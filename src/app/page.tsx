@@ -11,7 +11,7 @@ const Home = () => {
       <NavBar />
 
       <div className="container mt-4 text-center">
-        <img src="/hustlehoopers.JPG" className="img-fluid" alt="Main Image" />
+        <img src="/hustlehoopers.png" className="img-fluid" alt="Main Image" />
       </div>
 
       <div className="container mt-5" id="servicios">
