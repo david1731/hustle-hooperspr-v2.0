@@ -1,15 +1,10 @@
 import React from 'react';
-import NavBar from '../components/NavBar';
 import ServiceCard from '../components/ServiceCard';
 import LevelCard from '../components/LevelCard';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import '../styles/globals.css';
 
 const Home = () => {
   return (
     <div>
-      <NavBar />
-
       <div className="container mt-4 text-center">
         <img src="/hustlehoopers.png" className="img-fluid" alt="Main Image" />
       </div>
