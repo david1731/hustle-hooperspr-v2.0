@@ -2,7 +2,6 @@ import React from 'react';
 import NavBar from "../components/NavBar"; // Ensure you have the NavBar component
 import ServiceCard from '../components/ServiceCard';
 import LevelCard from '../components/LevelCard';
-import "bootstrap/dist/css/bootstrap.min.css";
 
 
 const Home = () => {
