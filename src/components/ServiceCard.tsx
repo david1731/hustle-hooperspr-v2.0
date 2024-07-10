@@ -9,8 +9,8 @@ interface ServiceCardProps {
 
 const ServiceCard: React.FC<ServiceCardProps> = ({ image, title, description }) => {
   // You need to know the width and height of your images
-  const width = 629; // Example width, you need to update it with the actual width of your image
-  const height = 479; // Example height, you need to update it with the actual height of your image
+  const width = 300; // Example width, you need to update it with the actual width of your image
+  const height = 200; // Example height, you need to update it with the actual height of your image
 
   return (
     <div className="col-md-4">
