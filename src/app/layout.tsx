@@ -4,11 +4,12 @@ import Script from 'next/script'; // Import Script from next/script
 import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS globally
 import "./globals.css";
 
+
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "HustleHoopersPR",
-  description: "Homepage",
+  description: "Homepage"
 };
 
 export default function RootLayout({

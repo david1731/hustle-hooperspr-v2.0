@@ -9,7 +9,7 @@ const Home = () => {
     <div>
       <NavBar /> {/* Add NavBar component here */}
       <div className="container mt-4 text-center">
-        <Image src="/hustlehoopers.png" layout="responsive" width={700} height={475} alt="Main Image" /> {/* Use Image component */}
+        <Image src="/hustlehoopers.png" layout="responsive" width={200} height={200} alt="Main Image" /> {/* Use Image component */}
       </div>
 
       <div className="container mt-5" id="servicios">
