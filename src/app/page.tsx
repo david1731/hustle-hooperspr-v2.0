@@ -2,31 +2,31 @@ import React from 'react';
 import NavBar from "../components/NavBar"; // Ensure you have the NavBar component
 import ServiceCard from '../components/ServiceCard';
 import LevelCard from '../components/LevelCard';
-
+import Image from 'next/image'; // Import the Image component from next/image
 
 const Home = () => {
   return (
     <div>
       <NavBar /> {/* Add NavBar component here */}
       <div className="container mt-4 text-center">
-        <img src="/hustlehoopers.png" className="img-fluid" alt="Main Image" />
+        <Image src="/hustlehoopers.png" layout="responsive" width={700} height={475} alt="Main Image" /> {/* Use Image component */}
       </div>
 
       <div className="container mt-5" id="servicios">
         <h2 className="mb-3 display-1">Nuestros Servicios</h2>
         <div className="row">
           <ServiceCard
-            image="https://www.stack.com/wp-content/uploads/2012/07/John-Wall-Jump-Shot-629x479.jpg"
+            image="/John-Wall-Jump-Shot.jpg"
             title="Práctica de Tiro"
             description="Enfoque en driles para el desarrollo y mejoramientos de destrezas de tiro."
           />
           <ServiceCard
-            image="https://www.blazepod.com/cdn/shop/articles/BP_Article_Basketball_10_Better_Handles_960x585_71143f85-075f-49e8-94f0-9eab1e517844_1024x.jpg?v=1654091123"
+            image="/basketball-dribble.webp"
             title="Manejo de Balón"
             description="Enfoque en driles para desarrollar o mejorar el manejo de balón."
           />
           <ServiceCard
-            image="https://rrspin.com/images/sports/basketball/how-to-shoot-a-basketball.jpg"
+            image="/how-to-shoot-a-basketball.jpg"
             title="Entrenamiento General"
             description="Entrenamiento en varios aspectos del baloncesto, así como Manejo de Balón y Práctica de Tiros, entre otros."
           />
@@ -68,9 +68,9 @@ const Home = () => {
         </p>
       </div>
     </div>
-    
   );
 };
 
 export default Home;
+
 
