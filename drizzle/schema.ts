@@ -31,7 +31,6 @@ export const TrainersTable = pgTable(
         name: text('name').notNull(),
         lastName: text('lastName').notNull(),
         email: text('email').notNull(),
-        service: text('service').notNull(),
     },
     (trainers) => {
         return {
