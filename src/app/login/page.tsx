@@ -1,8 +1,11 @@
 import React from 'react';
+import LoginSignup from '../../components/LoginSignup';
 
 const HomeLog = () => {
     return (
-        <h1>Login Page</h1>
-    )
-}
+        <div>
+          <LoginSignup />
+        </div>
+      );
+};
 export default HomeLog;

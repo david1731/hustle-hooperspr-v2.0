@@ -1,0 +1,27 @@
+/* LoginSignup.css */
+body {
+    background: #f0f4f7;
+  }
+  
+  .login-section {
+    background: #e0f7fa;
+    border-radius: 8px;
+    text-align: center;
+  }
+  
+  .signup-section {
+    background: #e1bee7;
+    border-radius: 8px;
+    text-align: center;
+  }
+  
+  .btn-google {
+    background-color: #4285f4;
+    color: white;
+  }
+  
+  .btn-google:hover {
+    background-color: #357ae8;
+    color: white;
+  }
+  
