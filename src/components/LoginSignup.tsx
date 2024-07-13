@@ -1,18 +1,19 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import '../styles/LoginSignup.css'; 
+import '../styles/LoginSignup.css';
+import { Button } from 'react-bootstrap'; // Import Button from react-bootstrap
 
-export default function LoginSignup (){
+export default function LoginSignup() {
   return (
     <div className="container">
       <div className="row align-items-center min-vh-100">
         <div className="col-md-6 col-sm-12 login-section p-5">
           <h2>Sign In</h2>
-          <button className="btn btn-primary btn-google mt-3">Sign in with Google</button>
+          <Button variant="primary" className="btn-google mt-3">Sign in with Google</Button> {/* Use Button component */}
         </div>
         <div className="col-md-6 col-sm-12 signup-section p-5">
           <h2>Welcome to Login</h2>
-          <p>Don't have an account?</p>
+          <p>Do not have an account?</p>
           <form>
             <div className="form-group mb-3">
               <label htmlFor="name">Name</label>
@@ -30,12 +31,11 @@ export default function LoginSignup (){
               <label htmlFor="email">Email</label>
               <input type="email" className="form-control" id="email" placeholder="Enter your email" />
             </div>
-            <button type="submit" className="btn btn-primary mt-3">Sign Up</button>
+            <Button type="submit" variant="primary" className="mt-3">Sign Up</Button> {/* Use Button component */}
           </form>
         </div>
       </div>
     </div>
   );
-};
-
+}
 
