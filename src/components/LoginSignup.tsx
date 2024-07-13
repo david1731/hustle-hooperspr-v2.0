@@ -1,6 +1,6 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './LoginSignup.css'; // We'll create this CSS file for custom styles
+import '../styles/LoginSignup.css'; 
 
 export default function LoginSignup (){
   return (
