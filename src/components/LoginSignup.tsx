@@ -1,7 +1,9 @@
+'use client'
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/LoginSignup.css';
 import { Button } from 'react-bootstrap'; // Import Button from react-bootstrap
+import GoogleButton from 'react-google-button';
 
 export default function LoginSignup() {
   return (
@@ -9,7 +11,7 @@ export default function LoginSignup() {
       <div className="row align-items-center min-vh-100">
         <div className="col-md-6 col-sm-12 login-section p-5">
           <h2>Sign In</h2>
-          <Button variant="primary" className="btn-google mt-3">Sign in with Google</Button> {/* Use Button component */}
+          <GoogleButton >Sign in with Google</GoogleButton> {/* Use Button component */}
         </div>
         <div className="col-md-6 col-sm-12 signup-section p-5">
           <h2>Welcome to Login</h2>
