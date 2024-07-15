@@ -5,17 +5,13 @@ import { sql } from '@vercel/postgres';
 import { ClientsTable } from '../drizzle/schema'; // Adjust the import path
 
 const ClientFormSchema = z.object({
-  name: z.string().min(1, 'Please enter your name.'),
-  lastname: z.string().min(1, 'Please enter your last name.'),
-  phone: z.string().min(10, 'Please enter a valid phone number.'),
+  fullname: z.string().min(1, 'Please enter your full name.'),
   email: z.string().email('Please enter a valid email address.'),
 });
 
 export type ClientState = {
   errors?: {
     name?: string[];
-    lastname?: string[];
-    phone?: string[];
     email?: string[];
   };
   message?: string | null;
@@ -34,16 +30,14 @@ export async function createClient(prevState: ClientState, formData: Record<stri
     };
   }
 
-  const { name, lastname, phone, email } = validatedFields.data;
+  const { fullname, email } = validatedFields.data;
 
   try {
     const db = drizzle(sql);
 
     await db.insert(ClientsTable).values({
-      name,
-      lastName: lastname,
+      fullname,
       email,
-      phoneNum: phone,
     }).execute();
 
   } catch (error) {

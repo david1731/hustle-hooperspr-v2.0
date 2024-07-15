@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { createClient } from '../../src/actions'; // Adjust the path according to your project structure
+import { createClient } from '../../actions'; // Adjust the path according to your project structure
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'POST') {

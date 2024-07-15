@@ -13,10 +13,9 @@ export const ClientsTable = pgTable(
     'clients',
     {
         clientID: serial('id').primaryKey(),
-        name: text('name').notNull(),
-        lastName: text("lastName").notNull(),
+        fullname: text('fullname').notNull(),
         email: text('email').notNull(),
-        phoneNum: text('phoneNum').notNull(),
+        
     },
     (clients) => {
         return {
