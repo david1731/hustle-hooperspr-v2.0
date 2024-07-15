@@ -22,7 +22,8 @@
     "react-bootstrap": "^2.10.4",
     "react-dom": "^18",
     "react-google-button": "^0.8.0",
-    "react-helmet": "^6.1.0"
+    "react-helmet": "^6.1.0",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/node": "^20",
