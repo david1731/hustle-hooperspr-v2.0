@@ -8,7 +8,7 @@ import { ClientsTable } from '../../../../../drizzle/schema'; // Adjust the impo
 import { eq } from 'drizzle-orm';
 
 
-export const authOptions = {
+const authOptions = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,

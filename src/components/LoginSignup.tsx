@@ -4,7 +4,6 @@ import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/LoginSignup.css';
 import { Button } from 'react-bootstrap';
-import GoogleButton from 'react-google-button';
 import { signIn } from 'next-auth/react';
 
 export default function LoginSignup() {
