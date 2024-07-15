@@ -31,7 +31,7 @@ export async function createClient(prevState: ClientState, formData: Record<stri
   if (!validatedFields.success) {
     return {
       errors: validatedFields.error.flatten().fieldErrors,
-      message: 'Missing or invalid fields. Failed to create client.',
+      message: 'Error llenando formulario. Intente otra vez.',
     };
   }
 
@@ -50,13 +50,10 @@ export async function createClient(prevState: ClientState, formData: Record<stri
   } catch (error) {
     console.error('Database error:', error); // Log detailed error
     return {
-      message: 'Database error: Failed to create client.',
+      message: 'Su cuenta no pudo ser creada.',
     };
   }
 
-  return {
-    message: 'Client created successfully.',
-  };
 }
 
 
