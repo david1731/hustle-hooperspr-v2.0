@@ -39,10 +39,8 @@ export const authOptions = {
           await db
             .insert(ClientsTable)
             .values({
-              name: user.name,
-              lastName: "", // Placeholder, update as needed
+              fullname: user.name,
               email: user.email,
-              phoneNum: "", // Placeholder, update as needed
             })
             .execute();
         }
