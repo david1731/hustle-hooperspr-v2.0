@@ -1,0 +1,7 @@
+.custom-nav-link:hover,
+.custom-nav-link:focus,
+.custom-nav-link:active {
+  background-color: transparent;
+  color: #000; /* Maintain the same color on hover/focus/active */
+  
+}

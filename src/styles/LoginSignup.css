@@ -14,7 +14,7 @@
   color: #000; /* Maintain same text color on hover/focus/active */
   border: 1px solid #ccc; /* Maintain same border color on hover/focus/active */
 }
-.custom-btn .bi-google, .custom-btn .bi-github {
+.custom-btn .bi-google {
   margin-right: 10px;
 }
 .text-center a {

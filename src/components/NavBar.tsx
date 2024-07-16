@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { Modal, Button } from 'react-bootstrap';
 import LoginSignup from './LoginSignup';
+import '../styles/NavBar.css';
 
 export default function NavBar() {
   const [showModal, setShowModal] = useState(false);
@@ -23,7 +24,7 @@ export default function NavBar() {
           <div className="collapse navbar-collapse" id="navbarNav">
             <ul className="navbar-nav">
               <li className="nav-item">
-                <Button onClick={handleShow} className="nav-link active" aria-current="page">
+                <Button onClick={handleShow} className="nav-link custom-nav-link" aria-current="page">
                   Login/Registrar
                 </Button>
               </li>
