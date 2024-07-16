@@ -29,7 +29,7 @@ export const TrainersTable = pgTable(
     {
         trainerID: serial('trainerID').primaryKey(),
         name: text('name').notNull(),
-        lastName: text('lastName').notNull(),
+        lastname: text('lastname').notNull(),
         email: text('email').notNull(),
     },
     (trainers) => {
