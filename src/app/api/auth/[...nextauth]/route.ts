@@ -55,10 +55,9 @@ const authOptions = {
       console.log("Token:", token);
 
       if (session.user) {
-        session.user.id = token.id as string;
         session.user.name = token.name as string;
         session.user.email = token.email as string;
-        session.user.picture = token.picture as string;
+        session.user.image = token.picture as string;
       }
 
       console.log("Session after:", session);
