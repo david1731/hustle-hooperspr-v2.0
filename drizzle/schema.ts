@@ -52,8 +52,8 @@ export const TimeSlotsTable = pgTable(
     'timeSlots',
     {
         slotID: serial('slotID').primaryKey(),
-        starttime: timestamp('start_time').notNull(),
-        endtime: timestamp('endtime').notNull(),
+        starttime: text('start_time').notNull(),
+        endtime: text('endtime').notNull(),
         status: text('status').notNull(),
     },
 );
