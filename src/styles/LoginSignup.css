@@ -1,27 +1,28 @@
-/* LoginSignup.css */
-body {
-    background: #f0f4f7;
-  }
-  
-  .login-section {
-    background: #e0f7fa;
-    border-radius: 8px;
-    text-align: center;
-  }
-  
-  .signup-section {
-    background: #e1bee7;
-    border-radius: 8px;
-    text-align: center;
-  }
-  
-  .btn-google {
-    background-color: #4285f4;
-    color: white;
-  }
-  
-  .btn-google:hover {
-    background-color: #357ae8;
-    color: white;
-  }
+/* styles/LoginSignup.css */
+.container {
+  padding: 20px;
+}
+.custom-btn {
+  background-color: #fff; /* Change to desired background color */
+  color: #000; /* Change to desired text color */
+  border: 1px solid #ccc; /* Change to desired border color */
+}
+.custom-btn:hover,
+.custom-btn:focus,
+.custom-btn:active {
+  background-color: #fff; /* Maintain same background color on hover/focus/active */
+  color: #000; /* Maintain same text color on hover/focus/active */
+  border: 1px solid #ccc; /* Maintain same border color on hover/focus/active */
+}
+.custom-btn .bi-google, .custom-btn .bi-github {
+  margin-right: 10px;
+}
+.text-center a {
+  color: #000; /* Change to desired link color */
+}
+.grey-line {
+  border: none;
+  height: 1px;
+  background-color: #ccc;
+}
   

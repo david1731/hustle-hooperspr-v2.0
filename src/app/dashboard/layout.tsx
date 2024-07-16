@@ -9,7 +9,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "HustleHoopersPR",
-  description: "Login"
+  description: "Dashboard"
 };
 
 export default function RootLayout({
@@ -21,6 +21,7 @@ export default function RootLayout({
       <html lang="en">
         <body className={inter.className}>
           {children}
+          <h1>Dashboard</h1>
         </body>
       </html>
     );
