@@ -1,7 +1,17 @@
+/* styles/NavBar.css */
+.custom-nav-link {
+  background-color: transparent;
+  cursor: pointer;
+  display: inline-block; /* Ensure it behaves like a link */
+}
+
 .custom-nav-link:hover,
 .custom-nav-link:focus,
 .custom-nav-link:active {
-  background-color: transparent;
-  color: #000; /* Maintain the same color on hover/focus/active */
-
+  background-color: transparent !important;
+  color: #000 !important; /* Maintain the same color on hover/focus/active */
+  outline: none !important; /* Remove focus outline */
+  box-shadow: none !important; /* Remove any potential box shadow */
+  border: none !important;
 }
+

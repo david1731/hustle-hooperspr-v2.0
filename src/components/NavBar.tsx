@@ -29,12 +29,12 @@ export default function NavBar() {
                 </Button>
               </li>
               <li className="nav-item">
-                <Link href="#servicios" className="nav-link">
+                <Link href="#servicios" className="nav-link custom-nav-link">
                   Servicios
                 </Link>
               </li>
               <li className="nav-item">
-                <Link href="#info" className="nav-link">
+                <Link href="#info" className="nav-link custom-nav-link">
                   Información
                 </Link>
               </li>
