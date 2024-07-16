@@ -12,7 +12,7 @@ import {
 export const ClientsTable = pgTable(
     'clients',
     {
-        clientID: serial('id').primaryKey(),
+        client_id: serial('id').primaryKey(),
         fullname: text('fullname').notNull(),
         email: text('email').notNull(),
         
@@ -27,7 +27,7 @@ export const ClientsTable = pgTable(
 export const TrainersTable = pgTable(
     'trainers',
     {
-        trainerID: serial('trainerID').primaryKey(),
+        trainer_id: serial('trainer_id').primaryKey(),
         name: text('name').notNull(),
         lastname: text('lastname').notNull(),
         email: text('email').notNull(),
@@ -42,16 +42,16 @@ export const TrainersTable = pgTable(
 export const ServicesTable = pgTable(
     'services',
     {
-        serviceID: serial('serviceID').primaryKey(),
+        service_id: serial('service_id').primaryKey(),
         servicename: text('servicename').notNull(),
         description: text('description').notNull(),
     },
 );
 
 export const TimeSlotsTable = pgTable(
-    'timeSlots',
+    'time_slots',
     {
-        slotID: serial('slotID').primaryKey(),
+        slot_id: serial('slot_id').primaryKey(),
         starttime: text('start_time').notNull(),
         endtime: text('endtime').notNull(),
         status: text('status').notNull(),
@@ -61,29 +61,29 @@ export const TimeSlotsTable = pgTable(
 export const LevelsTable = pgTable(
     'levels',
     {
-        levelID: serial('levelID').primaryKey(),
+        level_id: serial('level_id').primaryKey(),
         level: text('level').notNull(),
         description: text('description').notNull(),
     },
 );
 
 export const TrainerTimeSlotsTable = pgTable(
-    'trainerTimeSlots',
+    'trainer_time_slots',
     {
-      trainerID: integer('trainerID').references(() => TrainersTable.trainerID),
-      slotID: integer('slotID').references(() => TimeSlotsTable.slotID),
+      trainer_id: integer('trainer_id').references(() => TrainersTable.trainer_id),
+      slot_id: integer('slot_id').references(() => TimeSlotsTable.slot_id),
     },
 );   
 
 export const AppointmentSlotsTable = pgTable(
-    'appointmentSlots',
+    'appointment_slots',
     {
-      appID: serial('appID').primaryKey(),
-      slotID: integer('slotID').references(() => TimeSlotsTable.slotID),
-      clientID: integer('clientID').references(() => ClientsTable.clientID),
-      levelID: integer('levelID').references(() => LevelsTable.levelID),
-      trainerID: integer('trainerID').references(() => TrainersTable.trainerID),
-      serviceID: integer('serviceID').references(() => ServicesTable.serviceID),
+      app_id: serial('app_id').primaryKey(),
+      slot_id: integer('slot_id').references(() => TimeSlotsTable.slot_id),
+      client_id: integer('client_id').references(() => ClientsTable.client_id),
+      level_id: integer('level_id').references(() => LevelsTable.level_id),
+      trainer_id: integer('trainer_id').references(() => TrainersTable.trainer_id),
+      service_id: integer('service_id').references(() => ServicesTable.service_id),
       date: timestamp('date').notNull(),
     },
 );
