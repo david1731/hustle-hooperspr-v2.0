@@ -67,7 +67,7 @@ export const LevelsTable = pgTable(
     },
 );
 
-export const TrainerTimeSlotsTable = pgTable(
+export const TrainerTimeSlotsTable = pgTable( //should contain the trainer and the slots he has available
     'trainer_time_slots',
     {
       trainer_id: integer('trainer_id').references(() => TrainersTable.trainer_id),
