@@ -1,16 +1,17 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-
+import  SideNav from "../../components/sideNav";
 import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS globally
 import "../../styles/globals.css";
 
 
-const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "HustleHoopersPR",
   description: "Dashboard"
 };
+
+const inter = Inter({ subsets: ["latin"] });
 
 export default function RootLayout({
     children,
@@ -18,11 +19,11 @@ export default function RootLayout({
     children: React.ReactNode;
   }>) {
     return (
-      <html lang="en">
-        <body className={inter.className}>
+      <div className="flex h-screen">
+        <SideNav />
+        <div className="flex-grow p-6 bg-gray-50 overflow-auto">
           {children}
-          <h1>Dashboard</h1>
-        </body>
-      </html>
+        </div>
+      </div>
     );
   }

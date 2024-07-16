@@ -1,7 +1,7 @@
 import React from "react";
 
 export default function Page(){
-    return (
-        <div></div>
+    return(
+        <h1>Sacar citas</h1>
     )
 }
