@@ -4,7 +4,7 @@ import ServiceCard from '../components/ServiceCard';
 import LevelCard from '../components/LevelCard';
 import Image from 'next/image'; // Import the Image component from next/image
 
-const Home = () => {
+export default function Home() {
   return (
     <div>
       <NavBar /> {/* Add NavBar component here */}
@@ -71,6 +71,5 @@ const Home = () => {
   );
 };
 
-export default Home;
 
 
