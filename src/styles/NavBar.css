@@ -3,5 +3,5 @@
 .custom-nav-link:active {
   background-color: transparent;
   color: #000; /* Maintain the same color on hover/focus/active */
-  
+
 }

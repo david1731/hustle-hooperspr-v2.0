@@ -15,6 +15,7 @@ const authOptions = {
       clientSecret: process.env.GOOGLE_SECRET!,
     }),
   ],
+  secret: process.env.AUTH_SECRET!,
   callbacks: {
     async jwt({ token, user }: { token: JWT; user?: any }) {
       console.log("JWT callback");
