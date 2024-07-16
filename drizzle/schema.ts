@@ -43,7 +43,7 @@ export const ServicesTable = pgTable(
     'services',
     {
         serviceID: serial('serviceID').primaryKey(),
-        serviceName: text('serviceName').notNull(),
+        servicename: text('serviceName').notNull(),
         description: text('description').notNull(),
     },
 );
@@ -52,8 +52,8 @@ export const TimeSlotsTable = pgTable(
     'timeSlots',
     {
         slotID: serial('slotID').primaryKey(),
-        startTime: timestamp('startTime').notNull(),
-        endTime: timestamp('endTime').notNull(),
+        starttime: timestamp('startTime').notNull(),
+        endtime: timestamp('endTime').notNull(),
         status: text('status').notNull(),
     },
 );
