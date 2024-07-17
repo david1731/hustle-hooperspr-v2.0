@@ -3,17 +3,20 @@ import NavLinks from '@/components/nav-links';
 
 export default function SideNav() {
   return (
-    <div className="flex flex-col h-full w-64 bg-gray-800 text-white">
+    <div className="flex h-full flex-col px-3 py-4 md:px-2">
       <Link
-        className="flex items-center justify-start p-4 bg-blue-600 h-20"
+        className="mb-2 flex h-20 items-end justify-start rounded-md bg-blue-600 p-4 md:h-40"
         href="/"
       >
-        <div className="text-white text-lg font-bold">
-          Dashboard
+        <div className="w-32 text-white md:w-40">
+          {/* Add logo or brand name here */}
         </div>
       </Link>
-      <div className="flex flex-col grow">
+      <div className="flex grow flex-row justify-between space-x-2 md:flex-col md:space-x-0 md:space-y-2">
         <NavLinks />
+        <div className="hidden h-auto w-full grow rounded-md bg-gray-50 md:block">
+          <h1>Grey Area</h1>
+        </div>
       </div>
     </div>
   );

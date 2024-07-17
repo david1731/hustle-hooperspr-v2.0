@@ -4,15 +4,13 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
 
-// Map of links to display in the side navigation.
-// Depending on the size of the application, this would be stored in a database.
 const links = [
   { name: 'Home', href: '/dashboard'},
   {
     name: 'Mis Citas',
     href: '/dashboard/citas',
   },
-  { name: 'Sacar Citas', href: '/dashboard/sacaCitas'},
+  { name: 'Crear Citas', href: '/dashboard/sacaCitas'},
 ];
 
 export default function NavLinks() {
