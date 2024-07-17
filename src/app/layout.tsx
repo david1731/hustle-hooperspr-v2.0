@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { SessionProvider } from 'next-auth/react';
 import { Inter } from "next/font/google";
 import Script from 'next/script'; // Import Script from next/script
 import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS globally
@@ -20,7 +21,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        {children}
+          {children}
         <Script
           src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
           strategy="afterInteractive" // Load script after page becomes interactive

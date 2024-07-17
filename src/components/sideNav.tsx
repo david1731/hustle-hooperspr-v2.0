@@ -12,11 +12,9 @@ export default function SideNav() {
           {/* Add logo or brand name here */}
         </div>
       </Link>
-      <div className="flex grow flex-row justify-between space-x-2 md:flex-col md:space-x-0 md:space-y-2">
+      <div className="flex grow flex-col space-y-2">
         <NavLinks />
-        <div className="hidden h-auto w-full grow rounded-md bg-gray-50 md:block">
-          <h1>Grey Area</h1>
-        </div>
+        <div className="hidden h-auto w-full grow rounded-md bg-gray-50 md:block"></div>
       </div>
     </div>
   );
