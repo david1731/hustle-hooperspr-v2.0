@@ -1,3 +1,9 @@
+export type User = {
+  name: string;
+  email: string;
+};
+
+
 export type Client = {
     client_id: number;
     fullname: string;
@@ -46,14 +52,10 @@ export type Client = {
   };
   export type AppointmentQueryResult = {
     app_id: number;
-    slot_id: number;
-    client_id: number;
-    level_id: number;
-    trainer_id: number;
-    service_id: number;
     date: string;
     starttime: string;
     endtime: string;
+    client_name: string;
     trainer_name: string;
     trainer_lastname: string;
     servicename: string;
