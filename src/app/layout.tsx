@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { ClientSessionProvider } from './ClientSessionProvider';
+import { ClientSessionProvider } from '@/components/ClientSessionProvider';
 import { Inter } from "next/font/google";
 import Script from 'next/script'; // Import Script from next/script
 import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS globally
