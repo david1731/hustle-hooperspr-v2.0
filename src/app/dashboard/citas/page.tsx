@@ -1,7 +1,11 @@
+'use client';
 import React from "react";
+import GetSession  from '../../GetSession';
 
 export default function Page(){
-    return(
-        <h1>Mis citas</h1>
-    )
-}
+    return (
+        <div>
+            <GetSession></GetSession>
+        </div>
+    );
+};
