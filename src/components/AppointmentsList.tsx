@@ -8,9 +8,11 @@ export default function AppointmentsList({ email }: { email: string }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    console.log('Component mounted or email changed:', email);
     const fetchAppointments = async () => {
       try {
         const data = await getUserAppointmentsByEmail(email);
+        console.log('Fetched Appointments:', data); 
         setAppointments(data);
       } catch (error) {
         console.error('Failed to fetch appointments:', error);

@@ -23,7 +23,7 @@ export async function getUserAppointmentsByEmail(email: string){
         c.fullname AS client_name,
         t.name AS trainer_name,
         t.lastname AS trainer_lastname,
-        ts.starttime AS start_time,
+        ts.starttime AS starttime,
         ts.endtime AS endtime,
         l.level AS level,
         s.servicename AS service,
@@ -44,6 +44,7 @@ export async function getUserAppointmentsByEmail(email: string){
         c.email = ${email};
     `;
     
+    console.log('Query Result:', data); // Log the query result
     const appointments = data.rows.map((row) => ({
       ...row,
       app_id: row.app_id,
