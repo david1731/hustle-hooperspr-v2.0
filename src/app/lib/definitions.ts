@@ -53,14 +53,14 @@ export type Client = {
   };
   export type AppointmentQueryResult = {
     app_id: number;
-    date: string;
-    starttime: string;
-    endtime: string;
     client_name: string;
     trainer_name: string;
     trainer_lastname: string;
-    servicename: string;
+    starttime: string;
+    endtime: string;
     level: string;
+    servicename: string;
+    date: string;
   };
     
 

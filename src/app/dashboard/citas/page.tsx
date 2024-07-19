@@ -10,8 +10,7 @@ export default async function Page(){
                 {(user: User) => (
                     <div>
                     <h2>Dashboard</h2>
-                    <p>Welcome to your dashboard, {user.name}</p>
-                    {/* Add your dashboard content here */}
+                    <AppointmentsList email={user.email}/>
                   </div>
                 )}
             </GetSession>
