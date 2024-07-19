@@ -7,7 +7,7 @@ import { sql } from '@vercel/postgres';
 import { ClientsTable } from '../../../../../drizzle/schema'; // Adjust the import path to your schema file
 import { eq } from 'drizzle-orm';
 
-const authOptions: NextAuthOptions = {
+export const authOptions: NextAuthOptions = {
   session:{
     strategy: 'jwt'
   },
@@ -52,4 +52,4 @@ const authOptions: NextAuthOptions = {
 };
 
 const handler = NextAuth(authOptions);
-export { handler as GET, handler as POST, authOptions };
+export { handler as GET, handler as POST};
