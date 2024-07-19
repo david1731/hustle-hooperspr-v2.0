@@ -2,6 +2,8 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
+import { googleLogout } from '@react-oauth/google';
+
 
 const links = [
   { name: 'Home', href: '/dashboard' },
