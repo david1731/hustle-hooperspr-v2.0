@@ -1,32 +1,9 @@
-'use client';
 import React, { useEffect, useState } from 'react';
 import { getUserAppointmentsByEmail } from '@/app/lib/data';
 import { AppointmentQueryResult } from '@/app/lib/definitions';
 
-export default function AppointmentsList({ email }: { email: string }) {
-  const [appointments, setAppointments] = useState<AppointmentQueryResult[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    console.log('Component mounted or email changed:', email);
-    const fetchAppointments = async () => {
-      try {
-        const data = await getUserAppointmentsByEmail(email);
-        console.log('Fetched Appointments:', data); 
-        setAppointments(data);
-      } catch (error) {
-        console.error('Failed to fetch appointments:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchAppointments();
-  }, [email]);
-
-  if (loading) {
-    return <p>Loading...</p>;
-  }
+export default async function AppointmentsList({ email }: { email: string }) {
+  const appointments = await getUserAppointmentsByEmail(email);
 
   return (
     <div>

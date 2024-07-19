@@ -1,4 +1,4 @@
-import NextAuth from "next-auth";
+import NextAuth, { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { JWT } from "next-auth/jwt";
 import { Session } from "next-auth";
@@ -7,9 +7,10 @@ import { sql } from '@vercel/postgres';
 import { ClientsTable } from '../../../../../drizzle/schema'; // Adjust the import path to your schema file
 import { eq } from 'drizzle-orm';
 
-
-
-const authOptions = {
+export const authOptions: NextAuthOptions = {
+  session:{
+    strategy: 'jwt'
+  },
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -19,9 +20,7 @@ const authOptions = {
   secret: process.env.AUTH_SECRET!,
   callbacks: {
     async jwt({ token, user }: { token: JWT; user?: any }) {
-      console.log("JWT callback");
-      console.log("Token before:", token);
-
+    
       if (user) {
         token.id = user.id;
         token.name = user.name;
@@ -47,26 +46,10 @@ const authOptions = {
             .execute();
         }
       }
-
-      console.log("Token after:", token);
       return token;
-    },
-    async session({ session, token }: { session: Session; token: JWT }) {
-      console.log("Session callback");
-      console.log("Session before:", session);
-      console.log("Token:", token);
-
-      if (session.user) {
-        session.user.name = token.name as string;
-        session.user.email = token.email as string;
-        session.user.image = token.picture as string;
-      }
-
-      console.log("Session after:", session);
-      return session;
     },
   },
 };
 
 const handler = NextAuth(authOptions);
-export { handler as GET, handler as POST };
+export { handler as GET, handler as POST};

@@ -3,7 +3,9 @@ import { Inter } from "next/font/google";
 import SideNav from "../../components/sideNav";
 import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS globally
 import "../../styles/globals.css";
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
+<GoogleOAuthProvider clientId="663849039017-kq94q5paaeof47dljjmn6binv6eig3j9.apps.googleusercontent.com">...</GoogleOAuthProvider>;
 export const metadata: Metadata = {
   title: "HustleHoopersPR",
   description: "Dashboard"
