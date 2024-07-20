@@ -59,8 +59,8 @@ export type Client = {
     starttime: string;
     endtime: string;
     level: string;
-    servicename: string;
-    date: string;
+    service: string;
+    appointment_date: string;
   };
     
 
