@@ -53,7 +53,6 @@ export const TimeSlotsTable = pgTable(
         slot_id: serial('slot_id').primaryKey(),
         starttime: text('start_time').notNull(),
         endtime: text('endtime').notNull(),
-        status: text('status').notNull(),
     },
 );
 
@@ -71,6 +70,7 @@ export const TrainerTimeSlotsTable = pgTable( //should contain the trainer and t
     {
       trainer_id: integer('trainer_id').references(() => TrainersTable.trainer_id),
       slot_id: integer('slot_id').references(() => TimeSlotsTable.slot_id),
+      status: text('status').notNull(),
     },
 );   
 
