@@ -9,7 +9,6 @@ export default async function Page(){
             <GetSession>
                 {(user: User) => (
                     <div>
-                    <h2>Dashboard</h2>
                     <AppointmentsList email={user.email}/>
                   </div>
                 )}

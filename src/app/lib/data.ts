@@ -23,7 +23,7 @@ export async function getUserAppointmentsByEmail(email: string){
         c.fullname AS client_name,
         t.name AS trainer_name,
         t.lastname AS trainer_lastname,
-        ts.starttime AS starttime,
+        ts.start_time AS starttime,
         ts.endtime AS endtime,
         l.level AS level,
         s.servicename AS service,
@@ -31,7 +31,7 @@ export async function getUserAppointmentsByEmail(email: string){
       FROM 
         appointment_slots a
       JOIN 
-        clients c ON a.client_id = c.client_id
+        clients c ON a.client_id = c.id
       JOIN 
         trainers t ON a.trainer_id = t.trainer_id
       JOIN 
@@ -46,16 +46,16 @@ export async function getUserAppointmentsByEmail(email: string){
     
     console.log('Query Result:', data); // Log the query result
     const appointments = data.rows.map((row) => ({
-      ...row,
-      app_id: row.app_id,
-      client_name: row.client_name,
-      trainer_name: row.trainer_name,
-      trainer_lastname: row.trainer_lastname,
-      starttime: row.starttime,
-      endtime: row.endtime,
-      level: row.level,
-      service: row.servicename,
-      appointment_date: row.date,
+        app_id: row.app_id ?? 0,
+        client_name: row.client_name ?? 'Unknown',
+        trainer_name: row.trainer_name ?? 'Unknown',
+        trainer_lastname: row.trainer_lastname ?? 'Unknown',
+        starttime: row.starttime ?? 'Unknown',
+        endtime: row.endtime ?? 'Unknown',
+        level: row.level ?? 'Unknown',
+        service: row.service ?? 'Unknown',
+        appointment_date: row.appointment_date ?? 'Unknown',
+      
     }));
     return appointments;
   } catch (error) {
