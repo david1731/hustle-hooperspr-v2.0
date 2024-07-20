@@ -71,6 +71,7 @@ export const TrainerTimeSlotsTable = pgTable( //should contain the trainer and t
       trainer_id: integer('trainer_id').references(() => TrainersTable.trainer_id),
       slot_id: integer('slot_id').references(() => TimeSlotsTable.slot_id),
       status: text('status').notNull(),
+      date: text('date').notNull(),
     },
 );   
 
@@ -83,6 +84,6 @@ export const AppointmentSlotsTable = pgTable(
       level_id: integer('level_id').references(() => LevelsTable.level_id),
       trainer_id: integer('trainer_id').references(() => TrainersTable.trainer_id),
       service_id: integer('service_id').references(() => ServicesTable.service_id),
-      date: text('date').notNull(),
+      date: text('date').notNull().references(() => TrainerTimeSlotsTable.date),
     },
 );
