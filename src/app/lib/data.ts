@@ -1,6 +1,6 @@
 import { sql } from '@vercel/postgres';
 import { drizzle } from 'drizzle-orm/vercel-postgres';
-import { AppointmentQueryResult } from './definitions';
+import { AppointmentQueryResult, Trainer} from './definitions';
 import { ClientsTable, AppointmentSlotsTable, TrainersTable, ServicesTable, TimeSlotsTable, LevelsTable } from '../../../drizzle/schema';
 
 const db = drizzle(sql, {
@@ -64,4 +64,45 @@ export async function getUserAppointmentsByEmail(email: string){
   }
 }
 
+//create appointment should receive appointmentId(app_id), slot_id, client_id(id), 
+//level_id, trainer_id, service_id, date
+export async function createAppointment(
+  slot_id: number,
+  client_id: number,
+  level_id: number,
+  trainer_id: number, 
+  service_id: number, 
+  app_date: string){
+    try {
+      const result = await sql`
+        INSERT INTO appointment_slots (slot_id, client_id, level_id, trainer_id, service_id, date)
+        VALUES (${slot_id}, ${client_id}, ${level_id}, ${trainer_id}, ${service_id}, ${app_date});
+      `;
+  
+      console.log('Insert Result:', result);
+      return result;
+    } catch (error) {
+      console.error('Error inserting appointment:', error);
+      throw new Error('Failed to create appointment.');
+    }
+  }
+    
 
+export async function fetchTrainers(){
+  try{
+    const data = await sql<Trainer>`
+    SELECT trainer_id, name, lastname, email FROM trainers;
+    `;
+
+  const result = data.rows.map((row) => ({
+    trainer_id: row.trainer_id ?? 0,
+    name: row.name ?? 'Unknown',
+    lastname: row.lastname ?? 'Unknown',
+    email: row.email ?? 'Unknown',
+    }));
+    return result;
+  } catch(error){
+    console.error('Error fetching trainers',error);
+    throw new Error('Failed to fetch trainers');
+  }  
+}
