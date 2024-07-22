@@ -71,7 +71,7 @@ export async function GET(req: NextRequest) {
       fetchServices(),
       fetchLevels(),
     ]);
-
+    console.log('API data fetched:', { client, slots, services, levels }); // Add logging here
     return NextResponse.json({
       client,
       slots,
