@@ -1,6 +1,6 @@
 import { sql } from '@vercel/postgres';
 import { drizzle } from 'drizzle-orm/vercel-postgres';
-import { AppointmentQueryResult, Trainer} from './definitions';
+import { AppointmentQueryResult, Trainer, TrainerSlots} from './definitions';
 import { ClientsTable, AppointmentSlotsTable, TrainersTable, ServicesTable, TimeSlotsTable, LevelsTable } from '../../../drizzle/schema';
 
 const db = drizzle(sql, {
@@ -105,4 +105,33 @@ export async function fetchTrainers(){
     console.error('Error fetching trainers',error);
     throw new Error('Failed to fetch trainers');
   }  
+}
+
+//Used to display a given trainer's available hours
+export async function fetchSlotByTrainerID(trainer_id: number){
+  try{
+    const data = await sql<TrainerSlots>`
+    SELECT 
+      tts.slot_id,
+      ts.start_time,
+      ts.endtime,
+      tts.date
+    FROM 
+      trainer_time_slots tts
+    JOIN 
+      time_slots ts ON tts.slot_id = ts.slot_id
+    WHERE 
+      tts.trainer_id = ${trainer_id};
+  `;
+  const results = data.rows.map((row) => ({
+    slot_id : row.slot_id ?? 0,
+    start_time : row.start_time ?? 'Unknown',
+    endtime : row.endtime ?? 'Unknown',
+    data : row.date ?? 'Unknown',
+  }))
+  return results;
+  } catch(error){
+    console.error("Error fetching slots",error)
+    throw new Error("Failed to fetch slots")
+  }
 }

@@ -1,6 +1,10 @@
+// CreateApp.tsx
 import React from "react";
 import { fetchTrainers } from '@/app/lib/data';
 import { Trainer } from '@/app/lib/definitions';
+import dynamic from 'next/dynamic';
+
+const TrainerDropdown = dynamic(() => import('./TrainerDropdown'), { ssr: false });
 
 export default async function CreateApp(){
     let trainers: Trainer[] = [];
@@ -12,21 +16,10 @@ export default async function CreateApp(){
     console.log("Trainers:", trainers);
 
     return (
-        <div className="dropdown">
-          <a className="btn btn-secondary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Trainers
-          </a>
-          <ul className="dropdown-menu">
-            {trainers.length === 0 ? (
-              <li><a className="dropdown-item" href="#">No trainers available</a></li>
-            ) : (
-              trainers.map((trainer) => (
-                <li key={trainer.trainer_id}>
-                  <a className="dropdown-item" href="#">{trainer.name} {trainer.lastname}</a>
-                </li>
-              ))
-            )}
-          </ul>
-        </div>
+      <div>
+        <TrainerDropdown trainers={trainers} />
+      </div>
+        
+        
     );
 }

@@ -11,7 +11,7 @@ export default async function AppointmentsList({ email }: { email: string }) {
     console.error('Error fetching appointments:', error);
   }
 
-  console.log("Appointments:", appointments);
+  // console.log("Appointments:", appointments);
   return (
     <div className="container mt-5">
       <h1 className="mb-4">Your Appointments</h1>

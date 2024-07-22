@@ -62,5 +62,11 @@ export type Client = {
     service: string;
     appointment_date: string;
   };
-    
+  
+  export type TrainerSlots = {
+    slot_id : number;
+    start_time : string;
+    endtime : string;
+    date : string;
+  }
 
