@@ -3,11 +3,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@vercel/postgres';
 import { config } from 'dotenv';
 import { Client } from '@/app/lib/definitions';
+import { db } from '@vercel/postgres';
 
 // Load environment variables
 config();
 
-export default async function GET(req: NextRequest) {
+export async function GET(req: NextRequest) {
   const email = req.nextUrl.searchParams.get('email');
   if (!email) {
     return NextResponse.json({ message: 'Email query parameter is required' }, { status: 400 });

@@ -22,95 +22,31 @@ const TrainerDetailPage = () => {
   const [clientId, setClientId] = useState<number | null>(null);
 
   useEffect(() => {
-    async function fetchClientId() {
+    async function fetchData() {
       try {
-        const response = await fetch(`/api/clients?email=${email}`);
+        const response = await fetch(`/api/data?email=${email}&trainerId=${trainerId}`);
         if (!response.ok) {
-          throw new Error('Failed to fetch client');
+          throw new Error('Failed to fetch data');
         }
-        const clientData = await response.json();
-        console.log('Client ID:', clientData.client_id);
-        alert(`Client ID fetched: ${clientData.client_id}`)
-        setClientId(clientData.client_id);
+        const data = await response.json();
+        console.log('Fetched data:', data);
+        alert(`Fetched data: ${JSON.stringify(data)}`);
+        
+        setClientId(data.client.client_id);
+        setSlots(data.slots);
+        setServices(data.services);
+        setLevels(data.levels);
       } catch (error) {
-        if (error instanceof Error) {
-          console.error('Error fetching slots:', error);
-          setError(error.message);
-        } else {
-          console.error('Unknown error:', error);
-          setError('An unknown error occurred');
-        }
-      }
-    }
-
-    async function loadSlots() {
-      try {
-        const response = await fetch(`/api/trainers/${trainerId}/slots`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch slots');
-        }
-        const slotsData = await response.json();
-        console.log('Slots data:', slotsData);
-        alert(`Slots data fetched: ${JSON.stringify(slotsData)}`);
-        setSlots(slotsData);
-      } catch (error) {
-        if (error instanceof Error) {
-          console.error('Error fetching slots:', error);
-          setError(error.message);
-        } else {
-          console.error('Unknown error:', error);
-          setError('An unknown error occurred');
-        }
-      }
-    }
-
-    async function loadServices() {
-      try {
-        const response = await fetch('/api/services');
-        if (!response.ok) {
-          throw new Error('Failed to fetch services');
-        }
-        const servicesData = await response.json();
-        console.log('Services data:', servicesData);
-        alert(`Services data fetched: ${JSON.stringify(servicesData)}`);
-        setServices(servicesData);
-      } catch (error) {
-        if (error instanceof Error) {
-          console.error('Error fetching services:', error);
-          setError(error.message);
-        } else {
-          console.error('Unknown error:', error);
-          setError('An unknown error occurred');
-        }
-      }
-    }
-
-    async function loadLevels() {
-      try {
-        const response = await fetch('/api/levels');
-        if (!response.ok) {
-          throw new Error('Failed to fetch levels');
-        }
-        const levelsData = await response.json();
-        console.log('Levels data:', levelsData);
-        alert(`Levels data fetched: ${JSON.stringify(levelsData)}`);
-        setLevels(levelsData);
-      } catch (error) {
-        if (error instanceof Error) {
-          console.error('Error fetching levels:', error);
-          setError(error.message);
-        } else {
-          console.error('Unknown error:', error);
-          setError('An unknown error occurred');
-        }
+        if (error instanceof Error){
+          console.error('Error fetching data:', error);
+        alert(`Error fetching data: ${error.message}`);
+        setError(error.message);
+        }     
       }
     }
 
     if (trainerId && email) {
-      fetchClientId();
-      loadSlots();
-      loadServices();
-      loadLevels();
+      fetchData();
     }
   }, [trainerId, email]);
 
@@ -140,15 +76,17 @@ const TrainerDetailPage = () => {
       <h1>Available Slots, Services, and Levels</h1>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       <h2>Available Slots</h2>
+      {slots.length === 0 && !error && <p>Loading slots...</p>}
       <select onChange={(e) => setSelectedSlot(Number(e.target.value))} value={selectedSlot ?? ''}>
         <option value="" disabled>Select a slot</option>
         {slots.map((slot) => (
           <option key={slot.slot_id} value={slot.slot_id}>
-            {slot.start_time} - {slot.endtime}
+            {slot.start_time} - {slot.endtime} on {slot.date}
           </option>
         ))}
       </select>
       <h2>Available Services</h2>
+      {services.length === 0 && !error && <p>Loading services...</p>}
       <select onChange={(e) => setSelectedService(Number(e.target.value))} value={selectedService ?? ''}>
         <option value="" disabled>Select a service</option>
         {services.map((service) => (
@@ -158,6 +96,7 @@ const TrainerDetailPage = () => {
         ))}
       </select>
       <h2>Available Levels</h2>
+      {levels.length === 0 && !error && <p>Loading levels...</p>}
       <select onChange={(e) => setSelectedLevel(Number(e.target.value))} value={selectedLevel ?? ''}>
         <option value="" disabled>Select a level</option>
         {levels.map((level) => (
@@ -178,3 +117,4 @@ const TrainerDetailPage = () => {
 };
 
 export default TrainerDetailPage;
+

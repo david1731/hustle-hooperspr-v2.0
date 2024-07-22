@@ -7,7 +7,7 @@ import { config } from 'dotenv';
 // Load environment variables
 config();
 
-export default async function GET(req: NextRequest) {
+export async function GET(req: NextRequest) {
   try {
     const result = await sql<Service>`SELECT service_id, servicename, description FROM services`;
     console.log('Services query result:', result);

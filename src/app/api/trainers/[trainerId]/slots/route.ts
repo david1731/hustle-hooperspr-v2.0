@@ -7,7 +7,7 @@ import { config } from 'dotenv';
 // Load environment variables
 config();
 
-export default async function GET(req: NextRequest, { params }: { params: { trainerId: string } }) {
+export async function GET(req: NextRequest, { params }: { params: { trainerId: string } }) {
   const { trainerId } = params;
   console.log("TrainerID", trainerId)
   try {

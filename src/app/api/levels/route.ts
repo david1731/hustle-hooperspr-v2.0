@@ -6,7 +6,7 @@ import { config } from 'dotenv';
 // Load environment variables
 config();
 
-export default async function GET(req: NextRequest) {
+export async function GET(req: NextRequest) {
   try {
     const data = await sql<Level>`
     SELECT level_id, level, description FROM levels;
