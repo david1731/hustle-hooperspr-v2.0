@@ -1,4 +1,4 @@
-// app/api/trainers/route.ts
+
 import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@vercel/postgres';
 import { Trainer } from '@/app/lib/definitions';
