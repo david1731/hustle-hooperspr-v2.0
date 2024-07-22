@@ -36,7 +36,7 @@ const SacaCitasPage = () => {
   }, []);
 
   const handleTrainerClick = (trainerId: number) => {
-    router.push(`/dashboard/sacaCitas/${trainerId}?email=${user?.email}`);
+    router.push(`/dashboard/sacaCitas/trainerId=${trainerId}?email=${user?.email}`);
   };
 
   return (
