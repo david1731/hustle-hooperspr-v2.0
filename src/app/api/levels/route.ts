@@ -6,14 +6,15 @@ import { config } from 'dotenv';
 // Load environment variables
 config();
 
-export async function GET(req: NextRequest) {
+export default async function GET(req: NextRequest) {
   try {
     const data = await sql<Level>`
     SELECT level_id, level, description FROM levels;
     `;
+    console.log('Levels query result:', data);
 
     if (!data || data.rows.length === 0) {
-      return NextResponse.json({ message: 'No data returned from database' }, { status: 404 });
+      return NextResponse.json({ message: 'No levels found' }, { status: 404 });
     }
 
     const levels = data.rows.map((row) => ({

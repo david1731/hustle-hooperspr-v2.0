@@ -3,7 +3,7 @@ import { drizzle } from 'drizzle-orm/vercel-postgres';
 import { AppointmentQueryResult, Trainer, TrainerSlots, Client,Service,Level} from './definitions';
 import { ClientsTable, AppointmentSlotsTable, TrainersTable, ServicesTable, TimeSlotsTable, LevelsTable } from '../../../drizzle/schema';
 
-console.log('Database URL:', process.env.POSTGRES_URL);
+
 
 const db = drizzle(sql, {
   schema: {
@@ -102,6 +102,7 @@ export async function fetchTrainers(){
     lastname: row.lastname ?? 'Unknown',
     email: row.email ?? 'Unknown',
     }));
+    
     return result;
   } catch (error) {
     if (error instanceof Error) {
