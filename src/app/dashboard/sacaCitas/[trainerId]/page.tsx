@@ -3,7 +3,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { fetchSlotByTrainerID, createAppointment, fetchClientByEmail } from '@/app/lib/data';
+import { fetchSlotByTrainerID, createAppointment, fetchClientByEmail,fetchLevels, fetchServices } from '@/app/lib/data';
 import { TrainerSlots, Service, Level } from '@/app/lib/definitions';
 import { useSession } from '@/app/context/SessionContext';
 
@@ -29,11 +29,10 @@ const TrainerDetailPage = () => {
         const slotsData = await fetchSlotByTrainerID(Number(trainerId));
         setSlots(slotsData);
 
-        // Assuming you have similar functions to fetch services and levels
-        // const servicesData = await fetchServices();
-        // setServices(servicesData);
-        // const levelsData = await fetchLevels();
-        // setLevels(levelsData);
+        const servicesData = await fetchServices();
+        setServices(servicesData);
+        const levelsData = await fetchLevels();
+        setLevels(levelsData);
 
         if (email) {
           const clientData = await fetchClientByEmail(email as string);

@@ -15,11 +15,20 @@ const SacaCitasPage = () => {
   useEffect(() => {
     async function loadTrainers() {
       try {
-        const trainersData = await fetchTrainers();
-        console.log('Trainers data:', trainersData);
+        const response = await fetch('/api/trainers');
+        if (!response.ok) {
+          throw new Error('Failed to fetch trainers');
+        }
+        const trainersData = await response.json();
         setTrainers(trainersData);
       } catch (error) {
-        console.error('Error fetching trainers', error);
+        if (error instanceof Error) {
+          console.error('Error fetching trainers:', error);
+          setError(error.message);
+        } else {
+          console.error('Unknown error:', error);
+          setError('An unknown error occurred');
+        }
       }
     }
 
@@ -47,4 +56,8 @@ const SacaCitasPage = () => {
 };
 
 export default SacaCitasPage;
+
+function setError(message: string) {
+  throw new Error('Function not implemented.');
+}
 
