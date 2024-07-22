@@ -23,7 +23,6 @@ export default async function GetSession({
     email: session.user?.email || '',
     image: session.user?.image || '',
   };
-
   return (
     <div>
       {children(user)}

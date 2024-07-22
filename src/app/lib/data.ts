@@ -1,6 +1,6 @@
 import { sql } from '@vercel/postgres';
 import { drizzle } from 'drizzle-orm/vercel-postgres';
-import { AppointmentQueryResult, Trainer, TrainerSlots} from './definitions';
+import { AppointmentQueryResult, Trainer, TrainerSlots, Client} from './definitions';
 import { ClientsTable, AppointmentSlotsTable, TrainersTable, ServicesTable, TimeSlotsTable, LevelsTable } from '../../../drizzle/schema';
 
 const db = drizzle(sql, {
@@ -127,11 +127,26 @@ export async function fetchSlotByTrainerID(trainer_id: number){
     slot_id : row.slot_id ?? 0,
     start_time : row.start_time ?? 'Unknown',
     endtime : row.endtime ?? 'Unknown',
-    data : row.date ?? 'Unknown',
+    date : row.date ?? 'Unknown',
   }))
   return results;
   } catch(error){
     console.error("Error fetching slots",error)
     throw new Error("Failed to fetch slots")
+  }
+}
+
+export async function fetchClientByEmail(email: string): Promise<Client> {
+  try {
+    const data = await sql<Client>`
+    SELECT client_id, fullname, email FROM clients WHERE email = ${email};
+    `;
+    if (data.rows.length === 0) {
+      throw new Error('Client not found');
+    }
+    return data.rows[0];
+  } catch (error) {
+    console.error('Error fetching client', error);
+    throw new Error('Failed to fetch client');
   }
 }
