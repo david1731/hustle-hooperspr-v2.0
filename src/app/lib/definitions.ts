@@ -28,7 +28,6 @@ export type Client = {
     slot_id: number;
     starttime: string;
     endtime: string;
-    status: string;
   };
   
   export type Level = {

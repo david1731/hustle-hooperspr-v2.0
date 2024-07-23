@@ -1,7 +1,9 @@
 import { sql } from '@vercel/postgres';
 import { drizzle } from 'drizzle-orm/vercel-postgres';
-import { AppointmentQueryResult, Trainer, TrainerSlots} from './definitions';
+import { AppointmentQueryResult, Trainer, TrainerSlots, Client,Service,Level} from './definitions';
 import { ClientsTable, AppointmentSlotsTable, TrainersTable, ServicesTable, TimeSlotsTable, LevelsTable } from '../../../drizzle/schema';
+
+
 
 const db = drizzle(sql, {
   schema: {
@@ -100,11 +102,21 @@ export async function fetchTrainers(){
     lastname: row.lastname ?? 'Unknown',
     email: row.email ?? 'Unknown',
     }));
+    
     return result;
-  } catch(error){
-    console.error('Error fetching trainers',error);
-    throw new Error('Failed to fetch trainers');
-  }  
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error('Detailed error information:', {
+        message: error.message,
+        stack: error.stack,
+        sql: process.env.DATABASE_URL,
+      });
+      throw new Error(`Failed to fetch trainers from data.ts: ${error.message}`);
+    } else {
+      console.error('Unknown error:', error);
+      throw new Error('Failed to fetch trainers from data.ts: An unknown error occurred');
+    }
+  }
 }
 
 //Used to display a given trainer's available hours
@@ -127,11 +139,67 @@ export async function fetchSlotByTrainerID(trainer_id: number){
     slot_id : row.slot_id ?? 0,
     start_time : row.start_time ?? 'Unknown',
     endtime : row.endtime ?? 'Unknown',
-    data : row.date ?? 'Unknown',
+    date : row.date ?? 'Unknown',
   }))
   return results;
   } catch(error){
     console.error("Error fetching slots",error)
     throw new Error("Failed to fetch slots")
+  }
+}
+
+export async function fetchClientByEmail(email: string): Promise<Client> {
+  try {
+    const data = await sql<Client>`
+    SELECT client_id, fullname, email FROM clients WHERE email = ${email};
+    `;
+    if (data.rows.length === 0) {
+      throw new Error('Client not found');
+    }
+    return data.rows[0];
+  } catch (error) {
+    console.error('Error fetching client', error);
+    throw new Error('Failed to fetch client');
+  }
+}
+
+export async function fetchServices(){
+  try {
+    const data = await sql<Service>`
+    SELECT service_id, servicename, description FROM services;
+    `;
+    if (data.rows.length === 0) {
+      throw new Error('Service not found');
+    }
+    const results = data.rows.map((row) => ({
+      service_id : row.service_id ?? 0,
+      servicename : row.servicename ?? 'Unknown',
+      description : row.description ?? 'Unknown',
+    }))
+    return results;
+  } catch (error) {
+    console.error('Error fetching service', error);
+    throw new Error('Failed to fetch service');
+  }
+}
+
+
+export async function fetchLevels(){
+  try {
+    const data = await sql<Level>`
+    SELECT level_id, level, description FROM levels;
+    `;
+    if (data.rows.length === 0) {
+      throw new Error('Level not found');
+    }
+    const results = data.rows.map((row) => ({
+      level_id : row.level_id ?? 0,
+      level : row.level ?? 'Unknown',
+      description : row.description ?? 'Unknown',
+    }))
+    return results;
+  } catch (error) {
+    console.error('Error fetching service', error);
+    throw new Error('Failed to fetch service');
   }
 }
