@@ -1,4 +1,3 @@
-// src/app/api/slots/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@vercel/postgres';
 import { TrainerSlots } from '@/app/lib/definitions';
@@ -11,7 +10,7 @@ const fetchSlotByTrainerID = async (trainerId: number) => {
   const result = await sql<TrainerSlots>`
     SELECT 
       tts.slot_id, 
-      ts.starttime AS start_time, 
+      ts.start_time AS start_time, 
       ts.endtime, 
       tts.date 
     FROM 
@@ -34,26 +33,30 @@ const fetchSlotByTrainerID = async (trainerId: number) => {
 };
 
 export async function GET(req: NextRequest, { params }: { params: { trainerId: string } }) {
-  const trainerIdString = params.trainerId;
-  if (!trainerIdString) {
-    console.log('trainerId query parameter is required');
-    return NextResponse.json({ message: 'trainerId query parameter is required' }, { status: 400 });
+  const { trainerId } = params;
+  console.log("TrainerId from slots/route.ts", trainerId);
+
+  if (!trainerId) {
+    console.log('trainerId path parameter is required');
+    return NextResponse.json({ message: 'trainerId path parameter is required' }, { status: 400 });
   }
 
-  const trainerId = parseInt(trainerIdString, 10);
-  if (isNaN(trainerId)) {
+  const trainerIdNumber = parseInt(trainerId, 10);
+  if (isNaN(trainerIdNumber)) {
     console.log('Invalid trainerId');
     return NextResponse.json({ message: 'Invalid trainerId' }, { status: 400 });
   }
 
   try {
-    const slots = await fetchSlotByTrainerID(trainerId);
+    const slots = await fetchSlotByTrainerID(trainerIdNumber);
     console.log('API route slots:', slots);
     return NextResponse.json(slots);
   } catch (error) {
-    if(error instanceof Error){
+    if (error instanceof Error) {
       console.error('Error fetching slots:', error);
       return NextResponse.json({ message: `Failed to fetch slots: ${error.message}` }, { status: 500 });
     }
   }
 }
+
+

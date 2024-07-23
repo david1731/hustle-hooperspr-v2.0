@@ -1,4 +1,4 @@
-// src/app/dashboard/sacaCitas/page.tsx
+//src/app/dashboard/sacaCitas/page.tsx
 'use client';
 
 import React, { useEffect, useState } from 'react';
@@ -36,7 +36,7 @@ const SacaCitasPage = () => {
   }, []);
 
   const handleTrainerClick = (trainerId: number) => {
-    router.push(`/dashboard/sacaCitas/trainerId=${trainerId}?email=${user?.email}`);
+    router.push(`/dashboard/sacaCitas/${trainerId}?email=${user?.email}`);
   };
 
   return (
@@ -60,4 +60,3 @@ export default SacaCitasPage;
 function setError(message: string) {
   throw new Error('Function not implemented.');
 }
-
