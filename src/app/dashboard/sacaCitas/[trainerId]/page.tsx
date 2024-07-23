@@ -1,12 +1,17 @@
 'use client';
-
+import { config } from 'dotenv';
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import { TrainerSlots, Service, Level } from '@/app/lib/definitions';
+import { createAppointment } from '@/app/lib/data';
 
+config();
 export default function TrainerDetailPage() {
+  const searchParams = useSearchParams();
   const { trainerId } = useParams();
-  console.log('TrainerId from useParams:', trainerId);  // Log the trainerId to verify
+  const useremail = searchParams.get('email');
+  // console.log("User email:" ,useremail);
+  // console.log("User id:" ,trainerId);
 
   const [slots, setSlots] = useState<TrainerSlots[]>([]);
   const [levels, setLevels] = useState<Level[]>([]);
@@ -15,12 +20,13 @@ export default function TrainerDetailPage() {
   const [selectedSlot, setSelectedSlot] = useState<number | null>(null);
   const [selectedLevel, setSelectedLevel] = useState<number | null>(null);
   const [selectedService, setSelectedService] = useState<number | null>(null);
+  const [appointmentDate, setAppointmentDate] = useState<string>('');
 
   useEffect(() => {
     async function fetchSlots() {
       console.log("TrainerId:", trainerId);
       try {
-        if (!trainerId) {
+        if (!trainerId && !useremail) {
           throw new Error('trainerId is required');
         }
 
@@ -99,44 +105,81 @@ export default function TrainerDetailPage() {
     console.log('Selected service_id:', serviceId);
   };
 
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setAppointmentDate(e.target.value);
+    console.log('Selected appointment date:', e.target.value);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (selectedSlot && selectedLevel && selectedService && appointmentDate && useremail) {
+      try {
+        const parsedTrainerId = Array.isArray(trainerId) ? trainerId[0] : trainerId;
+        const result = await createAppointment(
+          selectedSlot,
+          useremail,
+          selectedLevel,
+          parseInt(parsedTrainerId),
+          selectedService,
+          appointmentDate.toString()
+        );
+        console.log('Appointment created:', result);
+        alert('Appointment created successfully');
+      } catch (error) {
+        console.error('Error creating appointment:', error);
+        alert('Failed to create appointment');
+      }
+    } else {
+      alert('Please select all fields');
+    }
+  };
+
   return (
     <div>
       <h1>Available Slots, Services, and Levels</h1>
       {error && <p style={{ color: 'red' }}>{error}</p>}
-      <div>
-        <label htmlFor="slots">Select a Slot</label>
-        <select id="slots" onChange={handleSlotChange} value={selectedSlot ?? ''}>
-          <option value="" disabled>Select a slot</option>
-          {slots.map((slot) => (
-            <option key={slot.slot_id} value={slot.slot_id}>
-              {slot.start_time} - {slot.endtime} on {slot.date}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div>
-        <label htmlFor="levels">Select a Level</label>
-        <select id="levels" onChange={handleLevelChange} value={selectedLevel ?? ''}>
-          <option value="" disabled>Select a level</option>
-          {levels.map((level) => (
-            <option key={level.level_id} value={level.level_id}>
-              {level.level}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div>
-        <label htmlFor="services">Select a Service</label>
-        <select id="services" onChange={handleServiceChange} value={selectedService ?? ''}>
-          <option value="" disabled>Select a service</option>
-          {services.map((service) => (
-            <option key={service.service_id} value={service.service_id}>
-              {service.servicename}
-            </option>
-          ))}
-        </select>
-      </div>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label htmlFor="slots">Select a Slot</label>
+          <select id="slots" onChange={handleSlotChange} value={selectedSlot ?? ''}>
+            <option value="" disabled>Select a slot</option>
+            {slots.map((slot) => (
+              <option key={slot.slot_id} value={slot.slot_id}>
+                {slot.start_time} - {slot.endtime} on {slot.date}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label htmlFor="levels">Select a Level</label>
+          <select id="levels" onChange={handleLevelChange} value={selectedLevel ?? ''}>
+            <option value="" disabled>Select a level</option>
+            {levels.map((level) => (
+              <option key={level.level_id} value={level.level_id}>
+                {level.level}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label htmlFor="services">Select a Service</label>
+          <select id="services" onChange={handleServiceChange} value={selectedService ?? ''}>
+            <option value="" disabled>Select a service</option>
+            {services.map((service) => (
+              <option key={service.service_id} value={service.service_id}>
+                {service.servicename}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label htmlFor="appointmentDate">Select Appointment Date</label>
+          <input type="text" id="appointmentDate" value={appointmentDate} onChange={handleDateChange} />
+        </div>
+        <button type="submit">Create Appointment</button>
+      </form>
     </div>
   );
 };
+
 

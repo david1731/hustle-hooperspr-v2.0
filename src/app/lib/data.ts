@@ -3,8 +3,8 @@ import { drizzle } from 'drizzle-orm/vercel-postgres';
 import { AppointmentQueryResult, Trainer, TrainerSlots, Client,Service,Level} from './definitions';
 import { ClientsTable, AppointmentSlotsTable, TrainersTable, ServicesTable, TimeSlotsTable, LevelsTable } from '../../../drizzle/schema';
 
-
-
+import { config } from 'dotenv';
+config();
 const db = drizzle(sql, {
   schema: {
     clients: ClientsTable,
@@ -70,16 +70,29 @@ export async function getUserAppointmentsByEmail(email: string){
 //level_id, trainer_id, service_id, date
 export async function createAppointment(
   slot_id: number,
-  client_id: number,
+  email: string,
   level_id: number,
   trainer_id: number, 
   service_id: number, 
   app_date: string){
     try {
+      console.log("Creating appointment with:", {
+        slot_id,
+        email,
+        level_id,
+        trainer_id,
+        service_id,
+        app_date
+      });
       const result = await sql`
-        INSERT INTO appointment_slots (slot_id, client_id, level_id, trainer_id, service_id, date)
-        VALUES (${slot_id}, ${client_id}, ${level_id}, ${trainer_id}, ${service_id}, ${app_date});
-      `;
+      WITH client AS (
+        SELECT id FROM clients WHERE email = ${email}
+      )
+      INSERT INTO appointment_slots (slot_id, client_id, level_id, trainer_id, service_id, date)
+      SELECT ${slot_id}, id, ${level_id}, ${trainer_id}, ${service_id}, ${app_date}
+      FROM client
+      RETURNING *;
+    `;
   
       console.log('Insert Result:', result);
       return result;
