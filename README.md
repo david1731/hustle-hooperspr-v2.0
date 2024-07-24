@@ -1,28 +1,28 @@
-#Hustle Hoopers PR v2.0
-##Project Overview
+# Hustle Hoopers PR v2.0
+## Project Overview
 Hustle Hoopers PR is a web application that connects clients with basketball trainers. The application allows clients to manage training sessions, book appointments, and interact with trainers. Trainers can manage their availability, view appointments, and interact with clients.
 
-##Features
+## Features
 Client Authentication: Clients can sign up and log in using Google authentication.
 Trainer Management: Trainers can manage their availability and view booked appointments.
 Booking System: Clients can book appointments based on trainer availability.
 Dashboard: Clients and trainers have access to a personalized dashboard to manage their activities.
 
-#Technology Stack
-##Frontend:
+# Technology Stack
+## Frontend:
 
 Next.js
 React
 Tailwind CSS
 Bootstrap
 
-##Backend:
+## Backend:
 
 Node.js
 Express
 PostgreSQL (using Drizzle ORM)
 
-##Authentication:
+## Authentication:
 
 NextAuth.js (Google Provider)
 
