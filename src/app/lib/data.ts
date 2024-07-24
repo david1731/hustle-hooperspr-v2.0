@@ -1,6 +1,6 @@
 import { sql } from '@vercel/postgres';
 import { drizzle } from 'drizzle-orm/vercel-postgres';
-import { AppointmentQueryResult, Trainer, TrainerSlots, Client,Service,Level} from './definitions';
+import { AppointmentQueryResult, Trainer, TrainerSlots, updateTimeSlot} from './definitions';
 import { ClientsTable, AppointmentSlotsTable, TrainersTable, ServicesTable, TimeSlotsTable, LevelsTable } from '../../../drizzle/schema';
 
 import { config } from 'dotenv';
@@ -161,58 +161,24 @@ export async function fetchSlotByTrainerID(trainer_id: number){
   }
 }
 
-export async function fetchClientByEmail(email: string): Promise<Client> {
+export async function updateTimeSlotStatus(
+  slot_id: number,
+  trainer_id: number,
+  date: string,
+  new_status: string
+){
   try {
-    const data = await sql<Client>`
-    SELECT client_id, fullname, email FROM clients WHERE email = ${email};
+    const result = await sql<updateTimeSlot>`
+      UPDATE trainer_time_slots
+      SET status = ${new_status}
+      WHERE slot_id = ${slot_id}
+        AND trainer_id = ${trainer_id}
+        AND date = ${date};
     `;
-    if (data.rows.length === 0) {
-      throw new Error('Client not found');
-    }
-    return data.rows[0];
-  } catch (error) {
-    console.error('Error fetching client', error);
-    throw new Error('Failed to fetch client');
-  }
-}
 
-export async function fetchServices(){
-  try {
-    const data = await sql<Service>`
-    SELECT service_id, servicename, description FROM services;
-    `;
-    if (data.rows.length === 0) {
-      throw new Error('Service not found');
-    }
-    const results = data.rows.map((row) => ({
-      service_id : row.service_id ?? 0,
-      servicename : row.servicename ?? 'Unknown',
-      description : row.description ?? 'Unknown',
-    }))
-    return results;
+    console.log('Update Result:', result);
   } catch (error) {
-    console.error('Error fetching service', error);
-    throw new Error('Failed to fetch service');
-  }
-}
-
-
-export async function fetchLevels(){
-  try {
-    const data = await sql<Level>`
-    SELECT level_id, level, description FROM levels;
-    `;
-    if (data.rows.length === 0) {
-      throw new Error('Level not found');
-    }
-    const results = data.rows.map((row) => ({
-      level_id : row.level_id ?? 0,
-      level : row.level ?? 'Unknown',
-      description : row.description ?? 'Unknown',
-    }))
-    return results;
-  } catch (error) {
-    console.error('Error fetching service', error);
-    throw new Error('Failed to fetch service');
+    console.error('Error updating time slot status:', error);
+    throw new Error('Failed to update time slot status.');
   }
 }
