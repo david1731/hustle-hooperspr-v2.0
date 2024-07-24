@@ -11,20 +11,20 @@ Dashboard: Clients and trainers have access to a personalized dashboard to manag
 # Technology Stack
 ## Frontend:
 
-Next.js
-React
-Tailwind CSS
-Bootstrap
+- Next.js
+- React
+- Tailwind CSS
+- Bootstrap
 
 ## Backend:
 
-Node.js
-Express
-PostgreSQL (using Drizzle ORM)
+- Node.js
+- Express
+- PostgreSQL (using Drizzle ORM)
 
 ## Authentication:
 
-NextAuth.js (Google Provider)
+- NextAuth.js (Google Provider)
 
 
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
