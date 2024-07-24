@@ -6,7 +6,7 @@ import { config } from 'dotenv';
 // Load environment variables
 config();
 
-const fetchSlotByTrainerID = async (trainerId: number) => {
+const fetchSlotByTrainerID = async (trainerId: number, date: string) => {
   const result = await sql<TrainerSlots>`
     SELECT 
       tts.slot_id, 
@@ -18,7 +18,7 @@ const fetchSlotByTrainerID = async (trainerId: number) => {
     JOIN 
       time_slots ts ON tts.slot_id = ts.slot_id
     WHERE 
-      tts.trainer_id = ${trainerId};
+      tts.trainer_id = ${trainerId} AND tts.date = ${date} AND tts.status = 'Available';
   `;
   console.log('fetchSlotByTrainerID result:', result);
   if (result.rows.length === 0) {
@@ -32,9 +32,10 @@ const fetchSlotByTrainerID = async (trainerId: number) => {
   }));
 };
 
-export async function GET(req: NextRequest, { params }: { params: { trainerId: string } }) {
-  const { trainerId } = params;
+export async function GET(req: NextRequest, { params }: { params: { trainerId: string; date : string } }) {
+  const { trainerId,date } = params;
   console.log("TrainerId from slots/route.ts", trainerId);
+  console.log("Date from slots/route.ts", date);
 
   if (!trainerId) {
     console.log('trainerId path parameter is required');
@@ -48,7 +49,7 @@ export async function GET(req: NextRequest, { params }: { params: { trainerId: s
   }
 
   try {
-    const slots = await fetchSlotByTrainerID(trainerIdNumber);
+    const slots = await fetchSlotByTrainerID(trainerIdNumber, date);
     console.log('API route slots:', slots);
     return NextResponse.json(slots);
   } catch (error) {

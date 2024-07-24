@@ -69,3 +69,9 @@ export type Client = {
     date : string;
   }
 
+export type updateTimeSlot = {
+  slot_id: number;
+  trainer_id: number;
+  date: string;
+  new_status: string;
+}

@@ -40,14 +40,18 @@ const SacaCitasPage = () => {
   };
 
   return (
-    <div>
-      <h1>Choose a professional</h1>
-      <div className="trainers-container">
+    <div className="container mt-5">
+      <h1 className="mb-4">Choose a Professional</h1>
+      <div className="row">
         {trainers.map((trainer) => (
-          <div key={trainer.trainer_id} className="trainer-card" onClick={() => handleTrainerClick(trainer.trainer_id)}>
-            <img src="/placeholder.jpg" alt={`${trainer.name} ${trainer.lastname}`} />
-            <h2>{trainer.name} {trainer.lastname} </h2>
-            <p>Available dates...</p>
+          <div key={trainer.trainer_id} className="col-md-4 mb-4">
+            <div className="card" onClick={() => handleTrainerClick(trainer.trainer_id)}>
+              <img src="/placeholder.jpg" className="card-img-top" alt={`${trainer.name} ${trainer.lastname}`} />
+              <div className="card-body">
+                <h5 className="card-title">{trainer.name} {trainer.lastname}</h5>
+                
+              </div>
+            </div>
           </div>
         ))}
       </div>
