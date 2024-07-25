@@ -83,6 +83,6 @@ export const AppointmentSlotsTable = pgTable(
       level_id: integer('level_id').references(() => LevelsTable.level_id),
       trainer_id: integer('trainer_id').references(() => TrainersTable.trainer_id),
       service_id: integer('service_id').references(() => ServicesTable.service_id),
-      date: text('date').notNull().references(() => TrainerTimeSlotsTable.date),
+      date: text('date').notNull(),
     },
 );
