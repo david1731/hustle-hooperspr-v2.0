@@ -102,6 +102,38 @@ export async function createAppointment(
     }
   }
     
+
+export async function fetchTrainers(){
+  try{
+    const data = await sql<Trainer>`
+    SELECT trainer_id, name, lastname, email FROM trainers;
+    `;
+
+  const result = data.rows.map((row) => ({
+    trainer_id: row.trainer_id ?? 0,
+    name: row.name ?? 'Unknown',
+    lastname: row.lastname ?? 'Unknown',
+    email: row.email ?? 'Unknown',
+    }));
+    
+    return result;
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error('Detailed error information:', {
+        message: error.message,
+        stack: error.stack,
+        sql: process.env.DATABASE_URL,
+      });
+      throw new Error(`Failed to fetch trainers from data.ts: ${error.message}`);
+    } else {
+      console.error('Unknown error:', error);
+      throw new Error('Failed to fetch trainers from data.ts: An unknown error occurred');
+    }
+  }
+}
+
+
+
 export async function updateTimeSlotStatus(
   slot_id: number,
   trainer_id: number,
