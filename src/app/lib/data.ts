@@ -102,66 +102,6 @@ export async function createAppointment(
     }
   }
     
-
-export async function fetchTrainers(){
-  try{
-    const data = await sql<Trainer>`
-    SELECT trainer_id, name, lastname, email FROM trainers;
-    `;
-
-  const result = data.rows.map((row) => ({
-    trainer_id: row.trainer_id ?? 0,
-    name: row.name ?? 'Unknown',
-    lastname: row.lastname ?? 'Unknown',
-    email: row.email ?? 'Unknown',
-    }));
-    
-    return result;
-  } catch (error) {
-    if (error instanceof Error) {
-      console.error('Detailed error information:', {
-        message: error.message,
-        stack: error.stack,
-        sql: process.env.DATABASE_URL,
-      });
-      throw new Error(`Failed to fetch trainers from data.ts: ${error.message}`);
-    } else {
-      console.error('Unknown error:', error);
-      throw new Error('Failed to fetch trainers from data.ts: An unknown error occurred');
-    }
-  }
-}
-
-//Used to display a given trainer's available hours
-export async function fetchSlotByTrainerID(trainer_id: number){
-  try{
-    const data = await sql<TrainerSlots>`
-    SELECT 
-      tts.slot_id,
-      ts.start_time,
-      ts.endtime,
-      tts.date
-    FROM 
-      trainer_time_slots tts
-    JOIN 
-      time_slots ts ON tts.slot_id = ts.slot_id
-    WHERE 
-      tts.trainer_id = ${trainer_id};
-  `;
-  const results = data.rows.map((row) => ({
-    slot_id : row.slot_id ?? 0,
-    start_time : row.start_time ?? 'Unknown',
-    endtime : row.endtime ?? 'Unknown',
-    date : row.date ?? 'Unknown',
-  }))
-  return results;
-  } catch(error){
-    console.error("Error fetching slots",error)
-    throw new Error("Failed to fetch slots")
-  }
-}
-
-
 export async function updateTimeSlotStatus(
   slot_id: number,
   trainer_id: number,
