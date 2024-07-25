@@ -7,31 +7,40 @@ import { config } from 'dotenv';
 config();
 
 const fetchSlotByTrainerID = async (trainerId: number, date: string) => {
-  const result = await sql<TrainerSlots>`
-    SELECT 
-      tts.slot_id, 
-      ts.start_time AS start_time, 
-      ts.endtime, 
-      tts.date 
-    FROM 
-      trainer_time_slots tts
-    JOIN 
-      time_slots ts ON tts.slot_id = ts.slot_id
-    WHERE 
-      tts.trainer_id = ${trainerId} AND tts.date = ${date} AND tts.status = 'Available';
-  `;
-  console.log('fetchSlotByTrainerID result:', result);
-  if (result.rows.length === 0) {
-    throw new Error('No slots found');
-  }
-  return result.rows.map((row) => ({
-    slot_id: row.slot_id ?? 0,
-    start_time: row.start_time ?? 'Unknown',
-    endtime: row.endtime ?? 'Unknown',
-    date: row.date ?? 'Unknown',
-  }));
-};
+  try {
+    const result = await sql<TrainerSlots>`
+      SELECT 
+        tts.slot_id, 
+        ts.start_time AS start_time, 
+        ts.endtime, 
+        tts.date,
+        tts.status
+      FROM 
+        trainer_time_slots tts
+      JOIN 
+        time_slots ts ON tts.slot_id = ts.slot_id
+      WHERE 
+        tts.trainer_id = ${trainerId} AND tts.date = ${date} AND tts.status = 'Available';
+    `;
 
+    console.log('fetchSlotByTrainerID result:', result);
+
+    if (result.rows.length === 0) {
+      throw new Error('No slots found');
+    }
+
+    return result.rows.map((row) => ({
+      slot_id: row.slot_id ?? 0,
+      start_time: row.start_time ?? 'Unknown',
+      endtime: row.endtime ?? 'Unknown',
+      date: row.date ?? 'Unknown',
+      status: row.status ?? 'Unknown',
+    }));
+  } catch (error) {
+    console.error('SQL query error:', error);
+    throw new Error('Failed to execute SQL query');
+  }
+};
 export async function GET(req: NextRequest, { params }: { params: { trainerId: string; date : string } }) {
   const { trainerId,date } = params;
   console.log("TrainerId from slots/route.ts", trainerId);

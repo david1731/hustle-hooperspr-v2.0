@@ -137,7 +137,7 @@ export default function TrainerDetailPage() {
           selectedDate
         );
 
-        await updateTimeSlotStatus(
+         await updateTimeSlotStatus(
           selectedSlot,
           parseInt(parsedTrainerId, 10),
           selectedDate,
