@@ -4,7 +4,6 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from '@/app/context/SessionContext';
-import { fetchTrainers } from '@/app/lib/data';
 import { Trainer } from '@/app/lib/definitions';
 
 const SacaCitasPage = () => {
