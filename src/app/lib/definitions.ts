@@ -13,8 +13,7 @@ export type Client = {
   
   export type Trainer = {
     trainer_id: number;
-    name: string;
-    lastname: string;
+    fullname: string;
     email: string;
   };
   
@@ -53,8 +52,7 @@ export type Client = {
   export type AppointmentQueryResult = {
     app_id: number;
     client_name: string;
-    trainer_name: string;
-    trainer_lastname: string;
+    trainer_fullname: string;
     starttime: string;
     endtime: string;
     level: string;

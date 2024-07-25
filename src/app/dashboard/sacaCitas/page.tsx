@@ -45,9 +45,9 @@ const SacaCitasPage = () => {
         {trainers.map((trainer) => (
           <div key={trainer.trainer_id} className="col-md-4 mb-4">
             <div className="card" onClick={() => handleTrainerClick(trainer.trainer_id)}>
-              <img src="/placeholder.jpg" className="card-img-top" alt={`${trainer.name} ${trainer.lastname}`} />
+              <img src="/placeholder.jpg" className="card-img-top" alt={`${trainer.fullname}`} />
               <div className="card-body">
-                <h5 className="card-title">{trainer.name} {trainer.lastname}</h5>
+                <h5 className="card-title">{trainer.fullname}</h5>
                 
               </div>
             </div>

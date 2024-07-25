@@ -27,8 +27,7 @@ export const TrainersTable = pgTable(
     'trainers',
     {
         trainer_id: serial('trainer_id').primaryKey(),
-        name: text('name').notNull(),
-        lastname: text('lastname').notNull(),
+        fullname: text('fullname').notNull(),
         email: text('email').notNull(),
     },
     (trainers) => {

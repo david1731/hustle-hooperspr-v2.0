@@ -23,7 +23,7 @@ export default async function AppointmentsList({ email }: { email: string }) {
             <div key={appointment.app_id} className="col-md-4 mb-4">
               <div className="card">
                 <div className="card-body">
-                  <h5 className="card-title">Entrenador: {appointment.trainer_name} {appointment.trainer_lastname}</h5>
+                  <h5 className="card-title">Entrenador: {appointment.trainer_fullname}</h5>
                   <h6 className="card-subtitle mb-2 text-muted">Servicio: {appointment.service}</h6>
                   <p className="card-text">
                     <strong>Level:</strong> {appointment.level}<br />

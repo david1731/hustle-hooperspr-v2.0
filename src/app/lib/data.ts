@@ -23,8 +23,7 @@ export async function getUserAppointmentsByEmail(email: string){
       SELECT 
         a.app_id,
         c.fullname AS client_name,
-        t.name AS trainer_name,
-        t.lastname AS trainer_lastname,
+        t.fullname AS trainer_fullname,
         ts.start_time AS starttime,
         ts.endtime AS endtime,
         l.level AS level,
@@ -50,8 +49,7 @@ export async function getUserAppointmentsByEmail(email: string){
     const appointments = data.rows.map((row) => ({
         app_id: row.app_id ?? 0,
         client_name: row.client_name ?? 'Unknown',
-        trainer_name: row.trainer_name ?? 'Unknown',
-        trainer_lastname: row.trainer_lastname ?? 'Unknown',
+        trainer_fullname: row.trainer_fullname ?? 'Unknown',
         starttime: row.starttime ?? 'Unknown',
         endtime: row.endtime ?? 'Unknown',
         level: row.level ?? 'Unknown',
@@ -106,13 +104,12 @@ export async function createAppointment(
 export async function fetchTrainers(){
   try{
     const data = await sql<Trainer>`
-    SELECT trainer_id, name, lastname, email FROM trainers;
+    SELECT trainer_id, fullname, email FROM trainers;
     `;
 
   const result = data.rows.map((row) => ({
     trainer_id: row.trainer_id ?? 0,
-    name: row.name ?? 'Unknown',
-    lastname: row.lastname ?? 'Unknown',
+    fullname: row.fullname ?? 'Unknown',
     email: row.email ?? 'Unknown',
     }));
     
