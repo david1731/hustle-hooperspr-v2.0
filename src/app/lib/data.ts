@@ -161,6 +161,7 @@ export async function fetchSlotByTrainerID(trainer_id: number){
   }
 }
 
+
 export async function updateTimeSlotStatus(
   slot_id: number,
   trainer_id: number,

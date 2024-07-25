@@ -67,6 +67,7 @@ export type Client = {
     start_time : string;
     endtime : string;
     date : string;
+    status: string;
   }
 
 export type updateTimeSlot = {
