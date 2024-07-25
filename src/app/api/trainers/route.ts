@@ -17,8 +17,7 @@ export async function GET(req: NextRequest) {
 
     const trainers = result.rows.map((row) => ({
       trainer_id: row.trainer_id ?? 0,
-      name: row.name ?? 'Unknown',
-      lastname: row.lastname ?? 'Unknown',
+      fullname: row.fullname ?? 'Unknown',
       email: row.email ?? 'Unknown',
     }));
 
