@@ -9,7 +9,8 @@ config();
 
 export async function GET(req: NextRequest) {
   try {
-    const result = await sql<Trainer>`SELECT trainer_id, name, lastname, email FROM trainers`;
+    const result = await sql<Trainer>`SELECT trainer_id, fullname, email FROM trainers`;
+    console.log("Trainers", result);
 
     if (!result || result.rows.length === 0) {
       return NextResponse.json({ message: 'No data returned from database' }, { status: 404 });

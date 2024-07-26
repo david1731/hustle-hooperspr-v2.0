@@ -8,19 +8,20 @@ config();
 
 const fetchSlotByTrainerID = async (trainerId: number, date: string) => {
   try {
+    console.log(`Fetching slots for trainerId: ${trainerId}, date: ${date}, status: 'Available'`);
     const result = await sql<TrainerSlots>`
       SELECT 
-        tts.slot_id, 
-        ts.start_time AS start_time, 
-        ts.endtime, 
-        tts.date,
-        tts.status
-      FROM 
-        trainer_time_slots tts
-      JOIN 
-        time_slots ts ON tts.slot_id = ts.slot_id
-      WHERE 
-        tts.trainer_id = ${trainerId} AND tts.date = ${date} AND tts.status = 'Available';
+      tts.slot_id, 
+      ts.start_time AS start_time, 
+      ts.endtime, 
+      tts.date,
+      tts.status
+    FROM 
+      trainer_time_slots tts
+    JOIN 
+      time_slots ts ON tts.slot_id = ts.slot_id
+    WHERE 
+      tts.trainer_id = ${trainerId} AND tts.date = ${date} AND tts.status = 'Available';
     `;
 
     console.log('fetchSlotByTrainerID result:', result);
