@@ -1,5 +1,6 @@
+'use client';
 import React from 'react';
-import { getUserAppointmentsByEmail } from '@/app/lib/data';
+import { getUserAppointmentsByEmail, cancelAppointment } from '@/app/lib/data';
 import { AppointmentQueryResult } from '@/app/lib/definitions';
 
 export default async function AppointmentsList({ email }: { email: string }) {
@@ -9,6 +10,14 @@ export default async function AppointmentsList({ email }: { email: string }) {
     appointments = await getUserAppointmentsByEmail(email);
   } catch (error) {
     console.error('Error fetching appointments:', error);
+  }
+
+  const handleCancel = (app_id: number) =>{
+    try{
+      cancelAppointment(app_id);
+    } catch(error){
+      console.error("Error deleting appointment");
+    }
   }
 
   // console.log("Appointments:", appointments);
@@ -30,6 +39,7 @@ export default async function AppointmentsList({ email }: { email: string }) {
                     <strong>Hora:</strong> {appointment.starttime} - {appointment.endtime}<br />
                     <strong>Fecha:</strong> {appointment.appointment_date}
                   </p>
+                  <button type="button" className="btn btn-danger" onClick={() => handleCancel(appointment.app_id)}>Cancelar Cita</button>
                 </div>
               </div>
             </div>
