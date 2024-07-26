@@ -21,9 +21,11 @@ const fetchSlotByTrainerID = async (trainerId: number, date: string) => {
     JOIN 
       time_slots ts ON tts.slot_id = ts.slot_id
     WHERE 
-      tts.trainer_id = ${trainerId} AND tts.date = ${date} AND tts.status = 'Available';
+      tts.trainer_id = ${trainerId} AND tts.date = ${date} AND tts.status = 'Available'
+    ORDER BY 
+      tts.slot_id ASC;
+    
     `;
-
     console.log('fetchSlotByTrainerID result:', result);
 
     if (result.rows.length === 0) {

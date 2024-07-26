@@ -152,3 +152,15 @@ export async function updateTimeSlotStatus(
     throw new Error('Failed to update time slot status.');
   }
 }
+
+export async function cancelAppointment(app_id: number){
+  try{
+    const result = await sql`
+      DELETE from appointment_slots WHERE app_id = ${app_id};    
+    `;
+  } catch(error){
+    console.error("Error deleting appointment", error);
+    throw new Error("Error deleting appointment.");
+  }
+
+}
