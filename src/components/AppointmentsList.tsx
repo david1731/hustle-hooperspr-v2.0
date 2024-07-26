@@ -15,6 +15,7 @@ export default async function AppointmentsList({ email }: { email: string }) {
   const handleCancel = (app_id: number) =>{
     try{
       cancelAppointment(app_id);
+      window.location.reload();
     } catch(error){
       console.error("Error deleting appointment");
     }
