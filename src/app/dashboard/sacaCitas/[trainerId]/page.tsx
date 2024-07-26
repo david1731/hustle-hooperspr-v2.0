@@ -1,9 +1,9 @@
 'use client';
 import { config } from 'dotenv';
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
 import { TrainerSlots, Service, Level } from '@/app/lib/definitions';
-import { updateTimeSlotStatus, createAppointment } from '@/app/lib/data';
+import { updateTimeSlotStatus, createAppointment, fetchSlots, fetchAvailableDates } from '@/app/lib/data'; // Import fetchSlots
 
 config();
 
@@ -24,23 +24,8 @@ export default function TrainerDetailPage() {
   const [selectedLevel, setSelectedLevel] = useState<number | null>(null);
   const [selectedService, setSelectedService] = useState<number | null>(null);
 
+  // Fetch levels and services on component mount
   useEffect(() => {
-    async function fetchDates() {
-      try {
-        const response = await fetch('/api/availableDates');
-        if (!response.ok) {
-          throw new Error('Failed to fetch available dates');
-        }
-        const data = await response.json();
-        setDates(data);
-      } catch (error) {
-        if (error instanceof Error) {
-          console.error('Error fetching available dates:', error);
-          setError(error.message);
-        }
-      }
-    }
-
     async function fetchLevels() {
       try {
         const response = await fetch(`/api/levels`);
@@ -73,37 +58,43 @@ export default function TrainerDetailPage() {
       }
     }
 
-    fetchDates();
     fetchLevels();
     fetchServices();
   }, []);
 
-  useEffect(() => {
-    async function fetchSlots() {
-      try {
-        if (!selectedDate || !trainerId) return;
+  const handleDateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedDate = e.target.value;
+    setSelectedDate(selectedDate);
+    console.log('Selected date:', selectedDate);
+  };
 
-        const response = await fetch(`/api/slots/${trainerId}/${selectedDate}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch available time slots');
-        }
-        const data = await response.json();
-        setSlots(data);
-      } catch (error) {
-        if (error instanceof Error) {
-          console.error('Error fetching available time slots:', error);
-          setError(error.message);
-        }
+  const handleSlotDropdownClick = async () => {
+    try {
+      if (!selectedDate || !trainerId) return;
+      const parsedTrainerId = Array.isArray(trainerId) ? trainerId[0] : trainerId;
+      const slotsData = await fetchSlots(parseInt(parsedTrainerId), selectedDate);
+      setSlots(slotsData);
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error('Error fetching available time slots:', error);
+        setError(error.message);
       }
     }
-
-    fetchSlots();
-  }, [selectedDate, trainerId]);
-
-  const handleDateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedDate(e.target.value);
-    console.log('Selected date:', e.target.value);
   };
+
+  const handleDateDropdown = async () => {
+    try {
+      if (!trainerId) return;
+      const parsedTrainerId = Array.isArray(trainerId) ? trainerId[0] : trainerId;
+      const datesData = await fetchAvailableDates(parseInt(parsedTrainerId));
+      setDates(datesData || []);
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error('Error fetching available time slots:', error);
+        setError(error.message);
+      }
+    }
+  }
 
   const handleSlotChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const slotId = Number(e.target.value);
@@ -146,6 +137,7 @@ export default function TrainerDetailPage() {
 
         console.log('Appointment created:', result);
         alert('Appointment created successfully');
+        window.location.reload();
       } catch (error) {
         console.error('Error creating appointment:', error);
         alert('Failed to create appointment');
@@ -165,6 +157,7 @@ export default function TrainerDetailPage() {
           <select
             id="dates"
             className="form-select"
+            onClick={handleDateDropdown} // Attach onClick handler here
             onChange={handleDateChange}
             value={selectedDate}
           >
@@ -179,6 +172,7 @@ export default function TrainerDetailPage() {
           <select
             id="slots"
             className="form-select"
+            onClick={handleSlotDropdownClick} // Attach onClick handler here
             onChange={handleSlotChange}
             value={selectedSlot ?? ''}
           >
@@ -227,3 +221,4 @@ export default function TrainerDetailPage() {
     </div>
   );
 }
+

@@ -164,3 +164,52 @@ export async function cancelAppointment(app_id: number){
   }
 
 }
+
+export async function fetchSlots(trainerId: number, date: string){
+  try {
+    console.log(`Fetching slots for trainerId: ${trainerId}, date: ${date}, status: 'Available'`);
+    const result = await sql<TrainerSlots>`
+      SELECT 
+      tts.slot_id, 
+      ts.start_time AS start_time, 
+      ts.endtime, 
+      tts.date,
+      tts.status
+    FROM 
+      trainer_time_slots tts
+    JOIN 
+      time_slots ts ON tts.slot_id = ts.slot_id
+    WHERE 
+      tts.trainer_id = ${trainerId} AND tts.date = ${date} AND tts.status = 'Available'
+    ORDER BY 
+      tts.slot_id ASC;
+    
+    `;
+    console.log('fetchSlotByTrainerID result:', result);
+
+    if (result.rows.length === 0) {
+      throw new Error('No slots found');
+    }
+
+    return result.rows.map((row) => ({
+      slot_id: row.slot_id ?? 0,
+      start_time: row.start_time ?? 'Unknown',
+      endtime: row.endtime ?? 'Unknown',
+      date: row.date ?? 'Unknown',
+      status: row.status ?? 'Unknown',
+    }));
+  } catch (error) {
+    console.error('SQL query error:', error);
+    throw new Error('Failed to execute SQL query');
+  }
+};
+
+export async function fetchAvailableDates(trainerId:number){
+  try {
+    const result = await sql`SELECT DISTINCT date FROM trainer_time_slots WHERE trainer_id = ${trainerId} AND status = 'Available'`;
+    return result.rows.map((row) => row.date);
+  } catch (error) {
+    console.error('Error fetching available dates:', error);
+    return [];
+  }
+}
