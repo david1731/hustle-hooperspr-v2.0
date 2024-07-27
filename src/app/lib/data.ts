@@ -231,3 +231,35 @@ export async function fetchDeleteUpdateApp(app_id: number){
   }
 }
 
+export async function fetchInfoFromAppID(app_id: number){
+  try{
+    const result = await sql`
+    SELECT 
+    t.trainer_id,
+    t.fullname,
+    ts.slot_id,
+    ts.start_time AS start_time,
+    ts.endtime AS end_time,
+    l.level_id,
+    l.level,
+    s.service_id,
+    s.servicename AS service,
+    a.date AS appointment_date
+  FROM 
+    appointment_slots a
+  JOIN 
+    trainers t ON a.trainer_id = t.trainer_id
+  JOIN 
+    time_slots ts ON a.slot_id = ts.slot_id
+  JOIN 
+    levels l ON a.level_id = l.level_id
+  JOIN 
+    services s ON a.service_id = s.service_id
+  WHERE 
+    a.app_id = ${app_id};
+    `;
+    return result.rows[0];
+  }catch(error){
+    throw new Error("Errof fetching information");
+  }
+}

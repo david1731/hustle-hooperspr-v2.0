@@ -163,7 +163,8 @@ export default function TrainerDetailPage() {
           >
             <option value="" disabled>Select a date</option>
             {dates.map((date) => (
-              <option key={date} value={date}>{date}</option>
+              <
+option key={date} value={date}>{date}</option>
             ))}
           </select>
         </div>
