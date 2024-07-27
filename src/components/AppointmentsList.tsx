@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
-import { getUserAppointmentsByEmail, cancelAppointment } from '@/app/lib/data';
-import { AppointmentQueryResult } from '@/app/lib/definitions';
+import { getUserAppointmentsByEmail, cancelAppointment, fetchInfoFromAppointments, changeStatus } from '@/app/lib/data';
+import { AppointmentQueryResult, InfoFromAppointments } from '@/app/lib/definitions';
 
 export default async function AppointmentsList({ email }: { email: string }) {
   let appointments: AppointmentQueryResult[] = [];
@@ -15,6 +15,7 @@ export default async function AppointmentsList({ email }: { email: string }) {
   const handleCancel = (app_id: number) =>{
     try{
       cancelAppointment(app_id);
+      //Fetch data and update status in one function in data.ts
       window.location.reload();
     } catch(error){
       console.error("Error deleting appointment");

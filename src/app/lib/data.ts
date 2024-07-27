@@ -1,6 +1,6 @@
 import { sql } from '@vercel/postgres';
 import { drizzle } from 'drizzle-orm/vercel-postgres';
-import { AppointmentQueryResult, Trainer, TrainerSlots, updateTimeSlot} from './definitions';
+import { AppointmentQueryResult, Trainer, TrainerSlots, updateTimeSlot, InfoFromAppointments} from './definitions';
 import { ClientsTable, AppointmentSlotsTable, TrainersTable, ServicesTable, TimeSlotsTable, LevelsTable } from '../../../drizzle/schema';
 
 import { config } from 'dotenv';
@@ -211,5 +211,36 @@ export async function fetchAvailableDates(trainerId:number){
   } catch (error) {
     console.error('Error fetching available dates:', error);
     return [];
+  }
+}
+
+export async function fetchInfoFromAppointments(app_id: number){
+  try{
+    const info = await sql<InfoFromAppointments>`
+    SELECT trainer_id, slot_id, date 
+    FROM appointment_slots 
+    WHERE app_id = ${app_id};
+    `
+    return info.rows.map((row)=>({
+      trainer_id: row.trainer_id ?? 0,
+      slot_id: row.slot_id ?? 0,
+      date: row.date ?? 'Unknown'
+    }));
+  } catch(error){
+    console.error("Error fetching info")
+  }
+}
+
+export async function changeStatus(trainer_id: number, slot_id: number,date:string){
+  try{
+    const result = await sql`
+    UPDATE trainer_time_slots SET status = 'Available'
+    WHERE trainer_id = ${trainer_id} 
+    AND slot_id = ${slot_id}
+    AND date = ${date};
+    `
+  }catch(error){
+    console.error("Error changing status", error);
+    throw new Error("Error changing status.");
   }
 }
