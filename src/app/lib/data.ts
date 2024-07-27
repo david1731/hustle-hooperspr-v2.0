@@ -153,17 +153,6 @@ export async function updateTimeSlotStatus(
   }
 }
 
-export async function cancelAppointment(app_id: number){
-  try{
-    const result = await sql`
-      DELETE from appointment_slots WHERE app_id = ${app_id};    
-    `;
-  } catch(error){
-    console.error("Error deleting appointment", error);
-    throw new Error("Error deleting appointment.");
-  }
-
-}
 
 export async function fetchSlots(trainerId: number, date: string){
   try {
@@ -214,33 +203,31 @@ export async function fetchAvailableDates(trainerId:number){
   }
 }
 
-export async function fetchInfoFromAppointments(app_id: number){
+export async function fetchDeleteUpdateApp(app_id: number){
   try{
     const info = await sql<InfoFromAppointments>`
-    SELECT trainer_id, slot_id, date 
-    FROM appointment_slots 
-    WHERE app_id = ${app_id};
+      SELECT trainer_id, slot_id, date 
+      FROM appointment_slots 
+      WHERE app_id = ${app_id};
     `
-    return info.rows.map((row)=>({
-      trainer_id: row.trainer_id ?? 0,
-      slot_id: row.slot_id ?? 0,
-      date: row.date ?? 'Unknown'
-    }));
+    if(info.rows.length === 0){
+      throw new Error('No information found for the given appointment ID.');
+    }
+    const { trainer_id, slot_id, date} = info.rows[0];
+
+    const cancel = await sql`
+      DELETE from appointment_slots WHERE app_id = ${app_id};    
+    `;
+
+    //update the status of the canceled timeslot back to Available
+    const updateResult = await sql`
+      UPDATE trainer_time_slots SET status = 'Available'
+      WHERE trainer_id = ${trainer_id} 
+      AND slot_id = ${slot_id}
+      AND date = ${date};
+    `
   } catch(error){
-    console.error("Error fetching info")
+    console.error("Error updating info")
   }
 }
 
-export async function changeStatus(trainer_id: number, slot_id: number,date:string){
-  try{
-    const result = await sql`
-    UPDATE trainer_time_slots SET status = 'Available'
-    WHERE trainer_id = ${trainer_id} 
-    AND slot_id = ${slot_id}
-    AND date = ${date};
-    `
-  }catch(error){
-    console.error("Error changing status", error);
-    throw new Error("Error changing status.");
-  }
-}
