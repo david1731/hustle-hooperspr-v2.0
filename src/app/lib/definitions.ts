@@ -74,3 +74,9 @@ export type updateTimeSlot = {
   date: string;
   new_status: string;
 }
+
+export type InfoFromAppointments ={
+  trainer_id: number;
+  slot_id: number;
+  date: string;
+}

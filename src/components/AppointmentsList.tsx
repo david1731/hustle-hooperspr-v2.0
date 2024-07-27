@@ -1,10 +1,13 @@
 'use client';
 import React from 'react';
-import { getUserAppointmentsByEmail, cancelAppointment } from '@/app/lib/data';
+import { Button } from 'react-bootstrap';
+import { getUserAppointmentsByEmail, fetchDeleteUpdateApp } from '@/app/lib/data';
 import { AppointmentQueryResult } from '@/app/lib/definitions';
+import { useRouter } from 'next/navigation';
 
 export default async function AppointmentsList({ email }: { email: string }) {
   let appointments: AppointmentQueryResult[] = [];
+  const router = useRouter();
 
   try {
     appointments = await getUserAppointmentsByEmail(email);
@@ -14,13 +17,14 @@ export default async function AppointmentsList({ email }: { email: string }) {
 
   const handleCancel = (app_id: number) =>{
     try{
-      cancelAppointment(app_id);
+      fetchDeleteUpdateApp(app_id);
+      //Fetch data and update status in one function in data.ts
       window.location.reload();
     } catch(error){
       console.error("Error deleting appointment");
     }
   }
-
+  
   // console.log("Appointments:", appointments);
   return (
     <div className="container mt-5">
@@ -40,7 +44,8 @@ export default async function AppointmentsList({ email }: { email: string }) {
                     <strong>Hora:</strong> {appointment.starttime} - {appointment.endtime}<br />
                     <strong>Fecha:</strong> {appointment.appointment_date}
                   </p>
-                  <button type="button" className="btn btn-danger" onClick={() => handleCancel(appointment.app_id)}>Cancelar Cita</button>
+                  <Button type="button" className="btn btn-danger" onClick={() => handleCancel(appointment.app_id)}>Cancelar Cita</Button>
+                  <Button type="button" className="btn btn-success" onClick={() => router.push(`/dashboard/citas/${appointment.app_id}`)}>Editar Cita</Button>
                 </div>
               </div>
             </div>

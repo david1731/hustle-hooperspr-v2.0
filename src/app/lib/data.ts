@@ -1,6 +1,6 @@
 import { sql } from '@vercel/postgres';
 import { drizzle } from 'drizzle-orm/vercel-postgres';
-import { AppointmentQueryResult, Trainer, TrainerSlots, updateTimeSlot} from './definitions';
+import { AppointmentQueryResult, Trainer, TrainerSlots, updateTimeSlot, InfoFromAppointments} from './definitions';
 import { ClientsTable, AppointmentSlotsTable, TrainersTable, ServicesTable, TimeSlotsTable, LevelsTable } from '../../../drizzle/schema';
 
 import { config } from 'dotenv';
@@ -153,17 +153,6 @@ export async function updateTimeSlotStatus(
   }
 }
 
-export async function cancelAppointment(app_id: number){
-  try{
-    const result = await sql`
-      DELETE from appointment_slots WHERE app_id = ${app_id};    
-    `;
-  } catch(error){
-    console.error("Error deleting appointment", error);
-    throw new Error("Error deleting appointment.");
-  }
-
-}
 
 export async function fetchSlots(trainerId: number, date: string){
   try {
@@ -211,5 +200,66 @@ export async function fetchAvailableDates(trainerId:number){
   } catch (error) {
     console.error('Error fetching available dates:', error);
     return [];
+  }
+}
+
+export async function fetchDeleteUpdateApp(app_id: number){
+  try{
+    const info = await sql<InfoFromAppointments>`
+      SELECT trainer_id, slot_id, date 
+      FROM appointment_slots 
+      WHERE app_id = ${app_id};
+    `
+    if(info.rows.length === 0){
+      throw new Error('No information found for the given appointment ID.');
+    }
+    const { trainer_id, slot_id, date} = info.rows[0];
+
+    const cancel = await sql`
+      DELETE from appointment_slots WHERE app_id = ${app_id};    
+    `;
+
+    //update the status of the canceled timeslot back to Available
+    const updateResult = await sql`
+      UPDATE trainer_time_slots SET status = 'Available'
+      WHERE trainer_id = ${trainer_id} 
+      AND slot_id = ${slot_id}
+      AND date = ${date};
+    `
+  } catch(error){
+    console.error("Error updating info")
+  }
+}
+
+export async function fetchInfoFromAppID(app_id: number){
+  try{
+    const result = await sql`
+    SELECT 
+    t.trainer_id,
+    t.fullname,
+    ts.slot_id,
+    ts.start_time AS start_time,
+    ts.endtime AS end_time,
+    l.level_id,
+    l.level,
+    s.service_id,
+    s.servicename AS service,
+    a.date AS appointment_date
+  FROM 
+    appointment_slots a
+  JOIN 
+    trainers t ON a.trainer_id = t.trainer_id
+  JOIN 
+    time_slots ts ON a.slot_id = ts.slot_id
+  JOIN 
+    levels l ON a.level_id = l.level_id
+  JOIN 
+    services s ON a.service_id = s.service_id
+  WHERE 
+    a.app_id = ${app_id};
+    `;
+    return result.rows[0];
+  }catch(error){
+    throw new Error("Errof fetching information");
   }
 }
