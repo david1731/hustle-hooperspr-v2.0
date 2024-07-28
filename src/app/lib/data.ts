@@ -263,3 +263,7 @@ export async function fetchInfoFromAppID(app_id: number){
     throw new Error("Errof fetching information");
   }
 }
+
+export async function editAppointment(){
+  console.log("edit appointment");
+}
