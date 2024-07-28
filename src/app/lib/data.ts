@@ -266,4 +266,7 @@ export async function fetchInfoFromAppID(app_id: number){
 
 export async function editAppointment(){
   console.log("edit appointment");
+  //should receive the old slot, new slot, trainerId, old/new serviceid, old/new levelid
+  //should update the appointment with new credentials
+  //if a new slot is selected, edit the new slots status to Unavailable and the old slot's status to unavailable
 }
