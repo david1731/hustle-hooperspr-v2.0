@@ -1,10 +1,11 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { fetchInfoFromAppID, fetchAvailableDates, fetchSlots, editAppointment } from '@/app/lib/data';
 import { Level, Service, TrainerSlots } from '@/app/lib/definitions';
 
 export default function AppDetails() {
+  const router = useRouter();
   const { appId } = useParams();
   const [appDetails, setAppDetails] = useState<any>(null);
   const [levels, setLevels] = useState<Level[]>([]);
@@ -131,7 +132,31 @@ export default function AppDetails() {
 
   const handleEdit = async (e: React.FormEvent) => {
     e.preventDefault();
-    alert("You edited your appointment")
+    if (appDetails && selectedSlot && selectedLevel && selectedService && selectedDate) {
+      try {
+        const parsedAppId = parseInt(Array.isArray(appId) ? appId[0] : appId, 10);
+        const result = await editAppointment(
+          parsedAppId,
+          appDetails.slot_id,
+          selectedSlot,
+          appDetails.trainer_id,
+          appDetails.service_id,
+          selectedService,
+          appDetails.level_id,
+          selectedLevel,
+          selectedDate
+        );
+        console.log('Appointment edited:', result);
+        alert('Appointment edited successfully');
+        router.push(`/dashboard/citas`);
+        
+      } catch (error) {
+        console.error('Error editing appointment:', error);
+        alert('Failed to edit appointment');
+      }
+    } else {
+      alert('Please select all fields');
+    }
   };
 
   return (
@@ -213,6 +238,7 @@ export default function AppDetails() {
     </>
   );
 }
+
 
 
 
