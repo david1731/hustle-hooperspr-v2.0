@@ -5,8 +5,9 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from '@/app/context/SessionContext';
 import { Trainer } from '@/app/lib/definitions';
+import '../../../styles/styling.css'
 
-const SacaCitasPage = () => {
+export default function SacaCitasPage (){
   const [trainers, setTrainers] = useState<Trainer[]>([]);
   const router = useRouter();
   const user = useSession();
@@ -39,16 +40,20 @@ const SacaCitasPage = () => {
   };
 
   return (
-    <div className="container mt-5">
-      <h1 className="mb-4">Choose a Professional</h1>
-      <div className="row">
+    <div className="mt-5">
+      <h1 className="mb-4 text-2xl font-bold">Entrenadores</h1>
+      <div className="flex flex-wrap justify-start">
         {trainers.map((trainer) => (
-          <div key={trainer.trainer_id} className="col-md-4 mb-4">
-            <div className="card" onClick={() => handleTrainerClick(trainer.trainer_id)}>
-              <img src="/placeholder.jpg" className="card-img-top" alt={`${trainer.fullname}`} />
-              <div className="card-body">
+          <div key={trainer.trainer_id} className="p-2 w-full sm:w-1/2 md:w-1/3 lg:w-1/4">
+            <div className="card trainer-card hover:shadow-xl hover:bg-blue-100 transition-all duration-300"
+             onClick={() => handleTrainerClick(trainer.trainer_id)}>
+              <img 
+                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQN4NYaMGS8d806xsl4U3GFR8jif0vKMWlPRg&s" 
+                className="card-img-top img-thumbnail rounded-circle w-24 h-24 mx-auto mt-4" 
+                alt={`${trainer.fullname}`} 
+              />
+              <div className="card-body text-center">
                 <h5 className="card-title">{trainer.fullname}</h5>
-                
               </div>
             </div>
           </div>
@@ -58,7 +63,7 @@ const SacaCitasPage = () => {
   );
 };
 
-export default SacaCitasPage;
+
 
 function setError(message: string) {
   throw new Error('Function not implemented.');
