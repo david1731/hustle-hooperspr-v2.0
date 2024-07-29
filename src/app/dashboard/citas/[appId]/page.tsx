@@ -132,19 +132,20 @@ export default function AppDetails() {
 
   const handleEdit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (appDetails && selectedSlot && selectedLevel && selectedService && selectedDate) {
+    if (appDetails) {
       try {
         const parsedAppId = parseInt(Array.isArray(appId) ? appId[0] : appId, 10);
         const result = await editAppointment(
           parsedAppId,
           appDetails.slot_id,
-          selectedSlot,
+          selectedSlot ?? 0,
           appDetails.trainer_id,
           appDetails.service_id,
-          selectedService,
+          selectedService ?? 0,
           appDetails.level_id,
-          selectedLevel,
-          selectedDate
+          selectedLevel ?? 0,
+          selectedDate,
+          appDetails.appointment_date
         );
         console.log('Appointment edited:', result);
         alert('Appointment edited successfully');
