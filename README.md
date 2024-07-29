@@ -3,10 +3,10 @@
 Hustle Hoopers PR is a web application that connects clients with basketball trainers. The application allows clients to manage training sessions, book appointments, and interact with trainers. Trainers can manage their availability, view appointments, and interact with clients.
 
 ## Features
-Client Authentication: Clients can sign up and log in using Google authentication.
-Trainer Management: Trainers can manage their availability and view booked appointments.
-Booking System: Clients can book appointments based on trainer availability.
-Dashboard: Clients and trainers have access to a personalized dashboard to manage their activities.
+- Client Authentication: Clients can sign up and log in using Google authentication.
+- Trainer Management: Trainers can manage their availability and view booked appointments.
+- Booking System: Clients can book appointments based on trainer availability.
+- gDashboard: Clients and trainers have access to a personalized dashboard to manage their activities.
 
 # Technology Stack
 ## Frontend:
