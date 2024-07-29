@@ -15,7 +15,7 @@ export default function Home() {
       <div className="container mt-5" id="servicios">
         <h2 className="mb-3 display-1">Nuestros Servicios</h2>
         <div className="row">
-          <ServiceCard
+          <ServiceCard 
             image="/John-Wall-Jump-Shot.jpg"
             title="Práctica de Tiro"
             description="Enfoque en driles para el desarrollo y mejoramientos de destrezas de tiro."
@@ -27,7 +27,7 @@ export default function Home() {
           />
           <ServiceCard
             image="/how-to-shoot-a-basketball.jpg"
-            title="Entrenamiento General"
+            title="Entreno General"
             description="Entrenamiento en varios aspectos del baloncesto, así como Manejo de Balón y Práctica de Tiros, entre otros."
           />
         </div>

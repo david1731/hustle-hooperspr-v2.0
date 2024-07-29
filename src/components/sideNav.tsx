@@ -3,10 +3,18 @@ import Link from 'next/link';
 import NavLinks from '@/components/nav-links';
 import { signOut } from 'next-auth/react';
 import { PowerIcon } from '@heroicons/react/24/outline';
-import { Button } from 'react-bootstrap';
+import { usePathname } from 'next/navigation';
+import clsx from 'clsx';
 
+const link = {
+  name: 'Signout',
+  href: '/',
+  icon: <PowerIcon className="w-6 h-6" />
+
+};
 export default function SideNav() {
-  const handleSignOut = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const pathname = usePathname();
+  const handleSignOut = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
     signOut({ callbackUrl: '/' });
   };
@@ -23,10 +31,18 @@ export default function SideNav() {
       <div className="flex grow flex-col space-y-2">
         <NavLinks/>
         <div className="hidden h-auto w-full grow rounded-md bg-gray-50 md:block"></div>
-        <Button onClick={handleSignOut} className="flex h-[48px] w-full grow items-center justify-center gap-2 rounded-md bg-gray-50 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600 md:flex-none md:justify-start md:p-2 md:px-3">
-          <PowerIcon className="w-6 h-6 text-black" />
-          <span className="text-black">Sign Out</span>
-        </Button>
+        <Link 
+          key={link.name} 
+          href={link.href}
+          onClick={handleSignOut} 
+          className={clsx(
+            'flex items-center justify-center gap-2 rounded-md bg-gray-50 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600',
+            { 'bg-sky-100 text-blue-600': pathname === link.href}
+          )}
+        >
+          {link.icon}
+          <p>{link.name}</p>
+        </Link>
       </div>
     </div>
   );

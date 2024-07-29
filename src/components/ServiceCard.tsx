@@ -13,7 +13,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ image, title, description }) 
   const height = 200; // Example height, you need to update it with the actual height of your image
 
   return (
-    <div className="col-md-4">
+    <div className="col-md-4 rounded-3xl hover:shadow-xl hover:bg-blue-100 transition-all duration-300">
       <div className="card" style={{ width: '18rem' }}>
         <Image src={image} width={width} height={height} className="card-img-top" alt={title} />
         <div className="card-body">
