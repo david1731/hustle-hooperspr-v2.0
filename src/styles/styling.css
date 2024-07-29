@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+.trainer-photo {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    margin: 0 auto; /* Center the image horizontally */
+  }
+
+.trainer-card {
+    width: 175px; /* Adjust the width as needed */
+    height: 215px;
+  }
+  
