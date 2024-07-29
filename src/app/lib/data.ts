@@ -273,11 +273,26 @@ export async function editAppointment(
   new_service_id: number,
   old_level_id: number,
   new_level_id: number,
-  new_date: string
+  new_date: string,
+  old_date:string
 ) {
   try {
     console.log("edit appointment");
     
+    // If the user doesnt make any changes but the clicks on the edit button, run the function with the og values
+    if(!new_date){
+      new_date = old_date;
+    }
+    if(!new_slot_id){
+      new_slot_id = old_slot_id;
+    }
+    if(!new_level_id){
+      new_level_id = old_level_id;
+    }
+    if(!new_service_id){
+      new_service_id = old_service_id;
+    }
+
     // Update the appointment with new credentials
     const result = await sql`
       UPDATE appointment_slots
