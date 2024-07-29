@@ -2,13 +2,24 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
-import { googleLogout } from '@react-oauth/google';
-
+import { HomeIcon, CalendarIcon, PencilIcon } from '@heroicons/react/24/outline';
 
 const links = [
-  { name: 'Home', href: '/dashboard' },
-  { name: 'Mis Citas', href: '/dashboard/citas' },
-  { name: 'Sacar Citas', href: '/dashboard/sacaCitas' },
+  { 
+    name: 'Home', 
+    href: '/dashboard', 
+    icon: <HomeIcon className="w-6 h-6" />
+  },
+  { 
+    name: 'Mis Citas', 
+    href: '/dashboard/citas', 
+    icon: <CalendarIcon className="w-6 h-6" />
+  },
+  { 
+    name: 'Sacar Citas', 
+    href: '/dashboard/sacaCitas', 
+    icon: <PencilIcon className="w-6 h-6" />
+  },
 ];
 
 export default function NavLinks() {
@@ -24,9 +35,11 @@ export default function NavLinks() {
             { 'bg-sky-100 text-blue-600': pathname === link.href }
           )}
         >
+          {link.icon}
           <p>{link.name}</p>
         </Link>
       ))}
     </div>
   );
 }
+
