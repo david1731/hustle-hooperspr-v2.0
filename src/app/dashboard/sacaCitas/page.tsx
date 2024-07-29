@@ -41,15 +41,15 @@ export default function SacaCitasPage (){
 
   return (
     <div className="mt-5">
-      <h1 className="mb-4 text-2xl font-bold">Entrenadores</h1>
+      <h1 className="mb-4 text-4xl antialiased">Escoge tú Entrenador</h1>
       <div className="flex flex-wrap justify-start">
         {trainers.map((trainer) => (
           <div key={trainer.trainer_id} className="p-2 w-full sm:w-1/2 md:w-1/3 lg:w-1/4">
-            <div className="card trainer-card hover:shadow-xl hover:bg-blue-100 transition-all duration-300"
+            <div className="card trainer-card rounded-3xl hover:shadow-xl hover:bg-blue-100 transition-all duration-300"
              onClick={() => handleTrainerClick(trainer.trainer_id)}>
               <img 
                 src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQN4NYaMGS8d806xsl4U3GFR8jif0vKMWlPRg&s" 
-                className="card-img-top img-thumbnail rounded-circle w-24 h-24 mx-auto mt-4" 
+                className="card-img-top img-thumbnail rounded-md w-24 h-24 mx-auto mt-4" 
                 alt={`${trainer.fullname}`} 
               />
               <div className="card-body text-center">
