@@ -264,9 +264,51 @@ export async function fetchInfoFromAppID(app_id: number){
   }
 }
 
-export async function editAppointment(){
-  console.log("edit appointment");
-  //should receive the old slot, new slot, trainerId, old/new serviceid, old/new levelid
-  //should update the appointment with new credentials
-  //if a new slot is selected, edit the new slots status to Unavailable and the old slot's status to unavailable
+export async function editAppointment(
+  app_id: number,
+  old_slot_id: number,
+  new_slot_id: number,
+  trainer_id: number,
+  old_service_id: number,
+  new_service_id: number,
+  old_level_id: number,
+  new_level_id: number,
+  new_date: string
+) {
+  try {
+    console.log("edit appointment");
+    
+    // Update the appointment with new credentials
+    const result = await sql`
+      UPDATE appointment_slots
+      SET
+        slot_id = ${new_slot_id},
+        service_id = ${new_service_id},
+        level_id = ${new_level_id},
+        date = ${new_date}
+      WHERE app_id = ${app_id}
+    `;
+
+    console.log("Appointment updated:", result);
+
+    // If a new slot is selected, edit the new slot's status to Unavailable and the old slot's status to Available
+    if (old_slot_id !== new_slot_id) {
+      await sql`
+        UPDATE trainer_time_slots
+        SET status = 'Available'
+        WHERE slot_id = ${old_slot_id} AND trainer_id = ${trainer_id}
+      `;
+
+      await sql`
+        UPDATE trainer_time_slots
+        SET status = 'Unavailable'
+        WHERE slot_id = ${new_slot_id} AND trainer_id = ${trainer_id}
+      `;
+    }
+
+    return result;
+  } catch (error) {
+    console.error("Error editing appointment:", error);
+    throw new Error("Failed to edit appointment.");
+  }
 }
