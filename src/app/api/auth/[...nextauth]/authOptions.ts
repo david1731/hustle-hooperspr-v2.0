@@ -21,7 +21,6 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }: { token: JWT; user?: any }) {
     
-      // check if a user is a trainer to redirect them to another page
       if (user) {
         token.id = user.id;
         token.name = user.name;
@@ -51,3 +50,4 @@ export const authOptions: NextAuthOptions = {
     },
   },
 };
+
