@@ -13,6 +13,7 @@ export default function NavBar() {
   const handleShow = () => setShowModal(true);
   const handleClose = () => setShowModal(false);
 
+
   return (
     <>
       <nav className="navbar navbar-expand-lg navbar-light bg-light">
