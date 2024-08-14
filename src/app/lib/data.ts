@@ -327,3 +327,21 @@ export async function editAppointment(
     throw new Error("Failed to edit appointment.");
   }
 }
+
+// Trainer Functions
+
+export async function validateTrainer(email: string, fullname: string){
+  try{
+    const result = await sql`
+      SELECT trainer_id, fullname, email
+      FROM trainers
+      WHERE fullname = ${fullname} and email = ${email}
+    `
+    console.log("Query Result:", result); // Log the query result
+    return result.rows[0];
+  } catch(error){
+    console.error("No encontramos su informacion", error);
+    throw new Error("Error encontrando su informacion.");
+  }
+}
+
