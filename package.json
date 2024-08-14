@@ -21,6 +21,7 @@
     "dotenv": "^16.4.5",
     "drizzle-orm": "^0.32.0",
     "jquery": "^3.7.1",
+    "mdb-react-ui-kit": "^8.0.0",
     "next": "14.2.4",
     "next-auth": "^4.24.7",
     "react": "^18",
