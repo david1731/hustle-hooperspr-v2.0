@@ -11,8 +11,8 @@ export default function TrainerDetailPage() {
   const searchParams = useSearchParams();
   const { trainerId } = useParams();
   const useremail = searchParams.get('email');
-  console.log("User email:", useremail);
-  console.log("Trainer ID:", trainerId);
+  // console.log("User email:", useremail);
+  // console.log("Trainer ID:", trainerId);
 
   const [dates, setDates] = useState<string[]>([]);
   const [slots, setSlots] = useState<TrainerSlots[]>([]);

@@ -14,11 +14,12 @@ export default function SignInPage(){
     try {
       const trainer = await validateTrainer(email, fullname);
       if (trainer) {
-        router.push('/trainerDashboard');
+        
+        router.push(`/trainerDashboard`);
       } else {
         setError('Invalid credentials');
       }
-    } catch (err) {
+    } catch (error) {
       setError('Error validating your information. Please try again.');
       alert(`Fullname:" ${fullname}`)
       alert(`Email:" ${email}`)
