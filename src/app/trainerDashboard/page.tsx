@@ -1,8 +1,13 @@
-import React from "react";
+'use client';
+import React, { useEffect, useState } from "react";
 
-const Page = () =>{
-    return(
-        <h1>TrainerDashboard</h1>
-    );
-};
-export default Page;
+export default function TrainerDashboardPage() {
+  return (
+    <div>
+      <h1>Welcome, Trainer</h1>
+      {/* Render dashboard content here */}
+    </div>
+  );
+}
+
+
