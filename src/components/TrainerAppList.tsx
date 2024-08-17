@@ -7,6 +7,7 @@ export default async function AppointmentsList({ trainer_id }: { trainer_id: num
   let appointments: AppointmentQueryResult[] = [];
 
   try {
+    console.log("trainer_id from TraineAppList", trainer_id);
     appointments = await trainerAppointments(trainer_id);
     console.log("Appointments in AppointmentsList:", appointments);
   } catch (error) {

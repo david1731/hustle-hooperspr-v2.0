@@ -372,7 +372,9 @@ export async function trainerAppointments(trainer_id: number){
     INNER JOIN
         services AS s ON a.service_id = s.service_id
     WHERE
-        a.trainer_id = ${trainer_id}; `
+        a.trainer_id = ${trainer_id}; 
+    `;
+    
     return trainerApps.rows;
 
   } catch(error){
