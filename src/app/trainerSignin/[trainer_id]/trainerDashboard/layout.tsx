@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react';
 import Link from 'next/link';
-import SideNav from "../../components/trainerSideNav";
-import "../../styles/globals.css";
+import SideNav from "../../../../components/trainerSideNav";
+import "../../../../styles/globals.css";
 interface LayoutProps {
   children: ReactNode;
 }

@@ -1,29 +1,33 @@
 'use client';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useParams } from 'next/navigation';
 import clsx from 'clsx';
 import { HomeIcon, CalendarIcon, PencilIcon } from '@heroicons/react/24/outline';
 
-const links = [
-  { 
-    name: 'Home', 
-    href: '/trainerDashboard', 
-    icon: <HomeIcon className="w-6 h-6" />
-  },
-  { 
-    name: 'Mis Citas', 
-    href: '/trainerDashboard/citas', 
-    icon: <CalendarIcon className="w-6 h-6" />
-  },
-  { 
-    name: 'Modificar Horas', 
-    href: '/trainerDashboard/modificaHoras', 
-    icon: <PencilIcon className="w-6 h-6" />
-  },
-];
 
 export default function NavLinks() {
   const pathname = usePathname();
+  const params = useParams();
+  const { trainer_id } = params; // Get the trainer_id from the URL
+
+  const links = [
+    { 
+      name: 'Home', 
+      href: `/trainerSignin/${trainer_id}/trainerDashboard`, 
+      icon: <HomeIcon className="w-6 h-6" />
+    },
+    { 
+      name: 'Mis Citas', 
+      href: `/trainerSignin/${trainer_id}/trainerDashboard/citas`, 
+      icon: <CalendarIcon className="w-6 h-6" />
+    },
+    { 
+      name: 'Modificar Horas', 
+      href: `/trainerSignin/${trainer_id}/trainerDashboard/modificaHoras`, 
+      icon: <PencilIcon className="w-6 h-6" />
+    },
+  ];
+  
   return (
     <div className="flex flex-col space-y-2">
       {links.map((link) => (
