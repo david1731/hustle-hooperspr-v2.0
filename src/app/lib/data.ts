@@ -345,3 +345,41 @@ export async function validateTrainer(email: string, fullname: string){
   }
 }
 
+export async function trainerAppointments(trainer_id: number){
+  console.log("Received trainer_id:", trainer_id);
+
+  try{
+    const trainerApps = await sql<AppointmentQueryResult>`
+    SELECT
+    a.app_id AS app_id,
+    c.fullname AS client_name,
+    t.fullname AS trainer_fullname,
+    ts.start_time AS starttime,
+    ts.endtime AS endtime,
+    l.level AS level,
+    s.servicename AS service,
+    a.date AS appointment_date
+    FROM
+        appointment_slots AS a
+    INNER JOIN
+        clients AS c ON a.client_id = c.id
+    INNER JOIN
+        trainers AS t ON a.trainer_id = t.trainer_id
+    INNER JOIN
+        time_slots AS ts ON a.slot_id = ts.slot_id
+    INNER JOIN
+        levels AS l ON a.level_id = l.level_id
+    INNER JOIN
+        services AS s ON a.service_id = s.service_id
+    WHERE
+        a.trainer_id = ${trainer_id}; 
+    `;
+    
+    return trainerApps.rows;
+
+  } catch(error){
+    console.error("No encontramos citas", error);
+    throw new Error("Error encontrando sus citas.");
+  }
+}
+

@@ -14,7 +14,7 @@ export default function SignInPage() {
     try {
       const trainer = await validateTrainer(email, fullname);
       if (trainer) {
-        router.push(`/trainerDashboard?trainer_id=${trainer.trainer_id}`);
+        router.push(`/trainerSignin/${trainer.trainer_id}/trainerDashboard`);
       } else {
         setError('Invalid credentials');
       }
