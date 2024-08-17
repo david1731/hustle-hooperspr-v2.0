@@ -39,8 +39,8 @@ const ClientAppointmentsList: React.FC<AppointmentsListProps> = ({ appointments 
                     <strong>Hora:</strong> {appointment.starttime} - {appointment.endtime}<br />
                     <strong>Fecha:</strong> {appointment.appointment_date}
                   </p>
-                  <Button type="button" className="btn btn-danger mt-2" onClick={() => handleCancel(appointment.app_id)}>Cancelar Cita</Button>
-                  <Button type='button' className='btn btn-success ml-2 mt-2' onClick={() => router.push(`/dashboard/citas/${appointment.app_id}`)}>Editar Cita</Button>
+                  <Button type="button" className="btn bg-red-700 text-white mt-2 rounded hover:bg-red-600" onClick={() => handleCancel(appointment.app_id)}>Cancelar Cita</Button>
+                  <Button type='button' className='btn bg-green-700 text-white ml-2 mt-2 rounded hover:bg-green-600' onClick={() => router.push(`/dashboard/citas/${appointment.app_id}`)}>Editar Cita</Button>
                 </div>
               </div>
             </div>

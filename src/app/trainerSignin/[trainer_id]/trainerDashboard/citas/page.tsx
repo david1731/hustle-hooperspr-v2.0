@@ -14,7 +14,6 @@ export default function Page({ params }: PageProps){
     }
     return(
        <>
-         <h1>Trainer Citas</h1>
          <AppointmentsList trainer_id={trainer_id}/>
        </>
     )
