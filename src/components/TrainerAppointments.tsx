@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { Button } from 'react-bootstrap';
 import { AppointmentQueryResult, TrainerSlots } from '@/app/lib/definitions';
 import { fetchAvailableTrainerSlots } from '@/app/lib/data'; // Ensure this function is imported
 
@@ -29,9 +30,9 @@ const TrainerAppointmentsList: React.FC<AppointmentsListProps> = ({ appointments
 
   return (
     <div className="mt-5">
-      <h1 className="mb-4 text-4xl antialiased">Your Trainer Appointments</h1>
+      <h1 className="mb-4 text-4xl antialiased">Tus Citas</h1>
       {appointments.length === 0 ? (
-        <p>No appointments found.</p>
+        <p>No tienes citas.</p>
       ) : (
         <div className="flex flex-wrap justify-start">
           {appointments.map(appointment => (
@@ -45,6 +46,7 @@ const TrainerAppointmentsList: React.FC<AppointmentsListProps> = ({ appointments
                     <strong>Hora:</strong> {appointment.starttime} - {appointment.endtime}<br />
                     <strong>Fecha:</strong> {appointment.appointment_date}
                   </p>
+                  <Button type="button" className="btn bg-red-700 text-white mt-2 rounded hover:bg-red-600" >Cancelar Cita</Button>
                 </div>
               </div>
             </div>
@@ -66,6 +68,7 @@ const TrainerAppointmentsList: React.FC<AppointmentsListProps> = ({ appointments
                   <p className="card-text">
                     <strong>Hora:</strong> {slot.starttime} - {slot.endtime}
                   </p>
+                  <Button type="button" className="btn bg-red-700 text-white mt-2 rounded hover:bg-red-600" >Eliminar Hora</Button>
                 </div>
               </div>
             </div>

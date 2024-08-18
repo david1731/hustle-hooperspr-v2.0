@@ -26,11 +26,7 @@ export default function NavLinks() {
       href: `/trainerSignin/${trainer_id}/trainerDashboard/modificaHoras`, 
       icon: <PencilIcon className="w-6 h-6" />
     },
-    {
-      name: 'Horas Disponible',
-      href: `/trainerSignin/${trainer_id}/trainerDashboard/citasDispo`,
-      icon: <CalendarDaysIcon className='w-6 h-6'/>
-    }
+
   ];
   
   return (
