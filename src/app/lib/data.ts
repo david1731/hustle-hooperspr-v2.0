@@ -1,6 +1,6 @@
 import { sql } from '@vercel/postgres';
 import { drizzle } from 'drizzle-orm/vercel-postgres';
-import { AppointmentQueryResult, Trainer, TrainerSlots, updateTimeSlot, InfoFromAppointments} from './definitions';
+import { AppointmentQueryResult, Trainer, TrainerSlots, updateTimeSlot, InfoFromAppointments, TimeSlot} from './definitions';
 import { ClientsTable, AppointmentSlotsTable, TrainersTable, ServicesTable, TimeSlotsTable, LevelsTable } from '../../../drizzle/schema';
 
 import { config } from 'dotenv';
@@ -383,3 +383,34 @@ export async function trainerAppointments(trainer_id: number){
   }
 }
 
+
+export async function insertTrainerTimeSlot(trainer_id:number,slot_id:number,status:string,date:string){
+  try{
+    const result = await sql`
+    INSERT INTO trainer_time_slots(trainer_id,slot_id,status,date)
+    VALUES (${trainer_id},${slot_id},${status},${date});
+    `;
+  } catch(error){
+    console.error("No pudimos insertar las horas", error);
+    throw new Error("Error insertando citas.");
+  }
+
+}
+
+export async function fetchTimeSlots(){
+  try{
+    const slots = await sql<TimeSlot>`
+    SELECT slot_id, start_time AS starttime, endtime
+    FROM time_slots;
+    `;
+    console.log("Slots fetched from data.ts:", slots);
+    return slots.rows.map((row) => ({
+      slot_id: row.slot_id ?? 0,
+      starttime: row.starttime ?? 'Unknown',
+      endtime: row.endtime ?? 'Unknown',
+    }));
+  }catch(error){
+    console.error("No encontramos los horarios");
+    throw new Error("Error encontrando las horas");
+  }
+}

@@ -3,7 +3,7 @@ import { config } from 'dotenv';
 import React, { useState, useEffect } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
 import { TrainerSlots, Service, Level } from '@/app/lib/definitions';
-import { updateTimeSlotStatus, createAppointment, fetchSlots, fetchAvailableDates } from '@/app/lib/data'; // Import fetchSlots
+import { updateTimeSlotStatus, createAppointment, fetchSlots, fetchAvailableDates } from '@/app/lib/data';
 
 config();
 
@@ -11,8 +11,6 @@ export default function TrainerDetailPage() {
   const searchParams = useSearchParams();
   const { trainerId } = useParams();
   const useremail = searchParams.get('email');
-  // console.log("User email:", useremail);
-  // console.log("Trainer ID:", trainerId);
 
   const [dates, setDates] = useState<string[]>([]);
   const [slots, setSlots] = useState<TrainerSlots[]>([]);
@@ -24,7 +22,6 @@ export default function TrainerDetailPage() {
   const [selectedLevel, setSelectedLevel] = useState<number | null>(null);
   const [selectedService, setSelectedService] = useState<number | null>(null);
 
-  // Fetch levels and services on component mount
   useEffect(() => {
     async function fetchLevels() {
       try {
@@ -148,32 +145,31 @@ export default function TrainerDetailPage() {
   };
 
   return (
-    <div className="container mt-4">
-      <h1 className="mb-4">Available Slots, Services, and Levels</h1>
-      {error && <div className="alert alert-danger">{error}</div>}
-      <form onSubmit={handleSubmit}>
+    <div className="container mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-4">Available Slots, Services, and Levels</h1>
+      {error && <div className="bg-red-500 text-white p-2 rounded">{error}</div>}
+      <form onSubmit={handleSubmit} className="space-y-4">
         <div className="mb-3">
-          <label htmlFor="dates" className="form-label">Select a Date</label>
+          <label htmlFor="dates" className="block text-sm font-medium text-gray-700">Select a Date</label>
           <select
             id="dates"
-            className="form-select"
-            onClick={handleDateDropdown} // Attach onClick handler here
+            className="block w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            onClick={handleDateDropdown}
             onChange={handleDateChange}
             value={selectedDate}
           >
             <option value="" disabled>Select a date</option>
             {dates.map((date) => (
-              <
-option key={date} value={date}>{date}</option>
+              <option key={date} value={date}>{date}</option>
             ))}
           </select>
         </div>
         <div className="mb-3">
-          <label htmlFor="slots" className="form-label">Select a Slot</label>
+          <label htmlFor="slots" className="block text-sm font-medium text-gray-700">Select a Slot</label>
           <select
             id="slots"
-            className="form-select"
-            onClick={handleSlotDropdownClick} // Attach onClick handler here
+            className="block w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            onClick={handleSlotDropdownClick}
             onChange={handleSlotChange}
             value={selectedSlot ?? ''}
           >
@@ -186,10 +182,10 @@ option key={date} value={date}>{date}</option>
           </select>
         </div>
         <div className="mb-3">
-          <label htmlFor="levels" className="form-label">Select a Level</label>
+          <label htmlFor="levels" className="block text-sm font-medium text-gray-700">Select a Level</label>
           <select
             id="levels"
-            className="form-select"
+            className="block w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
             onChange={handleLevelChange}
             value={selectedLevel ?? ''}
           >
@@ -202,10 +198,10 @@ option key={date} value={date}>{date}</option>
           </select>
         </div>
         <div className="mb-3">
-          <label htmlFor="services" className="form-label">Select a Service</label>
+          <label htmlFor="services" className="block text-sm font-medium text-gray-700">Select a Service</label>
           <select
             id="services"
-            className="form-select"
+            className="block w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
             onChange={handleServiceChange}
             value={selectedService ?? ''}
           >
@@ -217,10 +213,13 @@ option key={date} value={date}>{date}</option>
             ))}
           </select>
         </div>
-        <button type="submit" className="btn btn-primary">Create Appointment</button>
+        <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition duration-200">
+          Create Appointment
+        </button>
       </form>
     </div>
   );
 }
+
 
 
