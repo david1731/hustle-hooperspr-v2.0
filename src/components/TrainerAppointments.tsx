@@ -1,16 +1,32 @@
 'use client';
 
-import React from 'react';
-import { useRouter } from 'next/navigation';
-import { Button } from 'react-bootstrap';
-import { AppointmentQueryResult } from '@/app/lib/definitions';
+import React, { useEffect, useState } from 'react';
+import { AppointmentQueryResult, TrainerSlots } from '@/app/lib/definitions';
+import { fetchAvailableTrainerSlots } from '@/app/lib/data'; // Ensure this function is imported
 
 interface AppointmentsListProps {
   appointments: AppointmentQueryResult[];
+  trainerId: number; // Ensure trainerId is passed as a prop
 }
 
-const TrainerAppointmentsList: React.FC<AppointmentsListProps> = ({ appointments }) => {
-  
+const TrainerAppointmentsList: React.FC<AppointmentsListProps> = ({ appointments, trainerId }) => {
+  const [availableSlots, setAvailableSlots] = useState<TrainerSlots[]>([]);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchSlots = async () => {
+      try {
+        const slots = await fetchAvailableTrainerSlots(trainerId);
+        setAvailableSlots(slots);
+      } catch (error) {
+        console.error('Error fetching available slots:', error);
+        setError('Failed to load available slots.');
+      }
+    };
+
+    fetchSlots();
+  }, [trainerId]);
+
   return (
     <div className="mt-5">
       <h1 className="mb-4 text-4xl antialiased">Your Trainer Appointments</h1>
@@ -35,8 +51,31 @@ const TrainerAppointmentsList: React.FC<AppointmentsListProps> = ({ appointments
           ))}
         </div>
       )}
+
+      <h2 className="mt-8 mb-4 text-3xl antialiased">Fechas y Horas Disponibles</h2>
+      {error && <p className="text-red-500">{error}</p>}
+      {availableSlots.length === 0 ? (
+        <p>No tienes fechas y horas disponibles.</p>
+      ) : (
+        <div className="flex flex-wrap justify-start">
+          {availableSlots.map((slot, index) => (
+            <div key={index} className="p-2 w-full sm:w-1/2 md:w-1/3 lg:w-1/4">
+              <div className="card bg-white shadow-md hover:shadow-lg transition-shadow duration-300">
+                <div className="card-body">
+                  <h5 className="card-title">Fecha: {slot.date}</h5>
+                  <p className="card-text">
+                    <strong>Hora:</strong> {slot.starttime} - {slot.endtime}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
 
 export default TrainerAppointmentsList;
+
+

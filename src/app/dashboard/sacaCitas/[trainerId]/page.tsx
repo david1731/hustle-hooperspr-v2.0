@@ -146,11 +146,11 @@ export default function TrainerDetailPage() {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Available Slots, Services, and Levels</h1>
+      <h1 className="text-2xl font-bold mb-4">Fechas Disponibles</h1>
       {error && <div className="bg-red-500 text-white p-2 rounded">{error}</div>}
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="mb-3">
-          <label htmlFor="dates" className="block text-sm font-medium text-gray-700">Select a Date</label>
+          <label htmlFor="dates" className="block text-sm font-medium text-gray-700">Fecha</label>
           <select
             id="dates"
             className="block w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -158,14 +158,14 @@ export default function TrainerDetailPage() {
             onChange={handleDateChange}
             value={selectedDate}
           >
-            <option value="" disabled>Select a date</option>
+            <option value="" disabled>Seleccione una fecha</option>
             {dates.map((date) => (
               <option key={date} value={date}>{date}</option>
             ))}
           </select>
         </div>
         <div className="mb-3">
-          <label htmlFor="slots" className="block text-sm font-medium text-gray-700">Select a Slot</label>
+          <label htmlFor="slots" className="block text-sm font-medium text-gray-700">Horas Disponible</label>
           <select
             id="slots"
             className="block w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -173,23 +173,23 @@ export default function TrainerDetailPage() {
             onChange={handleSlotChange}
             value={selectedSlot ?? ''}
           >
-            <option value="" disabled>Select a slot</option>
+            <option value="" disabled>Seleccione una hora</option>
             {slots.map((slot) => (
               <option key={slot.slot_id} value={slot.slot_id}>
-                {slot.start_time} - {slot.endtime} on {slot.date}
+                {slot.starttime} - {slot.endtime} {slot.date}
               </option>
             ))}
           </select>
         </div>
         <div className="mb-3">
-          <label htmlFor="levels" className="block text-sm font-medium text-gray-700">Select a Level</label>
+          <label htmlFor="levels" className="block text-sm font-medium text-gray-700">Nivel</label>
           <select
             id="levels"
             className="block w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
             onChange={handleLevelChange}
             value={selectedLevel ?? ''}
           >
-            <option value="" disabled>Select a level</option>
+            <option value="" disabled>Seleccione su nivel de experiencia</option>
             {levels.map((level) => (
               <option key={level.level_id} value={level.level_id}>
                 {level.level}
@@ -198,14 +198,14 @@ export default function TrainerDetailPage() {
           </select>
         </div>
         <div className="mb-3">
-          <label htmlFor="services" className="block text-sm font-medium text-gray-700">Select a Service</label>
+          <label htmlFor="services" className="block text-sm font-medium text-gray-700">Servicios</label>
           <select
             id="services"
             className="block w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
             onChange={handleServiceChange}
             value={selectedService ?? ''}
           >
-            <option value="" disabled>Select a service</option>
+            <option value="" disabled>Seleccione un servicio</option>
             {services.map((service) => (
               <option key={service.service_id} value={service.service_id}>
                 {service.servicename}
@@ -214,7 +214,7 @@ export default function TrainerDetailPage() {
           </select>
         </div>
         <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition duration-200">
-          Create Appointment
+          Reservar Cita
         </button>
       </form>
     </div>

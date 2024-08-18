@@ -160,7 +160,7 @@ export async function fetchSlots(trainerId: number, date: string){
     const result = await sql<TrainerSlots>`
     SELECT DISTINCT ON (tts.slot_id) 
       tts.slot_id, 
-      ts.start_time AS start_time, 
+      ts.start_time AS starttime, 
       ts.endtime, 
       tts.date,
       tts.status
@@ -184,7 +184,7 @@ export async function fetchSlots(trainerId: number, date: string){
 
     return result.rows.map((row) => ({
       slot_id: row.slot_id ?? 0,
-      start_time: row.start_time ?? 'Unknown',
+      starttime: row.starttime ?? 'Unknown',
       endtime: row.endtime ?? 'Unknown',
       date: row.date ?? 'Unknown',
       status: row.status ?? 'Unknown',
@@ -416,3 +416,37 @@ export async function fetchTimeSlots(){
     throw new Error("Error encontrando las horas");
   }
 }
+
+export async function fetchAvailableTrainerSlots(trainer_id:number){
+  try{
+    const trainerSlots = await sql<TrainerSlots>`
+      SELECT 
+        tts.slot_id, 
+        ts.start_time AS starttime, 
+        ts.endtime, 
+        tts.date, 
+        tts.status
+      FROM 
+          trainer_time_slots tts
+      JOIN 
+          time_slots ts ON tts.slot_id = ts.slot_id
+      WHERE 
+          tts.trainer_id = 4 
+          AND tts.status = 'Available'
+      ORDER BY 
+          tts.date ASC, 
+          ts.start_time ASC;
+    `
+    console.log("trainerSlots: ",trainerSlots);
+    return trainerSlots.rows.map((row) =>({
+      slot_id: row.slot_id,
+      starttime: row.starttime ?? 'Unknown',
+      endtime: row.endtime ?? 'Unknown',
+      date: row.date ?? 'Unknown',
+      status: row.status ?? 'Unknown',
+    }));
+  } catch(error){
+    console.error("Couldn't find available date");
+    throw new Error("Error finding available dates");
+  }
+};
