@@ -195,7 +195,7 @@ export default function AppDetails() {
                 <option value="" disabled>{appDetails.start_time} - {appDetails.end_time}</option>
                 {slots.map((slot) => (
                   <option key={slot.slot_id} value={slot.slot_id}>
-                    {slot.start_time} - {slot.endtime} on {slot.date}
+                    {slot.starttime} - {slot.endtime} on {slot.date}
                   </option>
                 ))}
               </select>

@@ -30,7 +30,7 @@ const AppointmentsList: React.FC<AppointmentsListProps> = ({ trainer_id }) => {
     };
 
     fetchAppointments();
-  }, [trainer_id]); // Dependencies array
+  }, [trainer_id]);
 
   if (loading) {
     return <p>Loading appointments...</p>;
@@ -40,7 +40,7 @@ const AppointmentsList: React.FC<AppointmentsListProps> = ({ trainer_id }) => {
     return <p>{error}</p>;
   }
 
-  return <TrainerAppointmentsList appointments={appointments} />;
+  return <TrainerAppointmentsList appointments={appointments} trainerId={trainer_id} />;
 };
 
 export default AppointmentsList;

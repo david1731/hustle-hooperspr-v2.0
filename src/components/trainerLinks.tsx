@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { usePathname, useParams } from 'next/navigation';
 import clsx from 'clsx';
-import { HomeIcon, CalendarIcon, PencilIcon } from '@heroicons/react/24/outline';
+import { HomeIcon, CalendarIcon, PencilIcon, CalendarDaysIcon } from '@heroicons/react/24/outline';
 
 
 export default function NavLinks() {
@@ -26,6 +26,7 @@ export default function NavLinks() {
       href: `/trainerSignin/${trainer_id}/trainerDashboard/modificaHoras`, 
       icon: <PencilIcon className="w-6 h-6" />
     },
+
   ];
   
   return (
