@@ -38,7 +38,6 @@ const TrainerWorkForm: React.FC<{ trainer_id: number }> = ({ trainer_id }) => {
       try {
         await insertTrainerTimeSlot(trainer_id, selectedSlotId, 'Available', date);
         alert('Work slot added successfully!');
-        setDate(''); // Clear the form
         setSelectedSlotId(null);
       } catch (error) {
         console.error('Error inserting work slot:', error);
@@ -51,28 +50,28 @@ const TrainerWorkForm: React.FC<{ trainer_id: number }> = ({ trainer_id }) => {
 
   return (
     <div className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-lg">
-      <h2 className="text-2xl font-bold mb-4">Set Your Work Schedule</h2>
+      <h2 className="text-2xl font-bold mb-4">Modifica tus horas</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-gray-700 font-medium mb-2">Date:</label>
+          <label className="block text-gray-700 font-medium mb-2">Fecha:</label>
           <input
             type="text"
             value={date}
             onChange={(e) => setDate(e.target.value)}
-            placeholder="Month Day, Year"
+            placeholder="Ej: Enero 1, 2024"
             required
             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
           />
         </div>
         <div>
-          <label className="block text-gray-700 font-medium mb-2">Time Slot:</label>
+          <label className="block text-gray-700 font-medium mb-2">Horarios:</label>
           <select
             value={selectedSlotId ?? ''}
             onChange={handleSlotChange}
             required
             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
           >
-            <option value="" disabled>Select a time slot</option>
+            <option value="" disabled>Seleccione una hora</option>
             {timeSlots.map(slot => (
               <option key={slot.slot_id} value={slot.slot_id}>
                 {slot.starttime} - {slot.endtime}

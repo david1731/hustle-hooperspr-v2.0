@@ -158,7 +158,7 @@ export async function fetchSlots(trainerId: number, date: string){
   try {
     console.log(`Fetching slots for trainerId: ${trainerId}, date: ${date}, status: 'Available'`);
     const result = await sql<TrainerSlots>`
-      SELECT 
+    SELECT DISTINCT ON (tts.slot_id) 
       tts.slot_id, 
       ts.start_time AS start_time, 
       ts.endtime, 
@@ -171,7 +171,9 @@ export async function fetchSlots(trainerId: number, date: string){
     WHERE 
       tts.trainer_id = ${trainerId} AND tts.date = ${date} AND tts.status = 'Available'
     ORDER BY 
-      tts.slot_id ASC;
+      tts.slot_id ASC, 
+      ts.start_time ASC;
+
     
     `;
     console.log('fetchSlotByTrainerID result:', result);
