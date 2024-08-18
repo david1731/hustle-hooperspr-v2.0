@@ -346,7 +346,7 @@ export async function validateTrainer(email: string, fullname: string){
 }
 
 export async function trainerAppointments(trainer_id: number){
-  console.log("Received trainer_id:", trainer_id);
+  // console.log("Received trainer_id:", trainer_id);
 
   try{
     const trainerApps = await sql<AppointmentQueryResult>`
