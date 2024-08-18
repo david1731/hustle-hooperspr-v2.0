@@ -1,6 +1,6 @@
 import { sql } from '@vercel/postgres';
 import { drizzle } from 'drizzle-orm/vercel-postgres';
-import { AppointmentQueryResult, Trainer, TrainerSlots, updateTimeSlot, InfoFromAppointments} from './definitions';
+import { AppointmentQueryResult, Trainer, TrainerSlots, updateTimeSlot, InfoFromAppointments, TimeSlot} from './definitions';
 import { ClientsTable, AppointmentSlotsTable, TrainersTable, ServicesTable, TimeSlotsTable, LevelsTable } from '../../../drizzle/schema';
 
 import { config } from 'dotenv';
@@ -158,7 +158,7 @@ export async function fetchSlots(trainerId: number, date: string){
   try {
     console.log(`Fetching slots for trainerId: ${trainerId}, date: ${date}, status: 'Available'`);
     const result = await sql<TrainerSlots>`
-      SELECT 
+    SELECT DISTINCT ON (tts.slot_id) 
       tts.slot_id, 
       ts.start_time AS start_time, 
       ts.endtime, 
@@ -171,7 +171,9 @@ export async function fetchSlots(trainerId: number, date: string){
     WHERE 
       tts.trainer_id = ${trainerId} AND tts.date = ${date} AND tts.status = 'Available'
     ORDER BY 
-      tts.slot_id ASC;
+      tts.slot_id ASC, 
+      ts.start_time ASC;
+
     
     `;
     console.log('fetchSlotByTrainerID result:', result);
@@ -346,7 +348,7 @@ export async function validateTrainer(email: string, fullname: string){
 }
 
 export async function trainerAppointments(trainer_id: number){
-  console.log("Received trainer_id:", trainer_id);
+  // console.log("Received trainer_id:", trainer_id);
 
   try{
     const trainerApps = await sql<AppointmentQueryResult>`
@@ -383,3 +385,34 @@ export async function trainerAppointments(trainer_id: number){
   }
 }
 
+
+export async function insertTrainerTimeSlot(trainer_id:number,slot_id:number,status:string,date:string){
+  try{
+    const result = await sql`
+    INSERT INTO trainer_time_slots(trainer_id,slot_id,status,date)
+    VALUES (${trainer_id},${slot_id},${status},${date});
+    `;
+  } catch(error){
+    console.error("No pudimos insertar las horas", error);
+    throw new Error("Error insertando citas.");
+  }
+
+}
+
+export async function fetchTimeSlots(){
+  try{
+    const slots = await sql<TimeSlot>`
+    SELECT slot_id, start_time AS starttime, endtime
+    FROM time_slots;
+    `;
+    console.log("Slots fetched from data.ts:", slots);
+    return slots.rows.map((row) => ({
+      slot_id: row.slot_id ?? 0,
+      starttime: row.starttime ?? 'Unknown',
+      endtime: row.endtime ?? 'Unknown',
+    }));
+  }catch(error){
+    console.error("No encontramos los horarios");
+    throw new Error("Error encontrando las horas");
+  }
+}
