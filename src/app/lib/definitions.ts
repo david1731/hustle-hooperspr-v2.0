@@ -62,7 +62,7 @@ export type Client = {
   
   export type TrainerSlots = {
     slot_id : number;
-    start_time : string;
+    starttime : string;
     endtime : string;
     date : string;
     status: string;
