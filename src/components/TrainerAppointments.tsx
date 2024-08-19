@@ -3,11 +3,11 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from 'react-bootstrap';
 import { AppointmentQueryResult, TrainerSlots } from '@/app/lib/definitions';
-import { fetchAvailableTrainerSlots } from '@/app/lib/data'; // Ensure this function is imported
+import { fetchAvailableTrainerSlots, deleteAvailableTrainerSlot, trainerDeleteApp} from '@/app/lib/data';
 
 interface AppointmentsListProps {
   appointments: AppointmentQueryResult[];
-  trainerId: number; // Ensure trainerId is passed as a prop
+  trainerId: number;
 }
 
 const TrainerAppointmentsList: React.FC<AppointmentsListProps> = ({ appointments, trainerId }) => {
@@ -28,6 +28,27 @@ const TrainerAppointmentsList: React.FC<AppointmentsListProps> = ({ appointments
     fetchSlots();
   }, [trainerId]);
 
+  const handleDeleteSlot = async (slot_id: number, date: string) => {
+    try {
+      await deleteAvailableTrainerSlot(slot_id, date, trainerId);
+      // Update the available slots list after deletion
+      setAvailableSlots(prevSlots => prevSlots.filter(slot => slot.slot_id !== slot_id || slot.date !== date));
+    } catch (error) {
+      console.error('Error deleting slot:', error);
+      setError('Failed to delete slot.');
+    }
+  };
+
+  const handleDeleteApp = async (app_id: number) => {
+    try{
+      await trainerDeleteApp(app_id);
+      window.location.reload();
+    } catch(error){
+      console.error("Could not delete appointment in TrainerAppointmentList.tsx");
+      setError("Failed to delete shot");
+    }
+  };
+
   return (
     <div className="mt-5">
       <h1 className="mb-4 text-4xl antialiased">Tus Citas</h1>
@@ -46,7 +67,13 @@ const TrainerAppointmentsList: React.FC<AppointmentsListProps> = ({ appointments
                     <strong>Hora:</strong> {appointment.starttime} - {appointment.endtime}<br />
                     <strong>Fecha:</strong> {appointment.appointment_date}
                   </p>
-                  <Button type="button" className="btn bg-red-700 text-white mt-2 rounded hover:bg-red-600" >Cancelar Cita</Button>
+                  <Button 
+                    type="button" 
+                    className="btn bg-red-700 text-white mt-2 rounded hover:bg-red-600" 
+                    onClick={() =>  handleDeleteApp(appointment.app_id)}
+                    >
+                    Cancelar Cita
+                  </Button>
                 </div>
               </div>
             </div>
@@ -68,7 +95,13 @@ const TrainerAppointmentsList: React.FC<AppointmentsListProps> = ({ appointments
                   <p className="card-text">
                     <strong>Hora:</strong> {slot.starttime} - {slot.endtime}
                   </p>
-                  <Button type="button" className="btn bg-red-700 text-white mt-2 rounded hover:bg-red-600" >Eliminar Hora</Button>
+                  <Button
+                    type="button"
+                    className="btn bg-red-700 text-white mt-2 rounded hover:bg-red-600"
+                    onClick={() => handleDeleteSlot(slot.slot_id, slot.date)}
+                  >
+                    Eliminar Hora
+                  </Button>
                 </div>
               </div>
             </div>
@@ -80,5 +113,7 @@ const TrainerAppointmentsList: React.FC<AppointmentsListProps> = ({ appointments
 };
 
 export default TrainerAppointmentsList;
+
+
 
 
