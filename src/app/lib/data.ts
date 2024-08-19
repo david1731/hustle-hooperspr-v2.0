@@ -448,3 +448,30 @@ export async function fetchAvailableTrainerSlots(trainer_id:number){
     throw new Error("Error finding available dates");
   }
 };
+
+export async function deleteAvailableTrainerSlot(slot_id:number, date: string, trainer_id:number){
+  try{
+    console.log("Attempting to delete slot with:", { slot_id, date, trainer_id });
+    const cancel = await sql`
+      DELETE FROM trainer_time_slots 
+      WHERE trainer_id = ${trainer_id} and slot_id = ${slot_id} and date = ${date};
+      `;
+
+  } catch(error){
+    console.error("Could not delete available time slot");
+    throw new Error("Error deleting available slot");
+
+  }
+};
+
+export async function trainerDeleteApp(app_id:number){
+  try{
+    const cancel = await sql`
+    DELETE FROM appointment_slots
+    WHERE app_id = ${app_id};
+    `;
+  } catch(error){
+    console.error("Could not delete appointment");
+    throw new Error("Error deleting appointment");
+  }
+};
