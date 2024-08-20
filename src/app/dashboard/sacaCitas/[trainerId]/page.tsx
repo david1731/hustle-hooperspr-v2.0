@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
 import { TrainerSlots, Service, Level } from '@/app/lib/definitions';
 import { updateTimeSlotStatus, createAppointment, fetchSlots, fetchAvailableDates } from '@/app/lib/data';
+import StripeBuyButton from '@/components/StripeButton';
 
 config();
 
@@ -213,9 +214,7 @@ export default function TrainerDetailPage() {
             ))}
           </select>
         </div>
-        <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition duration-200">
-          Reservar Cita
-        </button>
+        <StripeBuyButton/>
       </form>
     </div>
   );
