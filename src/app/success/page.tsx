@@ -1,18 +1,17 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+export const dynamic = 'force-dynamic';
+
+import React, { useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createAppointment, updateTimeSlotStatus } from '@/app/lib/data';
 
 export default function SuccessPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const hasCreatedAppointment = useRef(false); // Ref to track if appointment creation has been triggered
 
   useEffect(() => {
     const createAppointmentAndRedirect = async () => {
-      if (hasCreatedAppointment.current) return; // Prevent duplicate execution
-
       const sessionId = searchParams.get('session_id');
       const slotId = parseInt(searchParams.get('slot_id') || '0', 10);
       const levelId = parseInt(searchParams.get('level_id') || '0', 10);
@@ -23,15 +22,10 @@ export default function SuccessPage() {
 
       if (sessionId && slotId && levelId && serviceId && date && email && trainerId) {
         try {
-          // Mark as triggered
-          hasCreatedAppointment.current = true;
-
-          // Create the appointment
           await createAppointment(slotId, email, levelId, trainerId, serviceId, date);
           await updateTimeSlotStatus(slotId, trainerId, date, 'Unavailable');
 
-          // Redirect to the dashboard
-          router.push(`/dashboard/citas`);
+          router.push(`/dashboard`);
         } catch (error) {
           console.error('Error creating appointment:', error);
         }
@@ -48,4 +42,7 @@ export default function SuccessPage() {
     </div>
   );
 }
+
+
+
 
