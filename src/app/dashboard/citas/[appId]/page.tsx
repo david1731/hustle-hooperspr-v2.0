@@ -18,18 +18,20 @@ export default function AppDetails() {
   const [selectedSlot, setSelectedSlot] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const getAppDetails = async () => {
+  const getAppDetails = async () => { //function for getting the appointment info of the desired appointment(using the app_id)to edit the appointment info
     try {
-      if (!appId) return;
+      if (!appId) return; //error handling
 
-      const parsedAppId = parseInt(Array.isArray(appId) ? appId[0] : appId, 10);
-      if (isNaN(parsedAppId)) {
+      const parsedAppId = parseInt(Array.isArray(appId) ? appId[0] : appId, 10); //checks if appId is an array, if it is an array appId is set to the first element of the array
+      // if it is not an array, it is set to its numeric value
+
+      if (isNaN(parsedAppId)) { //if app id is not a number, throw an error
         throw new Error('Invalid appId');
       }
 
-      const result = await fetchInfoFromAppID(parsedAppId);
-      setAppDetails(result);
-    } catch (error) {
+      const result = await fetchInfoFromAppID(parsedAppId); //fetch the appointment info using the appId
+      setAppDetails(result); // store the app info using state
+    } catch (error) { //error handling
       if (error instanceof Error) {
         setError(error.message);
       } else {
@@ -38,20 +40,20 @@ export default function AppDetails() {
     }
   };
 
-  useEffect(() => {
-    getAppDetails();
+  useEffect(() => { //execute the function that fetches the app info
+    getAppDetails(); // this useEffect runs when the component mounts and everytime the appId changes
   }, [appId]);
 
-  useEffect(() => {
+  useEffect(() => { //fetching levels and services using api routes I defined
     async function fetchLevels() {
       try {
-        const response = await fetch(`/api/levels`);
+        const response = await fetch(`/api/levels`); //api route for levels
         if (!response.ok) {
           throw new Error('Failed to fetch levels');
         }
         const data = await response.json();
-        setLevels(data);
-      } catch (error) {
+        setLevels(data); //store the info from the function as state for later use
+      } catch (error) { //error handling
         if (error instanceof Error) {
           console.error('Error fetching levels:', error);
           setError(error.message);
@@ -61,13 +63,13 @@ export default function AppDetails() {
 
     async function fetchServices() {
       try {
-        const response = await fetch(`/api/services`);
+        const response = await fetch(`/api/services`); //api route for services
         if (!response.ok) {
           throw new Error('Failed to fetch services');
         }
         const data = await response.json();
-        setServices(data);
-      } catch (error) {
+        setServices(data); //store the info from the function as state for later use
+      } catch (error) { //error handling
         if (error instanceof Error) {
           console.error('Error fetching services:', error);
           setError(error.message);
@@ -77,38 +79,43 @@ export default function AppDetails() {
 
     fetchLevels();
     fetchServices();
-  }, []);
+  }, []); //the useEffect is execute only when the component mounts
 
+  //function that handles the levels dropdown, when the user selects a level, its levelId is store for later use when creating the appointment
   const handleLevelChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const levelId = Number(e.target.value);
     setSelectedLevel(levelId);
     console.log('Selected level_id:', levelId);
   };
 
+  //function that handles the services dropdown, when the user selects a service, its serviceId is store for later use when creating the appointment
   const handleServiceChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const serviceId = Number(e.target.value);
     setSelectedService(serviceId);
     console.log('Selected service_id:', serviceId);
   };
 
+  //function that handles the date dropdown, when the user selects a date, its value is store for later use when creating the appointment
   const handleDateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedDate(e.target.value);
     console.log('Selected date:', e.target.value);
   };
 
+  //function that handles the slots dropdown, when the user selects a slot, its slotId is store for later use when creating the appointment
   const handleSlotChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const slotId = Number(e.target.value);
     setSelectedSlot(slotId);
     console.log('Selected slot_id:', slotId);
   };
 
+  //displays the slots, depending on the date
   const handleSlotDropdownClick = async () => {
     try {
       if (!selectedDate || !appDetails?.trainer_id) return;
       const parsedTrainerId = Array.isArray(appDetails.trainer_id) ? appDetails.trainer_id[0] : appDetails.trainer_id;
-      const slotsData = await fetchSlots(parseInt(parsedTrainerId), selectedDate);
-      setSlots(slotsData);
-    } catch (error) {
+      const slotsData = await fetchSlots(parseInt(parsedTrainerId), selectedDate); // function that fetches the slots for a given date
+      setSlots(slotsData); //storing the slots info as state
+    } catch (error) { //error handling
       if (error instanceof Error) {
         console.error('Error fetching available time slots:', error);
         setError(error.message);
@@ -116,13 +123,14 @@ export default function AppDetails() {
     }
   };
 
+  //displays the dates given a trainerId becuase every trainer may have distinct schedules
   const handleDateDropdown = async () => {
     try {
-      if (!appDetails?.trainer_id) return;
-      const parsedTrainerId = Array.isArray(appDetails.trainer_id) ? appDetails.trainer_id[0] : appDetails.trainer_id;
-      const datesData = await fetchAvailableDates(parseInt(parsedTrainerId));
-      setDates(datesData || []);
-    } catch (error) {
+      if (!appDetails?.trainer_id) return; //if trainerId does not exist, something is wrong so return out
+      const parsedTrainerId = Array.isArray(appDetails.trainer_id) ? appDetails.trainer_id[0] : appDetails.trainer_id; //checking trainerId to set its value accordingly and avoid errors
+      const datesData = await fetchAvailableDates(parseInt(parsedTrainerId)); //fetch the trainer's available dates
+      setDates(datesData || []); // store dates as state or as an empty array if the function returns nothing
+    } catch (error) { //error handling
       if (error instanceof Error) {
         console.error('Error fetching available dates:', error);
         setError(error.message);
@@ -130,11 +138,12 @@ export default function AppDetails() {
     }
   };
 
+  //function that edits an appointment with the new information a user enters
   const handleEdit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (appDetails) {
       try {
-        const parsedAppId = parseInt(Array.isArray(appId) ? appId[0] : appId, 10);
+        const parsedAppId = parseInt(Array.isArray(appId) ? appId[0] : appId, 10); //checking appId to set its value accordingly and avoid errors
         const result = await editAppointment(
           parsedAppId,
           appDetails.slot_id,
@@ -146,10 +155,10 @@ export default function AppDetails() {
           selectedLevel ?? 0,
           selectedDate,
           appDetails.appointment_date
-        );
+        ); //edit appointment
         console.log('Appointment edited:', result);
         alert('Appointment edited successfully');
-        router.push(`/dashboard/citas`);
+        router.push(`/dashboard/citas`); //if the edit is successfull redirect back to appointments page
         
       } catch (error) {
         console.error('Error editing appointment:', error);

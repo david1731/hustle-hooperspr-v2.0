@@ -1,20 +1,26 @@
 'use client';
-import { config } from 'dotenv';
-import React, { useState, useEffect } from 'react';
-import { useParams, useSearchParams } from 'next/navigation';
-import { TrainerSlots, Service, Level } from '@/app/lib/definitions';
-import { updateTimeSlotStatus, createAppointment, fetchSlots, fetchAvailableDates } from '@/app/lib/data';
-import { loadStripe } from '@stripe/stripe-js';
 
+// Import necessary modules and functions
+import { config } from 'dotenv'; // To load environment variables
+import React, { useState, useEffect } from 'react'; // React hooks
+import { useParams, useSearchParams } from 'next/navigation'; // Hooks for accessing route parameters and query strings
+import { TrainerSlots, Service, Level } from '@/app/lib/definitions'; // Importing types and definitions
+import { updateTimeSlotStatus, createAppointment, fetchSlots, fetchAvailableDates } from '@/app/lib/data'; // Importing functions for data fetching and updating
+import { loadStripe } from '@stripe/stripe-js'; // Stripe integration for payment processing
+
+// Load environment variables
 config();
 
+// Initialize Stripe with the publishable key from environment variables
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
 export default function TrainerDetailPage() {
+  // Accessing query parameters from the URL
   const searchParams = useSearchParams();
   const { trainerId } = useParams();
   const useremail = searchParams.get('email');
 
+  // State management for various form fields and loading state
   const [dates, setDates] = useState<string[]>([]);
   const [slots, setSlots] = useState<TrainerSlots[]>([]);
   const [levels, setLevels] = useState<Level[]>([]);
@@ -26,6 +32,7 @@ export default function TrainerDetailPage() {
   const [selectedService, setSelectedService] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
 
+  // Fetching available levels and services when the component mounts
   useEffect(() => {
     async function fetchLevels() {
       try {
@@ -59,16 +66,19 @@ export default function TrainerDetailPage() {
       }
     }
 
+    // Fetch levels and services when the component is loaded
     fetchLevels();
     fetchServices();
   }, []);
 
+  // Handle change event for the date dropdown
   const handleDateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedDate = e.target.value;
     setSelectedDate(selectedDate);
     console.log('Selected date:', selectedDate);
   };
 
+  // Fetch available time slots when a date is selected
   const handleSlotDropdownClick = async () => {
     try {
       if (!selectedDate || !trainerId) return;
@@ -83,6 +93,7 @@ export default function TrainerDetailPage() {
     }
   };
 
+  // Fetch available dates for the selected trainer
   const handleDateDropdown = async () => {
     try {
       if (!trainerId) return;
@@ -97,6 +108,7 @@ export default function TrainerDetailPage() {
     }
   }
 
+  // Handle change events for time slots, levels, and services
   const handleSlotChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const slotId = Number(e.target.value);
     setSelectedSlot(slotId);
@@ -115,8 +127,10 @@ export default function TrainerDetailPage() {
     console.log('Selected service_id:', serviceId);
   };
 
+  // Handle form submission to start the checkout process
   const handleCheckout = async (e: React.FormEvent) => {
     e.preventDefault();
+    // Validate that all necessary fields have been selected
     if (!selectedSlot || !selectedLevel || !selectedService || !selectedDate || !useremail) {
       alert('Please select all fields');
       return;
@@ -125,6 +139,7 @@ export default function TrainerDetailPage() {
     setLoading(true);
   
     try {
+      // Send a POST request to create a checkout session with Stripe
       const response = await fetch('/api/checkout_sessions', {
         method: 'POST',
         headers: {
@@ -142,11 +157,13 @@ export default function TrainerDetailPage() {
         }),
       });
   
+      // Parse the response to get the session ID and redirect to Stripe's checkout page
       const { id } = await response.json();
       const stripe = await stripePromise;
   
       const { error } = await stripe?.redirectToCheckout({ sessionId: id }) || {};
   
+      // Handle any errors during the checkout redirect
       if (error) {
         console.error('Error during checkout redirect:', error);
       }
@@ -156,10 +173,8 @@ export default function TrainerDetailPage() {
       setLoading(false);
     }
   };
-  
-  
 
-
+  // Render the form and checkout button
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Fechas Disponibles</h1>

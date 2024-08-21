@@ -31,7 +31,7 @@ export default function SuccessPage() {
           await updateTimeSlotStatus(slotId, trainerId, date, 'Unavailable');
 
           // Redirect to the dashboard
-          router.push(`/dashboard`);
+          router.push(`/dashboard/citas`);
         } catch (error) {
           console.error('Error creating appointment:', error);
         }
