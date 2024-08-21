@@ -1,4 +1,4 @@
-//src/app/dashboard/sacaCitas/page.tsx
+//Displays Trainers
 'use client';
 
 import React, { useEffect, useState } from 'react';
@@ -8,20 +8,20 @@ import { Trainer } from '@/app/lib/definitions';
 import '../../../styles/styling.css'
 
 export default function SacaCitasPage (){
-  const [trainers, setTrainers] = useState<Trainer[]>([]);
+  const [trainers, setTrainers] = useState<Trainer[]>([]); //used to store the trainers fetched
   const router = useRouter();
   const user = useSession();
 
   useEffect(() => {
     async function loadTrainers() {
       try {
-        const response = await fetch('/api/trainers');
+        const response = await fetch('/api/trainers'); //executed trainer api rout 
         if (!response.ok) {
           throw new Error('Failed to fetch trainers');
         }
         const trainersData = await response.json();
-        setTrainers(trainersData);
-      } catch (error) {
+        setTrainers(trainersData); //store the data fetch as state
+      } catch (error) { //error handling
         if (error instanceof Error) {
           console.error('Error fetching trainers:', error);
           setError(error.message);
@@ -33,10 +33,11 @@ export default function SacaCitasPage (){
     }
 
     loadTrainers();
-  }, []);
+  }, []); //executes when the component is mounted only
 
   const handleTrainerClick = (trainerId: number) => {
-    router.push(`/dashboard/sacaCitas/${trainerId}?email=${user?.email}`);
+    //when a trainer is selected, the user is redirected to a page to make the appointment and passes the user's email and trainer's id as url params
+    router.push(`/dashboard/sacaCitas/${trainerId}?email=${user?.email}`); 
   };
 
   return (

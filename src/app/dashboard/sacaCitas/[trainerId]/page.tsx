@@ -1,17 +1,26 @@
 'use client';
-import { config } from 'dotenv';
-import React, { useState, useEffect } from 'react';
-import { useParams, useSearchParams } from 'next/navigation';
-import { TrainerSlots, Service, Level } from '@/app/lib/definitions';
-import { updateTimeSlotStatus, createAppointment, fetchSlots, fetchAvailableDates } from '@/app/lib/data';
 
+// Import necessary modules and functions
+import { config } from 'dotenv'; // To load environment variables
+import React, { useState, useEffect } from 'react'; // React hooks
+import { useParams, useSearchParams } from 'next/navigation'; // Hooks for accessing route parameters and query strings
+import { TrainerSlots, Service, Level } from '@/app/lib/definitions'; // Importing types and definitions
+import { updateTimeSlotStatus, createAppointment, fetchSlots, fetchAvailableDates } from '@/app/lib/data'; // Importing functions for data fetching and updating
+import { loadStripe } from '@stripe/stripe-js'; // Stripe integration for payment processing
+
+// Load environment variables
 config();
 
+// Initialize Stripe with the publishable key from environment variables
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
+
 export default function TrainerDetailPage() {
+  // Accessing query parameters from the URL
   const searchParams = useSearchParams();
   const { trainerId } = useParams();
   const useremail = searchParams.get('email');
 
+  // State management for various form fields and loading state
   const [dates, setDates] = useState<string[]>([]);
   const [slots, setSlots] = useState<TrainerSlots[]>([]);
   const [levels, setLevels] = useState<Level[]>([]);
@@ -21,7 +30,9 @@ export default function TrainerDetailPage() {
   const [selectedSlot, setSelectedSlot] = useState<number | null>(null);
   const [selectedLevel, setSelectedLevel] = useState<number | null>(null);
   const [selectedService, setSelectedService] = useState<number | null>(null);
+  const [loading, setLoading] = useState(false);
 
+  // Fetching available levels and services when the component mounts
   useEffect(() => {
     async function fetchLevels() {
       try {
@@ -55,16 +66,19 @@ export default function TrainerDetailPage() {
       }
     }
 
+    // Fetch levels and services when the component is loaded
     fetchLevels();
     fetchServices();
   }, []);
 
+  // Handle change event for the date dropdown
   const handleDateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedDate = e.target.value;
     setSelectedDate(selectedDate);
     console.log('Selected date:', selectedDate);
   };
 
+  // Fetch available time slots when a date is selected
   const handleSlotDropdownClick = async () => {
     try {
       if (!selectedDate || !trainerId) return;
@@ -79,6 +93,7 @@ export default function TrainerDetailPage() {
     }
   };
 
+  // Fetch available dates for the selected trainer
   const handleDateDropdown = async () => {
     try {
       if (!trainerId) return;
@@ -93,6 +108,7 @@ export default function TrainerDetailPage() {
     }
   }
 
+  // Handle change events for time slots, levels, and services
   const handleSlotChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const slotId = Number(e.target.value);
     setSelectedSlot(slotId);
@@ -111,44 +127,59 @@ export default function TrainerDetailPage() {
     console.log('Selected service_id:', serviceId);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  // Handle form submission to start the checkout process
+  const handleCheckout = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (selectedSlot && selectedLevel && selectedService && selectedDate && useremail) {
-      try {
-        const parsedTrainerId = Array.isArray(trainerId) ? trainerId[0] : trainerId;
-        const result = await createAppointment(
-          selectedSlot,
-          useremail,
-          selectedLevel,
-          parseInt(parsedTrainerId, 10),
-          selectedService,
-          selectedDate
-        );
-
-         await updateTimeSlotStatus(
-          selectedSlot,
-          parseInt(parsedTrainerId, 10),
-          selectedDate,
-          'Unavailable'
-        );
-
-        console.log('Appointment created:', result);
-        alert('Appointment created successfully');
-        window.location.reload();
-      } catch (error) {
-        console.error('Error creating appointment:', error);
-        alert('Failed to create appointment');
-      }
-    } else {
+    // Validate that all necessary fields have been selected
+    if (!selectedSlot || !selectedLevel || !selectedService || !selectedDate || !useremail) {
       alert('Please select all fields');
+      return;
+    }
+  
+    setLoading(true);
+  
+    try {
+      // Send a POST request to create a checkout session with Stripe
+      const response = await fetch('/api/checkout_sessions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: 'Entrenamiento Individual',
+          amount: 100, // amount in cents (e.g., $1.00)
+          slot_id: selectedSlot,
+          level_id: selectedLevel,
+          service_id: selectedService,
+          date: selectedDate,
+          email: useremail,
+          trainer_id: Array.isArray(trainerId) ? trainerId[0] : trainerId,
+        }),
+      });
+  
+      // Parse the response to get the session ID and redirect to Stripe's checkout page
+      const { id } = await response.json();
+      const stripe = await stripePromise;
+  
+      const { error } = await stripe?.redirectToCheckout({ sessionId: id }) || {};
+  
+      // Handle any errors during the checkout redirect
+      if (error) {
+        console.error('Error during checkout redirect:', error);
+      }
+    } catch (error) {
+      console.error('Error during checkout:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
+  // Render the form and checkout button
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Fechas Disponibles</h1>
       {error && <div className="bg-red-500 text-white p-2 rounded">{error}</div>}
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleCheckout} className="space-y-4">
         <div className="mb-3">
           <label htmlFor="dates" className="block text-sm font-medium text-gray-700">Fecha</label>
           <select
@@ -213,13 +244,18 @@ export default function TrainerDetailPage() {
             ))}
           </select>
         </div>
-        <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition duration-200">
-          Reservar Cita
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition duration-200"
+        >
+          {loading ? 'Processing...' : 'Checkout and Reserve'}
         </button>
       </form>
     </div>
   );
 }
+
 
 
 
