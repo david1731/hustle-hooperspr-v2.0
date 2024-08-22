@@ -12,6 +12,15 @@ export default function SacaCitasPage() {
   const router = useRouter();
   const user = useSession();
 
+  // List of image URLs corresponding to the trainers
+  const imageUrls = [
+    'https://example.com/image1.jpg',
+    'https://example.com/image2.jpg',
+    'https://example.com/image3.jpg',
+    'https://example.com/image4.jpg'
+    // Add more URLs as needed
+  ];
+
   useEffect(() => {
     async function loadTrainers() {
       try {
@@ -44,13 +53,14 @@ export default function SacaCitasPage() {
     <div className="mt-5">
       <h1 className="mb-4 text-4xl antialiased">Escoge tú Entrenador</h1>
       <div className="flex flex-wrap justify-start">
-        {trainers.map(trainer => (
+        {trainers.map((trainer, index) => (
           <div key={trainer.trainer_id} className="p-2 w-full sm:w-1/2 md:w-1/3 lg:w-1/4">
-            <div className="card bg-white shadow-md hover:shadow-lg transition-shadow duration-300"
+            <div 
+              className="card bg-white shadow-md hover:shadow-lg hover:bg-gray-100 transition-all duration-300"
               onClick={() => handleTrainerClick(trainer.trainer_id)}>
               <div className="card-body text-center">
                 <img
-                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQN4NYaMGS8d806xsl4U3GFR8jif0vKMWlPRg&s"
+                  src={imageUrls[index]} // Get the corresponding image URL
                   className="card-img-top img-thumbnail rounded-md w-24 h-24 mx-auto mt-4"
                   alt={`${trainer.fullname}`}
                 />
@@ -67,6 +77,7 @@ export default function SacaCitasPage() {
 function setError(message: string) {
   throw new Error('Function not implemented.');
 }
+
 
 
 
