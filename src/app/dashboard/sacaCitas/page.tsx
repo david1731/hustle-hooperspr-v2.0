@@ -9,7 +9,7 @@ import '../../../styles/styling.css'
 
 export default function SacaCitasPage (){
   console.log('NEXT_PUBLIC_BASE_URL:', process.env.NEXT_PUBLIC_BASE_URL!);
-  console.log('STRIPE_SECRET_KEY:', process.env.STRIPE_SECRET_KEY!);
+  console.log('STRIPE_SECRET_KEY:', process.env.STRIPE_SECRET_KEY || 'Fallback Key');
   const [trainers, setTrainers] = useState<Trainer[]>([]); //used to store the trainers fetched
   const router = useRouter();
   const user = useSession();
