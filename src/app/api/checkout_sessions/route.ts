@@ -26,8 +26,8 @@ export async function POST(request: Request) {
           quantity: 1,
         },
       ],
-      success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/success?session_id={CHECKOUT_SESSION_ID}&slot_id=${body.slot_id}&level_id=${body.level_id}&service_id=${body.service_id}&date=${body.date}&email=${body.email}&trainer_id=${body.trainer_id}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/cancel`,
+      success_url: `${process.env.NEXT_PUBLIC_BASE_URL!}/success?session_id={CHECKOUT_SESSION_ID}&slot_id=${body.slot_id}&level_id=${body.level_id}&service_id=${body.service_id}&date=${body.date}&email=${body.email}&trainer_id=${body.trainer_id}`,
+      cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL!}/cancel`,
     });
 
     return NextResponse.json({ id: session.id });
