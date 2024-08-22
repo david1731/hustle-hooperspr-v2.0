@@ -15,6 +15,7 @@ export async function GET(req: NextRequest) {
     if (!result || result.rows.length === 0) {
       return NextResponse.json({ message: 'No data returned from database' }, { status: 404 });
     }
+    console.log('Full Query Result:', result.rows);
 
     const trainers = result.rows.map((row) => ({
       trainer_id: row.trainer_id ?? 0,

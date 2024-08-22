@@ -24,6 +24,7 @@ export default function SacaCitasPage (){
         }
         const trainersData = await response.json();
         setTrainers(trainersData); //store the data fetch as state
+        console.log("Trainers", trainersData);
       } catch (error) { //error handling
         if (error instanceof Error) {
           console.error('Error fetching trainers:', error);
@@ -47,7 +48,7 @@ export default function SacaCitasPage (){
     <div className="mt-5">
       <h1 className="mb-4 text-4xl antialiased">Escoge tú Entrenador</h1>
       <div className="flex flex-wrap justify-start">
-        {trainers.map((trainer) => (
+        {trainers.map(trainer => (
           <div key={trainer.trainer_id} className="p-2 w-full sm:w-1/2 md:w-1/3 lg:w-1/4">
             <div className="card trainer-card rounded-3xl hover:shadow-xl hover:bg-blue-100 transition-all duration-300"
              onClick={() => handleTrainerClick(trainer.trainer_id)}>
