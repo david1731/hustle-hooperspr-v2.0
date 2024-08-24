@@ -1,10 +1,10 @@
-// Displays Trainers
 'use client';
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from '@/app/context/SessionContext';
 import { Trainer } from '@/app/lib/definitions';
+import { fetchTrainers } from '@/app/lib/data';
 import '../../../styles/styling.css';
 
 export default function SacaCitasPage() {
@@ -21,29 +21,30 @@ export default function SacaCitasPage() {
     // Add more URLs as needed
   ];
 
-  useEffect(() => {
-    async function loadTrainers() {
-      try {
-        const response = await fetch('/api/trainers');
-        if (!response.ok) {
-          throw new Error('Failed to fetch trainers');
-        }
-        const trainersData = await response.json();
-        console.log("Fetched Trainers:", trainersData); // Log the fetched data
-        setTrainers(trainersData);
-        console.log("State Trainers:", trainers); // Log the state after setting
-      } catch (error) {
-        if (error instanceof Error) {
-          console.error('Error fetching trainers:', error);
-          setError(error.message);
-        } else {
-          console.error('Unknown error:', error);
-          setError('An unknown error occurred');
-        }
-      }
+  // Function to fetch trainers and update the state
+  const fetchedTrainers = async () => {
+    try {
+      const trainersInfo = await fetchTrainers(); // Assuming fetchTrainers is defined and imported
+      setTrainers(trainersInfo);
+    } catch (error) {
+      console.error("No trainer found", error);
     }
-  
-    loadTrainers();
+  };
+
+  useEffect(() => {
+    fetchedTrainers(); // Fetch trainers on component mount
+
+    // Add a beforeunload event listener if on the browser
+    if (typeof window !== 'undefined') {
+      window.addEventListener('beforeunload', fetchedTrainers);
+    }
+
+    // Clean up event listener on component unmount
+    return () => {
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('beforeunload', fetchedTrainers);
+      }
+    };
   }, []);
 
   const handleTrainerClick = (trainerId: number) => {
@@ -78,6 +79,7 @@ export default function SacaCitasPage() {
 function setError(message: string) {
   throw new Error('Function not implemented.');
 }
+
 
 
 
