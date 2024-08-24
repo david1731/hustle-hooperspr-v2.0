@@ -1,81 +1,14 @@
-import React from 'react';
-import NavBar from "../components/NavBar";
-import ServiceCard from '../components/ServiceCard';
-import LevelCard from '../components/LevelCard';
-import Image from 'next/image';
+import Header from '../components/Header';  // Ensure the correct path to Header
+import Footer from '../components/Footer';  // Ensure the correct path to Footer
+import Main from '../components/Main';      // Ensure the correct path to Main
+import "../styles/globals.css";
 
-export default function Home() {
+export default function HomePage() {
   return (
     <div>
-      <NavBar />
-      <div className="container mt-4 text-center">
-        <Image 
-          src="/hustlehoopers.png" 
-          width={600} 
-          height={600} 
-          alt="Main Image" 
-          style={{ 
-            maxWidth: '100%', 
-            height: 'auto' }} // Ensure responsiveness
-          
-        />
-      </div>
-
-      <div className="container mt-5" id="servicios">
-        <h2 className="mb-3 display-1">Nuestros Servicios</h2>
-        <div className="row">
-          <ServiceCard 
-            image="/John-Wall-Jump-Shot.jpg"
-            title="Práctica de Tiro"
-            description="Enfoque en driles para el desarrollo y mejoramientos de destrezas de tiro."
-          />
-          <ServiceCard
-            image="/basketball-dribble.webp"
-            title="Manejo de Balón"
-            description="Enfoque en driles para desarrollar o mejorar el manejo de balón."
-          />
-          <ServiceCard
-            image="/how-to-shoot-a-basketball.jpg"
-            title="Entrenamiento General"
-            description="Entrenamiento en varios aspectos del baloncesto, así como Manejo de Balón y Práctica de Tiros, entre otros."
-          />
-        </div>
-      </div>
-
-      <div className="container mt-5">
-        <h2 className="mb-3 display-1">Niveles de Servicios</h2>
-        <div className="row">
-          <LevelCard
-            title="Nivel Principiante"
-            description="Entrenamientos para principiantes consiste de driles para desarrollar y fortalecer destrezas fundamentales."
-          />
-          <LevelCard
-            title="Nivel Intermedio"
-            description="Entrenamientos para intermedios consisten de driles un poco más avanzados donde aplicarán destrezas fundamentales."
-          />
-          <LevelCard
-            title="Nivel Avanzado"
-            description="Clientes que ya dominan los fundamentos, participarán en driles más complejos que requieren alto nivel de destrezas para aplicarlas en situaciones de juego."
-          />
-        </div>
-      </div>
-
-      <div className="container mt-5" id="info">
-        <h2 className="mb-3 display-1">Conócenos</h2>
-        <p className="lead">
-          Saludos , bienvenid@ a la familia de Hustle Hoopers. Trabajamos y desarrollamos habilidades,
-          fundamentos básicos del baloncesto para llevar tu juego al próximo nivel. Siéntase cómodo de entrenar con nosotros.
-        </p>
-      </div>
-
-      <div className="container mt-5">
-        <h2 className="mb-3 display-1">Nuestra Misión</h2>
-        <p className="lead">
-          Nuestra misión es que el cliente se sienta en familia y llevar a nuestro Señor a través de nuestro servicio.
-          Mejorar su juego individual para que aporten en lo colectivo. Ser de ayuda a su disciplina tanto en los
-          entrenamientos como en la vida. ¡GRACIAS!
-        </p>
-      </div>
+      <Header />  {/* Render the Header component */}
+      <Main />    {/* Render the Main content component */}
+      <Footer />  {/* Render the Footer component */}
     </div>
   );
 }
