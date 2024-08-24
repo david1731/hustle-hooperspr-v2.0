@@ -17,7 +17,9 @@ const TrainerAppointmentsList: React.FC<AppointmentsListProps> = ({ appointments
   useEffect(() => {
     const fetchSlots = async () => {
       try {
+        console.log("Fetching slots for trainerId:", trainerId);
         const slots = await fetchAvailableTrainerSlots(trainerId);
+        console.log("slots:", slots);
         setAvailableSlots(slots);
       } catch (error) {
         console.error('Error fetching available slots:', error);

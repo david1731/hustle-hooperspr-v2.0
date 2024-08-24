@@ -417,6 +417,7 @@ export async function fetchTimeSlots(){
 
 export async function fetchAvailableTrainerSlots(trainer_id:number){
   try{
+    console.log("Trainer id from fetch fnuction", trainer_id);
     const trainerSlots = await sql<TrainerSlots>`
       SELECT 
         tts.slot_id, 
@@ -429,12 +430,12 @@ export async function fetchAvailableTrainerSlots(trainer_id:number){
       JOIN 
           time_slots ts ON tts.slot_id = ts.slot_id
       WHERE 
-          tts.trainer_id = 4 
+          tts.trainer_id = ${trainer_id} 
           AND tts.status = 'Available'
       ORDER BY 
           tts.date ASC, 
           ts.start_time ASC;
-    `
+    `;
     console.log("trainerSlots: ",trainerSlots);
     return trainerSlots.rows.map((row) =>({
       slot_id: row.slot_id,

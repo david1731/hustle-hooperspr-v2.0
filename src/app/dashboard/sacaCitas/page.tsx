@@ -15,7 +15,7 @@ export default function SacaCitasPage() {
   // List of image URLs corresponding to the trainers
   const imageUrls = [
     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSoGVLO0HPugTzEdyM1raso8Vk2FGMlYLkXyQ&s',
-    '../../../../public/yayi.jpeg',
+    '/yayi.jpeg',
     'https://example.com/image3.jpg',
     'https://example.com/image4.jpg'
     // Add more URLs as needed
@@ -29,8 +29,9 @@ export default function SacaCitasPage() {
           throw new Error('Failed to fetch trainers');
         }
         const trainersData = await response.json();
+        console.log("Fetched Trainers:", trainersData); // Log the fetched data
         setTrainers(trainersData);
-        console.log("Trainers", trainers);
+        console.log("State Trainers:", trainers); // Log the state after setting
       } catch (error) {
         if (error instanceof Error) {
           console.error('Error fetching trainers:', error);
@@ -41,7 +42,7 @@ export default function SacaCitasPage() {
         }
       }
     }
-
+  
     loadTrainers();
   }, []);
 
@@ -56,15 +57,15 @@ export default function SacaCitasPage() {
         {trainers.map((trainer, index) => (
           <div key={trainer.trainer_id} className="p-2 w-full sm:w-1/2 md:w-1/3 lg:w-1/4">
             <div 
-              className="card bg-white shadow-md hover:shadow-lg hover:bg-gray-100 transition-all duration-300"
+              className="card bg-white shadow-md hover:shadow-lg transition-all duration-300"
               onClick={() => handleTrainerClick(trainer.trainer_id)}>
-              <div className="card-body text-center">
+              <div className="card-body text-center hover:bg-gray-100">
                 <img
                   src={imageUrls[index]} // Get the corresponding image URL
-                  className="card-img-top img-thumbnail rounded-md w-24 h-24 mx-auto mt-4"
+                  className="rounded-md w-32 h-32 mx-auto mt-4 object-cover"
                   alt={`${trainer.fullname}`}
                 />
-                <h5 className="card-title mt-4">{trainer.fullname}</h5>
+                <h5 className="card-title mt-4 text-xl">{trainer.fullname}</h5>
               </div>
             </div>
           </div>
@@ -77,6 +78,7 @@ export default function SacaCitasPage() {
 function setError(message: string) {
   throw new Error('Function not implemented.');
 }
+
 
 
 
