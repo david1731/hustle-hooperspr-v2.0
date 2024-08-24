@@ -5,7 +5,7 @@ import { config } from 'dotenv'; // To load environment variables
 import React, { useState, useEffect } from 'react'; // React hooks
 import { useParams, useSearchParams } from 'next/navigation'; // Hooks for accessing route parameters and query strings
 import { TrainerSlots, Service, Level } from '@/app/lib/definitions'; // Importing types and definitions
-import { updateTimeSlotStatus, createAppointment, fetchSlots, fetchAvailableDates } from '@/app/lib/data'; // Importing functions for data fetching and updating
+import { fetchSlots, fetchAvailableDates } from '@/app/lib/data'; // Importing functions for data fetching and updating
 import { loadStripe } from '@stripe/stripe-js'; // Stripe integration for payment processing
 
 // Load environment variables
@@ -19,7 +19,6 @@ export default function TrainerDetailPage() {
   const searchParams = useSearchParams();
   const { trainerId } = useParams();
   const useremail = searchParams.get('email');
-
   // State management for various form fields and loading state
   const [dates, setDates] = useState<string[]>([]);
   const [slots, setSlots] = useState<TrainerSlots[]>([]);
@@ -147,7 +146,7 @@ export default function TrainerDetailPage() {
         },
         body: JSON.stringify({
           name: 'Entrenamiento Individual',
-          amount: 100, // amount in cents (e.g., $1.00)
+          amount: 2000, // amount in cents (e.g., $1.00)
           slot_id: selectedSlot,
           level_id: selectedLevel,
           service_id: selectedService,

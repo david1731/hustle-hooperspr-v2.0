@@ -1,10 +1,10 @@
-// Displays Trainers
 'use client';
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from '@/app/context/SessionContext';
 import { Trainer } from '@/app/lib/definitions';
+import { fetchTrainers } from '@/app/lib/data';
 import '../../../styles/styling.css';
 
 export default function SacaCitasPage() {
@@ -14,35 +14,37 @@ export default function SacaCitasPage() {
 
   // List of image URLs corresponding to the trainers
   const imageUrls = [
-    'https://example.com/image1.jpg',
-    'https://example.com/image2.jpg',
+    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSoGVLO0HPugTzEdyM1raso8Vk2FGMlYLkXyQ&s',
+    '/yayi.jpeg',
     'https://example.com/image3.jpg',
     'https://example.com/image4.jpg'
     // Add more URLs as needed
   ];
 
+  // Function to fetch trainers and update the state
+  const fetchedTrainers = async () => {
+    try {
+      const trainersInfo = await fetchTrainers(); // Assuming fetchTrainers is defined and imported
+      setTrainers(trainersInfo);
+    } catch (error) {
+      console.error("No trainer found", error);
+    }
+  };
+
   useEffect(() => {
-    async function loadTrainers() {
-      try {
-        const response = await fetch('/api/trainers');
-        if (!response.ok) {
-          throw new Error('Failed to fetch trainers');
-        }
-        const trainersData = await response.json();
-        setTrainers(trainersData);
-        console.log("Trainers", trainers);
-      } catch (error) {
-        if (error instanceof Error) {
-          console.error('Error fetching trainers:', error);
-          setError(error.message);
-        } else {
-          console.error('Unknown error:', error);
-          setError('An unknown error occurred');
-        }
-      }
+    fetchedTrainers(); // Fetch trainers on component mount
+
+    // Add a beforeunload event listener if on the browser
+    if (typeof window !== 'undefined') {
+      window.addEventListener('beforeunload', fetchedTrainers);
     }
 
-    loadTrainers();
+    // Clean up event listener on component unmount
+    return () => {
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('beforeunload', fetchedTrainers);
+      }
+    };
   }, []);
 
   const handleTrainerClick = (trainerId: number) => {
@@ -56,15 +58,15 @@ export default function SacaCitasPage() {
         {trainers.map((trainer, index) => (
           <div key={trainer.trainer_id} className="p-2 w-full sm:w-1/2 md:w-1/3 lg:w-1/4">
             <div 
-              className="card bg-white shadow-md hover:shadow-lg hover:bg-gray-100 transition-all duration-300"
+              className="card bg-white shadow-md hover:shadow-lg transition-all duration-300"
               onClick={() => handleTrainerClick(trainer.trainer_id)}>
-              <div className="card-body text-center">
+              <div className="card-body text-center hover:bg-gray-100">
                 <img
                   src={imageUrls[index]} // Get the corresponding image URL
-                  className="card-img-top img-thumbnail rounded-md w-24 h-24 mx-auto mt-4"
+                  className="rounded-md w-32 h-32 mx-auto mt-4 object-cover"
                   alt={`${trainer.fullname}`}
                 />
-                <h5 className="card-title mt-4">{trainer.fullname}</h5>
+                <h5 className="card-title mt-4 text-xl">{trainer.fullname}</h5>
               </div>
             </div>
           </div>
@@ -77,6 +79,8 @@ export default function SacaCitasPage() {
 function setError(message: string) {
   throw new Error('Function not implemented.');
 }
+
+
 
 
 
