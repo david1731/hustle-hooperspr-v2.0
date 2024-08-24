@@ -5,7 +5,7 @@ import "../styles/globals.css";
 
 export default function HomePage() {
   return (
-    <div>
+    <div className='homepage-container'>
       <Header />  {/* Render the Header component */}
       <Main />    {/* Render the Main content component */}
       <Footer />  {/* Render the Footer component */}
