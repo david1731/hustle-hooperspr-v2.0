@@ -14,8 +14,8 @@ export default function SacaCitasPage() {
 
   // List of image URLs corresponding to the trainers
   const imageUrls = [
-    'https://example.com/image1.jpg',
-    'https://example.com/image2.jpg',
+    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSoGVLO0HPugTzEdyM1raso8Vk2FGMlYLkXyQ&s',
+    '../../../../public/yayi.jpeg',
     'https://example.com/image3.jpg',
     'https://example.com/image4.jpg'
     // Add more URLs as needed
