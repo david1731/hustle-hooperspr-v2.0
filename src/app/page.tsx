@@ -1,15 +1,24 @@
 import React from 'react';
-import NavBar from "../components/NavBar"; // Ensure you have the NavBar component
+import NavBar from "../components/NavBar";
 import ServiceCard from '../components/ServiceCard';
 import LevelCard from '../components/LevelCard';
-import Image from 'next/image'; // Import the Image component from next/image
+import Image from 'next/image';
 
 export default function Home() {
   return (
     <div>
-      <NavBar /> {/* Add NavBar component here */}
+      <NavBar />
       <div className="container mt-4 text-center">
-        <Image src="/hustlehoopers.png" layout="responsive" width={200} height={200} alt="Main Image" /> {/* Use Image component */}
+        <Image 
+          src="/hustlehoopers.png" 
+          width={600} 
+          height={600} 
+          alt="Main Image" 
+          style={{ 
+            maxWidth: '100%', 
+            height: 'auto' }} // Ensure responsiveness
+          
+        />
       </div>
 
       <div className="container mt-5" id="servicios">
@@ -27,7 +36,7 @@ export default function Home() {
           />
           <ServiceCard
             image="/how-to-shoot-a-basketball.jpg"
-            title="Entreno General"
+            title="Entrenamiento General"
             description="Entrenamiento en varios aspectos del baloncesto, así como Manejo de Balón y Práctica de Tiros, entre otros."
           />
         </div>
@@ -69,7 +78,8 @@ export default function Home() {
       </div>
     </div>
   );
-};
+}
+
 
 
 
