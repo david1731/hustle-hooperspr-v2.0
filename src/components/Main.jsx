@@ -3,7 +3,7 @@ export default function Main() {
       <section className="text-gray-600 body-font">
         <div className="max-w-5xl pt-52 pb-24 mx-auto">
           <h1 className="text-80 text-center font-4 lh-6 ld-04 font-bold text-white mb-6">
-            Create your next website fast and easy
+          ¡Bienvenidos a HustleHoopersPR!
           </h1>
           <h2 className="text-2xl font-4 font-semibold lh-6 ld-04 pb-11 text-gray-700 text-center">
             HustleHoopersPR es un servicio de entrenamientos
@@ -20,13 +20,14 @@ export default function Main() {
               </div>
             </a>
             <a
-              className="inline-flex items-center py-3 font-semibold tracking-tighter text-white transition duration-500 ease-in-out transform bg-transparent ml-11 bg-gradient-to-r from-blue-500 to-blue-800 px-14 text-md md:mt-0 focus:shadow-outline"
-              href="/"
+                className="inline-flex items-center py-3 font-semibold tracking-tighter text-white transition duration-500 ease-in-out transform bg-transparent ml-11 bg-gradient-to-r from-blue-500 to-blue-800 px-14 text-md md:mt-0 focus:shadow-outline"
+                href="https://www.instagram.com/hustlehooperspr/"
             >
-              <div className="flex text-lg">
-                <span className="justify-center">Contactanos</span>
-              </div>
+                <div className="flex text-lg justify-center">
+                    Contactanos
+                </div>
             </a>
+
           </div>
         </div>
         <div id="servicios" className="container flex flex-col items-center justify-center mx-auto">
