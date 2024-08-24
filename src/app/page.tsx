@@ -36,7 +36,7 @@ export default function Home() {
           />
           <ServiceCard
             image="/how-to-shoot-a-basketball.jpg"
-            title="Entreno General"
+            title="Entrenamiento General"
             description="Entrenamiento en varios aspectos del baloncesto, así como Manejo de Balón y Práctica de Tiros, entre otros."
           />
         </div>
