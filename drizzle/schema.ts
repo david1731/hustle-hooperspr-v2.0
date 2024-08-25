@@ -84,5 +84,6 @@ export const AppointmentSlotsTable = pgTable(
       trainer_id: integer('trainer_id').references(() => TrainersTable.trainer_id),
       service_id: integer('service_id').references(() => ServicesTable.service_id),
       date: text('date').notNull(),
+      paidStatus: text('paidStatus').notNull(),
     },
 );

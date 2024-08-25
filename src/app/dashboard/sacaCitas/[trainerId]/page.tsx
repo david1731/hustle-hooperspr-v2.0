@@ -126,6 +126,9 @@ export default function TrainerDetailPage() {
     console.log('Selected service_id:', serviceId);
   };
 
+  // create appointment if clients decide to pay later
+  
+
   // Handle form submission to start the checkout process
   const handleCheckout = async (e: React.FormEvent) => {
     e.preventDefault();
