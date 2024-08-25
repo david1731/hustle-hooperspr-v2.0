@@ -1,19 +1,19 @@
 import { sql } from '@vercel/postgres';
 import { drizzle } from 'drizzle-orm/vercel-postgres';
 import { AppointmentQueryResult, Trainer, TrainerSlots, updateTimeSlot, InfoFromAppointments, TimeSlot} from './definitions';
-import { ClientsTable, AppointmentSlotsTable, TrainersTable, ServicesTable, TimeSlotsTable, LevelsTable } from '../../../drizzle/schema';
+import { clients, appointment_slots, trainers, services, time_slots, levels,trainer_time_slots } from '../../../drizzle/schema';
 
 import { config } from 'dotenv';
 config();
 const db = drizzle(sql, {
   schema: {
-    clients: ClientsTable,
-    trainers: TrainersTable,
-    services: ServicesTable,
-    time_slots: TimeSlotsTable,
-    levels: LevelsTable,
-    trainer_time_slots: TimeSlotsTable,
-    appointment_slots: AppointmentSlotsTable,
+    clients: clients,
+    trainers: trainers,
+    services: services,
+    time_slots: time_slots,
+    levels: levels,
+    trainer_time_slots: trainer_time_slots,
+    appointment_slots: appointment_slots,
   }
 });
 
@@ -359,6 +359,7 @@ export async function trainerAppointments(trainer_id: number){
     l.level AS level,
     s.servicename AS service,
     a.date AS appointment_date
+    a.statusPaid as status
     FROM
         appointment_slots AS a
     INNER JOIN

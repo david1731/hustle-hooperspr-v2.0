@@ -10,7 +10,7 @@ export const levels = pgTable("levels", {
 });
 
 export const appointment_slots = pgTable("appointment_slots", {
-	app_id: integer("app_id").primaryKey().notNull(),
+	app_id: serial("app_id").primaryKey(),
 	slot_id: integer("slot_id").references(() => time_slots.slot_id),
 	client_id: integer("client_id").references(() => clients.id),
 	level_id: integer("level_id").references(() => levels.level_id),
@@ -18,6 +18,11 @@ export const appointment_slots = pgTable("appointment_slots", {
 	service_id: integer("service_id").references(() => services.service_id),
 	date: text("date").notNull(),
 	paidstatus: varchar("paidstatus", { length: 20 }),
+},
+(table) =>{
+	return{
+		unique_app_idx: uniqueIndex("unique_app_idx").using("betree",table.app_id)
+	}
 });
 
 export const services = pgTable("services", {
