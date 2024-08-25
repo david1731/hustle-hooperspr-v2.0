@@ -1,16 +1,9 @@
-'use client';
-import React, { useState } from "react";
-import { Modal, Button } from 'react-bootstrap'; // Add this line
-import LoginSignup from './LoginSignup'; // Import your LoginSignup component
-
 export default function Header() {
   const [navbarOpen, setNavbarOpen] = useState(false);
-  const [flyer, setFlyer] = useState(false);
-  const [flyerTwo, setFlyerTwo] = useState(false);
-  const [showModal, setShowModal] = useState(false); // Add this line
+  const [showModal, setShowModal] = useState(false);
 
-  const handleShow = () => setShowModal(true); // Add this line
-  const handleClose = () => setShowModal(false); // Add this line
+  const handleShow = () => setShowModal(true);
+  const handleClose = () => setShowModal(false);
 
   return (
     <header className="fixed top-0 w-full clearNav z-50">
@@ -49,20 +42,20 @@ export default function Header() {
             (navbarOpen ? " flex" : " hidden")
           }
         >
-          <div className="md:ml-auto md:mr-auto font-4 pt-1 md:pl-14 pl-1 flex flex-wrap items-center md:text-base text-1xl md:justify-center justify-items-start">
+          <div className="md:ml-auto md:mr-auto font-4 pt-1 md:pl-14 pl-1 flex flex-wrap items-center md:text-base text-1xl md:justify-center justify-start">
             <a
-              className="mr-11 pr-2 cursor-pointer text-gray-300 hover:text-white font-semibold tr04"
-              onClick={handleShow} // Change this line
+              className="mr-4 cursor-pointer text-gray-300 hover:text-white font-semibold tr04"
+              onClick={handleShow}
             >
               Sacar Cita
             </a>
-            <a href="#servicios" className="mr-12 md:ml-11 ml-0 cursor-pointer text-gray-300 hover:text-white font-semibold tr04">
+            <a href="#servicios" className="mr-4 cursor-pointer text-gray-300 hover:text-white font-semibold tr04">
               Nuestros Servicios
             </a>
-            <a href="#niveles" className="mr-12 md:ml-11 ml-0 cursor-pointer text-gray-300 hover:text-white font-semibold tr04">
+            <a href="#niveles" className="mr-4 cursor-pointer text-gray-300 hover:text-white font-semibold tr04">
               Niveles
             </a>
-            <a href="#mision" className="mr-5 cursor-pointer text-gray-300 hover:text-white font-semibold tr04">
+            <a href="#mision" className="cursor-pointer text-gray-300 hover:text-white font-semibold tr04">
               Nuestra Misión
             </a>
           </div>
@@ -92,7 +85,7 @@ export default function Header() {
         </div>
       </div>
 
-      <Modal show={showModal} onHide={handleClose} centered> {/* Add this modal block */}
+      <Modal show={showModal} onHide={handleClose} centered>
         <Modal.Header closeButton>
           <Modal.Title>Log in / Registrar</Modal.Title>
         </Modal.Header>
@@ -103,3 +96,4 @@ export default function Header() {
     </header>
   );
 }
+
