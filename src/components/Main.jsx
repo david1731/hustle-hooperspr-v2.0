@@ -24,7 +24,7 @@ export default function Main() {
             href="https://www.instagram.com/hustlehooperspr/"
           >
             <div className="flex text-lg">
-              Contactanos
+              Contáctanos
             </div>
           </a>
         </div>
