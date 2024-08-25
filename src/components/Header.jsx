@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from "react";
-import { Modal } from 'react-bootstrap'; // Import Modal component
-import LoginSignup from './LoginSignup'; // Import your LoginSignup component
+import { Modal } from 'react-bootstrap';
+import LoginSignup from './LoginSignup';
 
 export default function Header() {
   const [navbarOpen, setNavbarOpen] = useState(false);
@@ -47,20 +47,20 @@ export default function Header() {
             (navbarOpen ? " flex" : " hidden")
           }
         >
-          <div className="md:ml-auto md:mr-auto font-4 pt-1 md:pl-14 pl-1 flex flex-wrap items-center md:text-base text-1xl md:justify-center justify-items-start">
+          <div className="font-4 pt-1 md:pl-14 pl-1 flex flex-col md:flex-row items-start md:items-center md:text-base text-1xl text-left md:text-center md:justify-center"> {/* Modified here */}
             <a
-              className="mr-4 cursor-pointer text-gray-300 hover:text-white font-semibold tr04"
+              className="mb-2 md:mb-0 md:mr-8 cursor-pointer text-gray-300 hover:text-white font-semibold tr04"
               onClick={handleShow}
             >
               Sacar Cita
             </a>
-            <a href="#servicios" className="mr-4 cursor-pointer text-gray-300 hover:text-white font-semibold tr04">
+            <a href="#servicios" className="mb-2 md:mb-0 md:mr-8 cursor-pointer text-gray-300 hover:text-white font-semibold tr04">
               Nuestros Servicios
             </a>
-            <a href="#niveles" className="mr-4 cursor-pointer text-gray-300 hover:text-white font-semibold tr04">
+            <a href="#niveles" className="mb-2 md:mb-0 md:mr-8 cursor-pointer text-gray-300 hover:text-white font-semibold tr04">
               Niveles
             </a>
-            <a href="#mision" className="cursor-pointer text-gray-300 hover:text-white font-semibold tr04">
+            <a href="#mision" className="mb-2 md:mb-0 cursor-pointer text-gray-300 hover:text-white font-semibold tr04">
               Nuestra Misión
             </a>
           </div>
