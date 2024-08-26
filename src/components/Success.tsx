@@ -52,10 +52,35 @@ export default function SuccessComponent() {
   }, [searchParams, router]);
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Processing...</h1>
-      <p>Creating your appointment and redirecting you to the dashboard.</p>
+    <div className="flex flex-col items-center justify-center min-h-screen mx-auto p-4">
+      <h1 className="text-3xl font-bold mb-4">Processing...</h1>
+      <div className="loader"></div> {/* Loader added here */}
+      <p className="mt-4 text-lg text-center">Creando su cita, sera redirigido a su portal enseguida.</p>
+
+      <style jsx>{`
+        .loader {
+          width: 64px; /* Increased loader size */
+          height: 64px; /* Increased loader size */
+          border: 6px solid #FFF;
+          border-bottom-color: #FF3D00;
+          border-radius: 50%;
+          display: inline-block;
+          box-sizing: border-box;
+          animation: rotation 1s linear infinite;
+        }
+
+        @keyframes rotation {
+          0% {
+            transform: rotate(0deg);
+          }
+          100% {
+            transform: rotate(360deg);
+          }
+        }
+      `}</style>
     </div>
+
   );
 }
+
 
