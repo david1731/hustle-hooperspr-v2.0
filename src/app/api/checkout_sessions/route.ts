@@ -19,7 +19,7 @@ export async function POST(request: Request) {
             currency: 'usd',
             product_data: {
               name: body.name,
-              description: 'Training session with expert trainer', // Description shown on the payment page
+              description: 'Entrenamiento de baloncesto individualizado', // Description shown on the payment page
             },
             unit_amount: body.amount, // amount in cents
           },
