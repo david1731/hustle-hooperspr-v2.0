@@ -29,6 +29,7 @@ export async function getUserAppointmentsByEmail(email: string){
         l.level AS level,
         s.servicename AS service,
         a.date AS appointment_date
+        a.paidstatus as status
       FROM 
         appointment_slots a
       JOIN 
@@ -55,6 +56,7 @@ export async function getUserAppointmentsByEmail(email: string){
         level: row.level ?? 'Unknown',
         service: row.service ?? 'Unknown',
         appointment_date: row.appointment_date ?? 'Unknown',
+        status: row.status ?? 'Unknown'
       
     }));
     return appointments;
