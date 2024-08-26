@@ -37,7 +37,7 @@ export default function SuccessComponent() {
           hasCreatedAppointment.current = true;
 
           // Create the appointment
-          await createAppointment(slotId, email, levelId, trainerId, serviceId, date);
+          await createAppointment(slotId, email, levelId, trainerId, serviceId, date, 'Pagado');
           await updateTimeSlotStatus(slotId, trainerId, date, 'Unavailable');
 
           // Redirect to the dashboard

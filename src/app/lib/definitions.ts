@@ -58,6 +58,7 @@ export type Client = {
     level: string;
     service: string;
     appointment_date: string;
+    status: string;
   };
   
   export type TrainerSlots = {

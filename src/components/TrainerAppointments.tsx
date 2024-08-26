@@ -67,7 +67,8 @@ const TrainerAppointmentsList: React.FC<AppointmentsListProps> = ({ appointments
                   <p className="card-text">
                     <strong>Nivel:</strong> {appointment.level}<br />
                     <strong>Hora:</strong> {appointment.starttime} - {appointment.endtime}<br />
-                    <strong>Fecha:</strong> {appointment.appointment_date}
+                    <strong>Fecha:</strong> {appointment.appointment_date}<br/>
+                    <strong>Status:</strong> {appointment.status}
                   </p>
                   <Button 
                     type="button" 

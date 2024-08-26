@@ -72,22 +72,15 @@ export async function createAppointment(
   level_id: number,
   trainer_id: number, 
   service_id: number, 
-  app_date: string){
+  app_date: string,
+  paidstatus: string){
     try {
-      console.log("Creating appointment with:", {
-        slot_id,
-        email,
-        level_id,
-        trainer_id,
-        service_id,
-        app_date
-      });
       const result = await sql`
       WITH client AS (
         SELECT id FROM clients WHERE email = ${email}
       )
-      INSERT INTO appointment_slots (slot_id, client_id, level_id, trainer_id, service_id, date)
-      SELECT ${slot_id}, id, ${level_id}, ${trainer_id}, ${service_id}, ${app_date}
+      INSERT INTO appointment_slots (slot_id, client_id, level_id, trainer_id, service_id, date, paidstatus)
+      SELECT ${slot_id}, id, ${level_id}, ${trainer_id}, ${service_id}, ${app_date}, ${paidstatus}
       FROM client
       RETURNING *;
     `;
@@ -358,8 +351,8 @@ export async function trainerAppointments(trainer_id: number){
     ts.endtime AS endtime,
     l.level AS level,
     s.servicename AS service,
-    a.date AS appointment_date
-    a.statusPaid as status
+    a.date AS appointment_date,
+    a.paidstatus as status
     FROM
         appointment_slots AS a
     INNER JOIN
