@@ -28,7 +28,7 @@ export async function getUserAppointmentsByEmail(email: string){
         ts.endtime AS endtime,
         l.level AS level,
         s.servicename AS service,
-        a.date AS appointment_date
+        a.date AS appointment_date,
         a.paidstatus as status
       FROM 
         appointment_slots a
