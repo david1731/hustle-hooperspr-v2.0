@@ -3,9 +3,9 @@
 // Import necessary modules and functions
 import { config } from 'dotenv'; // To load environment variables
 import React, { useState, useEffect } from 'react'; // React hooks
-import { useParams, useSearchParams } from 'next/navigation'; // Hooks for accessing route parameters and query strings
+import { useParams, useSearchParams,useRouter } from 'next/navigation'; // Hooks for accessing route parameters and query strings
 import { TrainerSlots, Service, Level } from '@/app/lib/definitions'; // Importing types and definitions
-import { fetchSlots, fetchAvailableDates } from '@/app/lib/data'; // Importing functions for data fetching and updating
+import { fetchSlots, fetchAvailableDates, createAppointment,updateTimeSlotStatus } from '@/app/lib/data'; // Importing functions for data fetching and updating
 import { loadStripe } from '@stripe/stripe-js'; // Stripe integration for payment processing
 
 // Load environment variables
@@ -15,7 +15,8 @@ config();
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
 export default function TrainerDetailPage() {
-  // Accessing query parameters from the URL
+  const router = useRouter();
+    // Accessing query parameters from the URL
   const searchParams = useSearchParams();
   const { trainerId } = useParams();
   const useremail = searchParams.get('email');
@@ -173,6 +174,24 @@ export default function TrainerDetailPage() {
     }
   };
 
+  // Handle reserving without payment
+  const handleReserveWithoutPaying = async () => {
+    if (!selectedSlot || !selectedLevel || !selectedService || !selectedDate || !useremail) {
+      alert('Porfavor no deje nada vacio');
+      return;
+    }
+
+    try {
+      await createAppointment(selectedSlot, useremail, selectedLevel, Number(trainerId), selectedService, selectedDate, 'No Pagado');
+      alert('Su cita ha sido reservada.');
+      await updateTimeSlotStatus(selectedSlot,Number(trainerId),selectedDate,'Unavailable');
+      router.push(`/dashboard/citas`);
+    } catch (error) {
+      console.error('Error creating appointment without payment:', error);
+      alert('Failed to reserve appointment.');
+    }
+  };
+
   // Render the form and checkout button
   return (
     <div className="container mx-auto p-4">
@@ -243,17 +262,28 @@ export default function TrainerDetailPage() {
             ))}
           </select>
         </div>
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition duration-200"
-        >
-          {loading ? 'Processing...' : 'Checkout and Reserve'}
-        </button>
+        <div className="flex space-x-4">
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition duration-200"
+          >
+            {loading ? 'Processing...' : 'Pagar y Reservar'}
+          </button>
+          <button
+            type="button"
+            disabled={loading}
+            onClick={handleReserveWithoutPaying}
+            className="w-full bg-gray-600 text-white py-2 rounded hover:bg-gray-700 transition duration-200"
+          >
+            Pagar Luego y Reservar
+          </button>
+        </div>
       </form>
     </div>
   );
 }
+
 
 
 

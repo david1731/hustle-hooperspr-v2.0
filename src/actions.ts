@@ -2,7 +2,7 @@
 import { z } from 'zod';
 import { drizzle } from 'drizzle-orm/vercel-postgres';
 import { sql } from '@vercel/postgres';
-import { ClientsTable } from '../drizzle/schema'; // Adjust the import path
+import { clients } from '../drizzle/schema'; 
 
 const ClientFormSchema = z.object({
   fullname: z.string().min(1, 'Please enter your full name.'),
@@ -35,7 +35,7 @@ export async function createClient(prevState: ClientState, formData: Record<stri
   try {
     const db = drizzle(sql);
 
-    await db.insert(ClientsTable).values({
+    await db.insert(clients).values({
       fullname,
       email,
     }).execute();

@@ -1,19 +1,19 @@
 import { sql } from '@vercel/postgres';
 import { drizzle } from 'drizzle-orm/vercel-postgres';
 import { AppointmentQueryResult, Trainer, TrainerSlots, updateTimeSlot, InfoFromAppointments, TimeSlot} from './definitions';
-import { ClientsTable, AppointmentSlotsTable, TrainersTable, ServicesTable, TimeSlotsTable, LevelsTable } from '../../../drizzle/schema';
+import { clients, appointment_slots, trainers, services, time_slots, levels,trainer_time_slots } from '../../../drizzle/schema';
 
 import { config } from 'dotenv';
 config();
 const db = drizzle(sql, {
   schema: {
-    clients: ClientsTable,
-    trainers: TrainersTable,
-    services: ServicesTable,
-    time_slots: TimeSlotsTable,
-    levels: LevelsTable,
-    trainer_time_slots: TimeSlotsTable,
-    appointment_slots: AppointmentSlotsTable,
+    clients: clients,
+    trainers: trainers,
+    services: services,
+    time_slots: time_slots,
+    levels: levels,
+    trainer_time_slots: trainer_time_slots,
+    appointment_slots: appointment_slots,
   }
 });
 
@@ -29,6 +29,7 @@ export async function getUserAppointmentsByEmail(email: string){
         l.level AS level,
         s.servicename AS service,
         a.date AS appointment_date
+        a.paidstatus as status
       FROM 
         appointment_slots a
       JOIN 
@@ -55,6 +56,7 @@ export async function getUserAppointmentsByEmail(email: string){
         level: row.level ?? 'Unknown',
         service: row.service ?? 'Unknown',
         appointment_date: row.appointment_date ?? 'Unknown',
+        status: row.status ?? 'Unknown'
       
     }));
     return appointments;
@@ -72,22 +74,15 @@ export async function createAppointment(
   level_id: number,
   trainer_id: number, 
   service_id: number, 
-  app_date: string){
+  app_date: string,
+  paidstatus: string){
     try {
-      console.log("Creating appointment with:", {
-        slot_id,
-        email,
-        level_id,
-        trainer_id,
-        service_id,
-        app_date
-      });
       const result = await sql`
       WITH client AS (
         SELECT id FROM clients WHERE email = ${email}
       )
-      INSERT INTO appointment_slots (slot_id, client_id, level_id, trainer_id, service_id, date)
-      SELECT ${slot_id}, id, ${level_id}, ${trainer_id}, ${service_id}, ${app_date}
+      INSERT INTO appointment_slots (slot_id, client_id, level_id, trainer_id, service_id, date, paidstatus)
+      SELECT ${slot_id}, id, ${level_id}, ${trainer_id}, ${service_id}, ${app_date}, ${paidstatus}
       FROM client
       RETURNING *;
     `;
@@ -358,7 +353,8 @@ export async function trainerAppointments(trainer_id: number){
     ts.endtime AS endtime,
     l.level AS level,
     s.servicename AS service,
-    a.date AS appointment_date
+    a.date AS appointment_date,
+    a.paidstatus as status
     FROM
         appointment_slots AS a
     INNER JOIN

@@ -4,7 +4,7 @@ import { JWT } from "next-auth/jwt";
 import { Session } from "next-auth";
 import { drizzle } from 'drizzle-orm/vercel-postgres';
 import { sql } from '@vercel/postgres';
-import { ClientsTable } from '../../../../../drizzle/schema'; // Adjust the import path to your schema file
+import { clients } from '../../../../../drizzle/schema'; // Adjust the import path to your schema file
 import { eq } from 'drizzle-orm';
 
 export const authOptions: NextAuthOptions = {
@@ -31,14 +31,14 @@ export const authOptions: NextAuthOptions = {
         const db = drizzle(sql);
         const existingUsers = await db
           .select()
-          .from(ClientsTable)
-          .where(eq(ClientsTable.email, user.email))
+          .from(clients)
+          .where(eq(clients.email, user.email))
           .execute();
 
         if (existingUsers.length === 0) {
           // If the user does not exist, insert their information
           await db
-            .insert(ClientsTable)
+            .insert(clients)
             .values({
               fullname: user.name,
               email: user.email,
