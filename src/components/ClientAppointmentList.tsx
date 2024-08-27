@@ -28,9 +28,9 @@ const ClientAppointmentsList: React.FC<AppointmentsListProps> = ({ appointments 
 
   return (
     <div className="mt-5">
-      <h1 className="mb-4 text-4xl antialiased">Your Appointments</h1>
+      <h1 className="mb-4 text-4xl antialiased">Tus Citas</h1>
       {appointments.length === 0 ? (
-        <p>No appointments found.</p>
+        <p>No tienes citas pendientes.</p>
       ) : (
         <Swiper
           modules={[Navigation, Pagination]}
