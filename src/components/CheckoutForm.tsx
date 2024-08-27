@@ -10,6 +10,7 @@ export default function CheckoutForm() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
+  //stripe api call
   const handleCheckout = async () => {
     setLoading(true);
 

@@ -8,6 +8,7 @@ export default async function GetSession({
 }: Readonly<{
   children: (user: User) => ReactNode;
 }>) {
+  //gets the user's info from google sigin
   const session = await getServerSession(authOptions);
 
   if (!session){

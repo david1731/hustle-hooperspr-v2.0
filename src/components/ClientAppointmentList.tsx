@@ -12,16 +12,16 @@ import { AppointmentQueryResult } from '@/app/lib/definitions';
 import { fetchDeleteUpdateApp } from '@/app/lib/data';
 
 interface AppointmentsListProps {
-  appointments: AppointmentQueryResult[];
+  appointments: AppointmentQueryResult[]; //props passed from parent componentt
 }
 
 const ClientAppointmentsList: React.FC<AppointmentsListProps> = ({ appointments }) => {
-  const router = useRouter();
-  const handleCancel = async (app_id: number) => {
+  const router = useRouter(); //router component for redirection
+  const handleCancel = async (app_id: number) => { //action to cancel appointments
     try {
-      await fetchDeleteUpdateApp(app_id);
-      window.location.reload();
-    } catch (error) {
+      await fetchDeleteUpdateApp(app_id); //calls function from data.ts that deletes an appointment from the database given the app_id
+      window.location.reload(); //reload the current page to see the changes in the user's appointments instantly
+    } catch (error) { //handle errors
       console.error("Error deleting appointment:", error);
     }
   };
@@ -32,6 +32,8 @@ const ClientAppointmentsList: React.FC<AppointmentsListProps> = ({ appointments 
       {appointments.length === 0 ? (
         <p>No tienes citas pendientes.</p>
       ) : (
+        // Swiper component 
+        //Displays the user's appointments as a caroussel in smaller screens
         <Swiper
           modules={[Navigation, Pagination]}
           spaceBetween={20}
@@ -53,6 +55,7 @@ const ClientAppointmentsList: React.FC<AppointmentsListProps> = ({ appointments 
           }}
           className="flex flex-wrap justify-start"
         >
+          {/* Display appointments from appointment array that contains the result from the query */}
           {appointments.map(appointment => (
             <SwiperSlide key={appointment.app_id} className="p-2">
               <div className="card bg-white shadow-md hover:shadow-lg transition-shadow duration-300">
