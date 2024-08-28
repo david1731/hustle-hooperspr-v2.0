@@ -16,7 +16,7 @@ export default function SideNav() {
   const pathname = usePathname();
   const handleSignOut = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
-    signOut({ callbackUrl: '/' });
+    signOut({ callbackUrl: '/' }); //redirects user to homepage when signed out
   };
   return (
     <div className="flex h-full flex-col px-3 py-4 md:px-2">

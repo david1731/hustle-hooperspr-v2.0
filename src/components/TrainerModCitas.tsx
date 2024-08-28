@@ -14,11 +14,11 @@ const TrainerWorkForm: React.FC<{ trainer_id: number }> = ({ trainer_id }) => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchSlots = async () => {
+    const fetchSlots = async () => { //fetch generic timeslots
       try {
-        const slots = await fetchTimeSlots();
-        setTimeSlots(slots);
-      } catch (error) {
+        const slots = await fetchTimeSlots(); //stores query result
+        setTimeSlots(slots); //stores slots as state
+      } catch (error) { //error handling
         setError('Failed to load time slots.');
       }
     };
@@ -27,24 +27,24 @@ const TrainerWorkForm: React.FC<{ trainer_id: number }> = ({ trainer_id }) => {
   }, []);
 
   const handleSlotChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedId = Number(e.target.value);
-    console.log("Selected Slot ID:", selectedId); // Log the slot_id to the console
-    setSelectedSlotId(selectedId);
+    const selectedId = Number(e.target.value); 
+    // console.log("Selected Slot ID:", selectedId);  Log the slot_id to the console
+    setSelectedSlotId(selectedId); //store the selected slot by the user as state for db insertion
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (selectedSlotId && date) {
       try {
-        await insertTrainerTimeSlot(trainer_id, selectedSlotId, 'Available', date);
-        alert('Work slot added successfully!');
-        setSelectedSlotId(null);
-      } catch (error) {
-        console.error('Error inserting work slot:', error);
+        await insertTrainerTimeSlot(trainer_id, selectedSlotId, 'Available', date); //insert into db new trainer time slot
+        alert('Su horario ha sido modificado exitosamente!');
+        setSelectedSlotId(null); //reset the slot id
+      } catch (error) { //error handling
+        console.error('Error modificando su horario:', error);
         setError('Failed to add work slot.');
       }
     } else {
-      setError('Please select a time slot and enter a date.');
+      setError('Seleccione una hora y fecha.');
     }
   };
 

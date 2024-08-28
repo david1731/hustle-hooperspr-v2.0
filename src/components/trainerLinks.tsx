@@ -10,6 +10,7 @@ export default function NavLinks() {
   const params = useParams();
   const { trainer_id } = params; // Get the trainer_id from the URL
 
+  //trainer dashboard sections
   const links = [
     { 
       name: 'Home', 

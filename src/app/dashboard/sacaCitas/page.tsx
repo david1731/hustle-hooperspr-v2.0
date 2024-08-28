@@ -47,7 +47,7 @@ export default function SacaCitasPage() {
   }, []);
 
   const handleTrainerClick = (trainerId: number) => {
-    router.push(`/dashboard/sacaCitas/${trainerId}?email=${user?.email}`);
+    router.push(`/dashboard/sacaCitas/${trainerId}?email=${user?.email}`); //redirect to selected trainer's available days and hours
   };
 
   return (
