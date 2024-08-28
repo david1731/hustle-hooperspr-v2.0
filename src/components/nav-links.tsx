@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
 import { HomeIcon, CalendarIcon, PencilIcon } from '@heroicons/react/24/outline';
 
+//links for the dashboard page subsections
 const links = [
   { 
     name: 'Home', 
@@ -26,7 +27,7 @@ export default function NavLinks() {
   const pathname = usePathname();
   return (
     <div className="flex flex-col space-y-2">
-      {links.map((link) => (
+      {links.map((link) => ( //displays every link, its icon, and name 
         <Link
           key={link.name}
           href={link.href}

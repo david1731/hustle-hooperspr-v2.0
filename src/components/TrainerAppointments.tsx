@@ -15,13 +15,13 @@ const TrainerAppointmentsList: React.FC<AppointmentsListProps> = ({ appointments
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchSlots = async () => {
+    const fetchSlots = async () => { //fetches a trainer's available slots 
       try {
-        console.log("Fetching slots for trainerId:", trainerId);
-        const slots = await fetchAvailableTrainerSlots(trainerId);
-        console.log("slots:", slots);
-        setAvailableSlots(slots);
-      } catch (error) {
+        //console.log("Fetching slots for trainerId:", trainerId);
+        const slots = await fetchAvailableTrainerSlots(trainerId); //slots result stored here
+        //console.log("slots:", slots);
+        setAvailableSlots(slots); //slots result stored as state
+      } catch (error) { //error handling
         console.error('Error fetching available slots:', error);
         setError('Failed to load available slots.');
       }
@@ -30,22 +30,23 @@ const TrainerAppointmentsList: React.FC<AppointmentsListProps> = ({ appointments
     fetchSlots();
   }, [trainerId]);
 
-  const handleDeleteSlot = async (slot_id: number, date: string) => {
+  const handleDeleteSlot = async (slot_id: number, date: string) => { //execute deleting a time slot
     try {
-      await deleteAvailableTrainerSlot(slot_id, date, trainerId);
+      await deleteAvailableTrainerSlot(slot_id, date, trainerId); //deletes the slot from the database
       // Update the available slots list after deletion
-      setAvailableSlots(prevSlots => prevSlots.filter(slot => slot.slot_id !== slot_id || slot.date !== date));
-    } catch (error) {
+      setAvailableSlots(prevSlots => prevSlots.filter(slot => slot.slot_id !== slot_id || slot.date !== date)); // Create a new array with all slots that do not match the given slot_id and date
+       // Keep the slot if the slot_id is different or the date is different
+    } catch (error) { //error handling
       console.error('Error deleting slot:', error);
       setError('Failed to delete slot.');
     }
   };
 
-  const handleDeleteApp = async (app_id: number) => {
+  const handleDeleteApp = async (app_id: number) => { //deletes appointment from database
     try{
-      await trainerDeleteApp(app_id);
-      window.location.reload();
-    } catch(error){
+      await trainerDeleteApp(app_id); //imported function from data.ts
+      window.location.reload(); //reload the page to so that changes are reflected
+    } catch(error){ //error handling
       console.error("Could not delete appointment in TrainerAppointmentList.tsx");
       setError("Failed to delete shot");
     }

@@ -1,4 +1,5 @@
 export default function Main() {
+  //main content portion of homepage
   return (
     <section className="text-gray-600 body-font">
       <div className="max-w-full pt-52 pb-24 mx-auto px-4"> {/* Adjusted max width and added padding */}

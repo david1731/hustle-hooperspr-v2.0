@@ -13,6 +13,7 @@ export default function SuccessComponent() {
     const createAppointmentAndRedirect = async () => {
       if (hasCreatedAppointment.current) return; // Prevent duplicate execution
 
+      //values needed for appointment db insertion
       const sessionId = searchParams.get('session_id');
       const slotId = parseInt(searchParams.get('slot_id') || '0', 10);
       const levelId = parseInt(searchParams.get('level_id') || '0', 10);
@@ -21,24 +22,24 @@ export default function SuccessComponent() {
       const email = searchParams.get('email') || '';
       const trainerId = parseInt(searchParams.get('trainer_id') || '0', 10);
 
-      console.log({
-        sessionId,
-        slotId,
-        levelId,
-        serviceId,
-        date,
-        email,
-        trainerId,
-      });
+      // console.log({
+      //   sessionId,
+      //   slotId,
+      //   levelId,
+      //   serviceId,
+      //   date,
+      //   email,
+      //   trainerId,
+      // });
 
-      if (sessionId && slotId && levelId && serviceId && date && email && trainerId) {
+      if (sessionId && slotId && levelId && serviceId && date && email && trainerId) { //if all values are not null 
         try {
           // Mark as triggered
           hasCreatedAppointment.current = true;
 
           // Create the appointment
-          await createAppointment(slotId, email, levelId, trainerId, serviceId, date, 'Pagado');
-          await updateTimeSlotStatus(slotId, trainerId, date, 'Unavailable');
+          await createAppointment(slotId, email, levelId, trainerId, serviceId, date, 'Pagado'); //create appointment and mark as payed for trainer reference
+          await updateTimeSlotStatus(slotId, trainerId, date, 'Unavailable'); //update the current trainer_time_slot as unavailable to avoid duplicate sessions
 
           // Redirect to the dashboard
           router.push(`/dashboard`);

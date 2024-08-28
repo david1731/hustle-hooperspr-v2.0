@@ -17,9 +17,10 @@ const db = drizzle(sql, {
   }
 });
 
-export async function getUserAppointmentsByEmail(email: string){
+export async function getUserAppointmentsByEmail(email: string){ //fetches the user's appointments given their email, fetched from their session when signed in with google
   try {
-    const data = await sql<AppointmentQueryResult>`
+    //type defined to store the query results
+    const data = await sql<AppointmentQueryResult>` 
       SELECT 
         a.app_id,
         c.fullname AS client_name,
@@ -46,7 +47,8 @@ export async function getUserAppointmentsByEmail(email: string){
         c.email = ${email};
     `;
     
-    console.log('Query Result:', data); // Log the query result
+    //console.log('Query Result:', data);  Log the query result
+    //mapping the results to their row value and handles null values
     const appointments = data.rows.map((row) => ({
         app_id: row.app_id ?? 0,
         client_name: row.client_name ?? 'Unknown',
@@ -60,7 +62,7 @@ export async function getUserAppointmentsByEmail(email: string){
       
     }));
     return appointments;
-  } catch (error) {
+  } catch (error) { //error handling
     console.error('Database Error:', error);
     throw new Error('Failed to fetch user appointments.');
   }
@@ -77,6 +79,7 @@ export async function createAppointment(
   app_date: string,
   paidstatus: string){
     try {
+      //create an appointment using the clients email from the session
       const result = await sql`
       WITH client AS (
         SELECT id FROM clients WHERE email = ${email}
@@ -87,29 +90,29 @@ export async function createAppointment(
       RETURNING *;
     `;
   
-      console.log('Insert Result:', result);
+      //console.log('Insert Result:', result);
       return result;
-    } catch (error) {
+    } catch (error) { //error handling
       console.error('Error inserting appointment:', error);
       throw new Error('Failed to create appointment.');
     }
   }
     
 
-export async function fetchTrainers(){
+export async function fetchTrainers(){ //fetches all trainers in database
   try{
     const data = await sql<Trainer>`
     SELECT trainer_id, fullname, email FROM trainers;
     `;
 
-  const result = data.rows.map((row) => ({
+  const result = data.rows.map((row) => ({ //maps the values with row names for easier use
     trainer_id: row.trainer_id ?? 0,
     fullname: row.fullname ?? 'Unknown',
     email: row.email ?? 'Unknown',
     }));
     
     return result;
-  } catch (error) {
+  } catch (error) { //error handling
     if (error instanceof Error) {
       console.error('Detailed error information:', {
         message: error.message,
@@ -132,7 +135,7 @@ export async function updateTimeSlotStatus(
   date: string,
   new_status: string
 ){
-  try {
+  try { //given a slot id, trainer-id, date and a new status,update available time slot as unavailable
     const result = await sql<updateTimeSlot>`
       UPDATE trainer_time_slots
       SET status = ${new_status}
@@ -141,8 +144,8 @@ export async function updateTimeSlotStatus(
         AND date = ${date};
     `;
 
-    console.log('Update Result:', result);
-  } catch (error) {
+    // console.log('Update Result:', result);
+  } catch (error) { //error handling
     console.error('Error updating time slot status:', error);
     throw new Error('Failed to update time slot status.');
   }
@@ -151,7 +154,10 @@ export async function updateTimeSlotStatus(
 
 export async function fetchSlots(trainerId: number, date: string){
   try {
-    console.log(`Fetching slots for trainerId: ${trainerId}, date: ${date}, status: 'Available'`);
+    // console.log(`Fetching slots for trainerId: ${trainerId}, date: ${date}, status: 'Available'`);
+    //fetch a trainer's time slots on a given date
+    //selects distinct time slots in case a trainer inserts the same slot id two times on the same date
+    //only selects available dates to avoid clients from making an appointment on a prohibited date
     const result = await sql<TrainerSlots>`
     SELECT DISTINCT ON (tts.slot_id) 
       tts.slot_id, 
@@ -169,30 +175,30 @@ export async function fetchSlots(trainerId: number, date: string){
       tts.slot_id ASC, 
       ts.start_time ASC;
     `;
-    console.log('fetchSlotByTrainerID result:', result);
+    //console.log('fetchSlotByTrainerID result:', result);
 
     if (result.rows.length === 0) {
       throw new Error('No slots found');
     }
 
-    return result.rows.map((row) => ({
+    return result.rows.map((row) => ({ //mapping results
       slot_id: row.slot_id ?? 0,
       starttime: row.starttime ?? 'Unknown',
       endtime: row.endtime ?? 'Unknown',
       date: row.date ?? 'Unknown',
       status: row.status ?? 'Unknown',
     }));
-  } catch (error) {
+  } catch (error) { //error handling
     console.error('SQL query error:', error);
     throw new Error('Failed to execute SQL query');
   }
 };
 
 export async function fetchAvailableDates(trainerId:number){
-  try {
+  try { //fetches the days a trainer has available hours
     const result = await sql`SELECT DISTINCT date FROM trainer_time_slots WHERE trainer_id = ${trainerId} AND status = 'Available'`;
     return result.rows.map((row) => row.date);
-  } catch (error) {
+  } catch (error) {//error handling
     console.error('Error fetching available dates:', error);
     return [];
   }
@@ -200,7 +206,8 @@ export async function fetchAvailableDates(trainerId:number){
 
 export async function fetchDeleteUpdateApp(app_id: number){
   try{
-    const info = await sql<InfoFromAppointments>`
+    //selects an appointments info for deletion
+    const info = await sql<InfoFromAppointments>` 
       SELECT trainer_id, slot_id, date 
       FROM appointment_slots 
       WHERE app_id = ${app_id};
@@ -208,10 +215,11 @@ export async function fetchDeleteUpdateApp(app_id: number){
     if(info.rows.length === 0){
       throw new Error('No information found for the given appointment ID.');
     }
-    const { trainer_id, slot_id, date} = info.rows[0];
+    const { trainer_id, slot_id, date} = info.rows[0]; //saved info from query
 
+    //delete the appointment
     const cancel = await sql`
-      DELETE from appointment_slots WHERE app_id = ${app_id};    
+      DELETE from appointment_slots WHERE app_id = ${app_id};     
     `;
 
     //update the status of the canceled timeslot back to Available
@@ -221,12 +229,12 @@ export async function fetchDeleteUpdateApp(app_id: number){
       AND slot_id = ${slot_id}
       AND date = ${date};
     `
-  } catch(error){
+  } catch(error){ //error handling
     console.error("Error updating info")
   }
 }
 
-export async function fetchInfoFromAppID(app_id: number){
+export async function fetchInfoFromAppID(app_id: number){ //fetches an appointment's additional info, given its primary key
   try{
     const result = await sql`
     SELECT 
@@ -254,7 +262,7 @@ export async function fetchInfoFromAppID(app_id: number){
     a.app_id = ${app_id};
     `;
     return result.rows[0];
-  }catch(error){
+  }catch(error){ //error handling
     throw new Error("Errof fetching information");
   }
 }
@@ -274,7 +282,7 @@ export async function editAppointment(
   try {
     console.log("edit appointment");
     
-    // If the user doesnt make any changes but the clicks on the edit button, run the function with the og values
+    // If the user doesnt make any changes but the clicks on the edit button, run the function with the original values
     if(!new_date){
       new_date = old_date;
     }
@@ -325,16 +333,17 @@ export async function editAppointment(
 
 // Trainer Functions
 
-export async function validateTrainer(email: string, fullname: string){
+export async function validateTrainer(email: string, fullname: string){ //trainer authentication
+  //ensure only trainers can sigin into trainer Dashboard
   try{
     const result = await sql`
       SELECT trainer_id, fullname, email
       FROM trainers
       WHERE fullname = ${fullname} and email = ${email}
     `
-    console.log("Query Result:", result); // Log the query result
+    //console.log("Query Result:", result);  Log the query result
     return result.rows[0];
-  } catch(error){
+  } catch(error){ //error handling
     console.error("No encontramos su informacion", error);
     throw new Error("Error encontrando su informacion.");
   }
@@ -343,7 +352,7 @@ export async function validateTrainer(email: string, fullname: string){
 export async function trainerAppointments(trainer_id: number){
   // console.log("Received trainer_id:", trainer_id);
 
-  try{
+  try{ //fetches all the information of a trainer's appointment to be displayed
     const trainerApps = await sql<AppointmentQueryResult>`
     SELECT
     a.app_id AS app_id,
@@ -373,7 +382,7 @@ export async function trainerAppointments(trainer_id: number){
     
     return trainerApps.rows;
 
-  } catch(error){
+  } catch(error){ //error handling
     console.error("No encontramos citas", error);
     throw new Error("Error encontrando sus citas.");
   }
@@ -381,7 +390,7 @@ export async function trainerAppointments(trainer_id: number){
 
 
 export async function insertTrainerTimeSlot(trainer_id:number,slot_id:number,status:string,date:string){
-  try{
+  try{ //inserts a new trainer_time_slot on a given date and slot provided by the trainer
     const result = await sql`
     INSERT INTO trainer_time_slots(trainer_id,slot_id,status,date)
     VALUES (${trainer_id},${slot_id},${status},${date});
@@ -393,7 +402,7 @@ export async function insertTrainerTimeSlot(trainer_id:number,slot_id:number,sta
 
 }
 
-export async function fetchTimeSlots(){
+export async function fetchTimeSlots(){ //fetches the generic time slots for trainers
   try{
     const slots = await sql<TimeSlot>`
     SELECT slot_id, start_time AS starttime, endtime
@@ -405,7 +414,7 @@ export async function fetchTimeSlots(){
       starttime: row.starttime ?? 'Unknown',
       endtime: row.endtime ?? 'Unknown',
     }));
-  }catch(error){
+  }catch(error){ //error handling
     console.error("No encontramos los horarios");
     throw new Error("Error encontrando las horas");
   }
@@ -413,7 +422,8 @@ export async function fetchTimeSlots(){
 
 export async function fetchAvailableTrainerSlots(trainer_id:number){
   try{
-    console.log("Trainer id from fetch fnuction", trainer_id);
+   // console.log("Trainer id from fetch fnuction", trainer_id);
+   //fetches trainer's available slots so they can keep track of unreserved hours
     const trainerSlots = await sql<TrainerSlots>`
       SELECT 
         tts.slot_id, 
@@ -432,7 +442,7 @@ export async function fetchAvailableTrainerSlots(trainer_id:number){
           tts.date ASC, 
           ts.start_time ASC;
     `;
-    console.log("trainerSlots: ",trainerSlots);
+    //console.log("trainerSlots: ",trainerSlots);
     return trainerSlots.rows.map((row) =>({
       slot_id: row.slot_id,
       starttime: row.starttime ?? 'Unknown',
@@ -447,14 +457,14 @@ export async function fetchAvailableTrainerSlots(trainer_id:number){
 };
 
 export async function deleteAvailableTrainerSlot(slot_id:number, date: string, trainer_id:number){
-  try{
-    console.log("Attempting to delete slot with:", { slot_id, date, trainer_id });
+  try{ //deletes trainers time slots on trainer button click
+    //console.log("Attempting to delete slot with:", { slot_id, date, trainer_id });
     const cancel = await sql`
       DELETE FROM trainer_time_slots 
       WHERE trainer_id = ${trainer_id} and slot_id = ${slot_id} and date = ${date};
       `;
 
-  } catch(error){
+  } catch(error){ //error handling
     console.error("Could not delete available time slot");
     throw new Error("Error deleting available slot");
 
@@ -462,7 +472,7 @@ export async function deleteAvailableTrainerSlot(slot_id:number, date: string, t
 };
 
 export async function trainerDeleteApp(app_id:number){
-  try{
+  try{ //deletes trainers appointment
     const cancel = await sql`
     DELETE FROM appointment_slots
     WHERE app_id = ${app_id};

@@ -10,18 +10,18 @@ interface AppointmentsListProps {
 }
 
 const AppointmentsList: React.FC<AppointmentsListProps> = ({ trainer_id }) => {
-  const [appointments, setAppointments] = useState<AppointmentQueryResult[]>([]);
+  const [appointments, setAppointments] = useState<AppointmentQueryResult[]>([]); //state to manage result from query
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
-        console.log("Fetching appointments for trainer_id:", trainer_id);
-        const result = await trainerAppointments(trainer_id);
-        console.log("Fetched appointments:", result);
-        setAppointments(result);
-      } catch (error) {
+        // console.log("Fetching appointments for trainer_id:", trainer_id);
+        const result = await trainerAppointments(trainer_id); //fetch a trainer's appointments
+        //console.log("Fetched appointments:", result);
+        setAppointments(result); //store the trainer's appointments as state
+      } catch (error) { //error handling
         console.error("Error fetching appointments:", error);
         setError('Failed to load appointments.');
       } finally {
@@ -40,7 +40,7 @@ const AppointmentsList: React.FC<AppointmentsListProps> = ({ trainer_id }) => {
     return <p>{error}</p>;
   }
 
-  return <TrainerAppointmentsList appointments={appointments} trainerId={trainer_id} />;
+  return <TrainerAppointmentsList appointments={appointments} trainerId={trainer_id} />; //pass appointments and trainer id as props for display component
 };
 
 export default AppointmentsList;
