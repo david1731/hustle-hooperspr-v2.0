@@ -9,6 +9,11 @@ import { fetchSlots, fetchAvailableDates, createAppointment,updateTimeSlotStatus
 import { loadStripe } from '@stripe/stripe-js'; // Stripe integration for payment processing
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { cn } from '@/lib/utils';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
 import { 
   CalendarIcon, 
   ClockIcon, 
@@ -37,7 +42,7 @@ export default function TrainerDetailPage() {
   const [levels, setLevels] = useState<Level[]>([]);
   const [services, setServices] = useState<Service[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [selectedDate, setSelectedDate] = useState<string>('');
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [selectedSlot, setSelectedSlot] = useState<number | null>(null);
   const [selectedLevel, setSelectedLevel] = useState<number | null>(null);
   const [selectedService, setSelectedService] = useState<number | null>(null);
@@ -82,11 +87,48 @@ export default function TrainerDetailPage() {
     fetchServices();
   }, []);
 
-  // Handle change event for the date dropdown
-  const handleDateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedDate = e.target.value;
-    setSelectedDate(selectedDate);
-    console.log('Selected date:', selectedDate);
+  // Fetch available dates for the selected trainer
+  useEffect(() => {
+    const fetchDates = async () => {
+      try {
+        if (!trainerId) return;
+        const parsedTrainerId = Array.isArray(trainerId) ? trainerId[0] : trainerId;
+        const datesData = await fetchAvailableDates(parseInt(parsedTrainerId));
+        setDates(datesData || []);
+      } catch (error) {
+        if (error instanceof Error) {
+          console.error('Error fetching available dates:', error);
+          setError(error.message);
+        }
+      }
+    };
+
+    fetchDates();
+  }, [trainerId]);
+
+  const formatDateForDB = (date: Date): string => {
+    const monthNames = [
+      'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+    ];
+    
+    const month = monthNames[date.getMonth()];
+    const day = date.getDate();
+    const year = date.getFullYear();
+    
+    return `${month} ${day}, ${year}`;
+  };
+
+  const isDateAvailable = (date: Date): boolean => {
+    const formattedDate = formatDateForDB(date);
+    return dates.includes(formattedDate);
+  };
+
+  const handleDateSelect = (date: Date | undefined) => {
+    setSelectedDate(date);
+    setSlots([]); // Clear slots when date changes
+    setSelectedSlot(null); // Clear selected slot
+    console.log('Selected date:', date ? formatDateForDB(date) : 'None');
   };
 
   // Fetch available time slots when a date is selected
@@ -94,7 +136,8 @@ export default function TrainerDetailPage() {
     try {
       if (!selectedDate || !trainerId) return;
       const parsedTrainerId = Array.isArray(trainerId) ? trainerId[0] : trainerId;
-      const slotsData = await fetchSlots(parseInt(parsedTrainerId), selectedDate);
+      const formattedDate = formatDateForDB(selectedDate);
+      const slotsData = await fetchSlots(parseInt(parsedTrainerId), formattedDate);
       setSlots(slotsData);
     } catch (error) {
       if (error instanceof Error) {
@@ -103,21 +146,6 @@ export default function TrainerDetailPage() {
       }
     }
   };
-
-  // Fetch available dates for the selected trainer
-  const handleDateDropdown = async () => {
-    try {
-      if (!trainerId) return;
-      const parsedTrainerId = Array.isArray(trainerId) ? trainerId[0] : trainerId;
-      const datesData = await fetchAvailableDates(parseInt(parsedTrainerId));
-      setDates(datesData || []);
-    } catch (error) {
-      if (error instanceof Error) {
-        console.error('Error fetching available time slots:', error);
-        setError(error.message);
-      }
-    }
-  }
 
   // Handle change events for time slots, levels, and services
   const handleSlotChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -150,6 +178,7 @@ export default function TrainerDetailPage() {
     setLoading(true);
   
     try {
+      const formattedDate = formatDateForDB(selectedDate);
       // Send a POST request to create a checkout session with Stripe
       const response = await fetch('/api/checkout_sessions', {
         method: 'POST',
@@ -162,7 +191,7 @@ export default function TrainerDetailPage() {
           slot_id: selectedSlot,
           level_id: selectedLevel,
           service_id: selectedService,
-          date: selectedDate,
+          date: formattedDate,
           email: useremail,
           trainer_id: Array.isArray(trainerId) ? trainerId[0] : trainerId,
         }),
@@ -193,9 +222,10 @@ export default function TrainerDetailPage() {
     }
 
     try {
-      await createAppointment(selectedSlot, useremail, selectedLevel, Number(trainerId), selectedService, selectedDate, 'No Pagado');
+      const formattedDate = formatDateForDB(selectedDate);
+      await createAppointment(selectedSlot, useremail, selectedLevel, Number(trainerId), selectedService, formattedDate, 'No Pagado');
       alert('Su cita ha sido reservada.');
-      await updateTimeSlotStatus(selectedSlot,Number(trainerId),selectedDate,'Unavailable');
+      await updateTimeSlotStatus(selectedSlot,Number(trainerId),formattedDate,'Unavailable');
       router.push(`/dashboard/citas`);
     } catch (error) {
       console.error('Error creating appointment without payment:', error);
@@ -231,8 +261,8 @@ export default function TrainerDetailPage() {
 
       <form onSubmit={handleCheckout} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Date Selection */}
-          <Card className="bg-gray-900/50 border-gray-800 hover:bg-gray-900/70 transition-all duration-300">
+          {/* Date Selection with Calendar */}
+          <Card className="bg-gray-900/50 border-gray-800 hover:bg-gray-900/70 transition-all duration-300 md:col-span-2">
             <CardHeader className="pb-4">
               <div className="flex items-center gap-3">
                 <div className="p-2 rounded-lg bg-gradient-to-r from-cyan-500/20 to-blue-500/20 border border-cyan-500/30">
@@ -242,20 +272,63 @@ export default function TrainerDetailPage() {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="relative">
-                <select
-                  id="dates"
-                  className="w-full p-4 bg-gray-800/50 border border-gray-700 rounded-lg text-white appearance-none cursor-pointer hover:border-cyan-500/50 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-transparent transition-all duration-300"
-                  onClick={handleDateDropdown}
-                  onChange={handleDateChange}
-                  value={selectedDate}
-                >
-                  <option value="" disabled>Seleccione una fecha</option>
-                  {dates.map((date) => (
-                    <option key={date} value={date} className="bg-gray-800">{date}</option>
-                  ))}
-                </select>
-                <ChevronDownIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+              <div className="space-y-4">
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "w-full justify-start text-left font-normal bg-gray-800/50 border-gray-700 text-white hover:bg-gray-800/70 hover:border-cyan-500/50",
+                        !selectedDate && "text-gray-400"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4 text-gray-400" />
+                      {selectedDate ? (
+                        format(selectedDate, "PPP", { locale: es })
+                      ) : (
+                        <span>Selecciona una fecha disponible</span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0 bg-gray-800 border-gray-700" align="center">
+                    <Calendar
+                      mode="single"
+                      selected={selectedDate}
+                      onSelect={handleDateSelect}
+                      disabled={(date) => {
+                        const today = new Date();
+                        today.setHours(0, 0, 0, 0);
+                        return date < today || !isDateAvailable(date);
+                      }}
+                      initialFocus
+                      className="bg-gray-800 text-white"
+                      modifiers={{
+                        available: (date) => isDateAvailable(date),
+                        unavailable: (date) => !isDateAvailable(date) && date >= new Date()
+                      }}
+                      modifiersStyles={{
+                        unavailable: {
+                          textDecoration: 'line-through',
+                          color: '#6b7280',
+                          opacity: 0.5
+                        },
+                        available: {
+                          backgroundColor: 'rgba(6, 182, 212, 0.1)',
+                          border: '1px solid rgba(6, 182, 212, 0.3)'
+                        }
+                      }}
+                    />
+                  </PopoverContent>
+                </Popover>
+                
+                {selectedDate && (
+                  <div className="p-3 bg-gray-800/30 rounded-lg border border-gray-700">
+                    <p className="text-gray-300 text-sm">
+                      <span className="text-gray-400">Fecha seleccionada:</span>{' '}
+                      <span className="text-white font-medium">{formatDateForDB(selectedDate)}</span>
+                    </p>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -278,8 +351,11 @@ export default function TrainerDetailPage() {
                   onClick={handleSlotDropdownClick}
                   onChange={handleSlotChange}
                   value={selectedSlot ?? ''}
+                  disabled={!selectedDate}
                 >
-                  <option value="" disabled>Seleccione una hora</option>
+                  <option value="" disabled>
+                    {selectedDate ? 'Seleccione una hora' : 'Primero seleccione una fecha'}
+                  </option>
                   {slots.map((slot) => (
                     <option key={slot.slot_id} value={slot.slot_id} className="bg-gray-800">
                       {slot.starttime} - {slot.endtime}
