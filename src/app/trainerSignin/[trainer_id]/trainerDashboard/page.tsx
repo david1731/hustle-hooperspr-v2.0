@@ -1,6 +1,7 @@
 'use client';
 import React, { useEffect } from "react";
 import { useRouter, useParams } from 'next/navigation';
+import { useTrainerDashboardData } from '@/lib/useTrainerDashboardData';
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { 
@@ -11,13 +12,18 @@ import {
   FireIcon,
   PlusIcon,
   BookOpenIcon,
-  StarIcon
+  StarIcon,
+  ExclamationTriangleIcon
 } from '@heroicons/react/24/outline';
 
 export default function TrainerDashboardPage() {
   const router = useRouter();
   const params = useParams();
   const { trainer_id } = params;
+  
+  // Convert trainer_id to number for the hook
+  const trainerIdNumber = trainer_id ? parseInt(trainer_id as string) : null;
+  const { data: dashboardData, loading, error } = useTrainerDashboardData(trainerIdNumber);
 
   useEffect(() => {
     if (!trainer_id) {
@@ -33,11 +39,57 @@ export default function TrainerDashboardPage() {
     );
   }
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-500 mx-auto mb-4"></div>
+          <p className="text-gray-400">Cargando tu dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <ExclamationTriangleIcon className="w-12 h-12 text-red-500 mx-auto mb-4" />
+          <p className="text-red-400 mb-2">Error al cargar los datos</p>
+          <p className="text-gray-400 text-sm">{error}</p>
+        </div>
+      </div>
+    );
+  }
+
+  const stats = dashboardData?.stats;
+  const recentActivity = dashboardData?.recentActivity || [];
+
   const quickStats = [
-    { label: 'Citas Hoy', value: '8', icon: CalendarIcon, color: 'from-cyan-500 to-blue-500' },
-    { label: 'Próxima Cita', value: '2:00 PM', icon: ClockIcon, color: 'from-magenta-500 to-purple-500' },
-    { label: 'Estudiantes Totales', value: '24', icon: UserGroupIcon, color: 'from-orange-500 to-red-500' },
-    { label: 'Horas Enseñadas', value: '156h', icon: ChartBarIcon, color: 'from-green-500 to-emerald-500' },
+    { 
+      label: 'Citas Hoy', 
+      value: stats?.appointmentsToday?.toString() || '0', 
+      icon: CalendarIcon, 
+      color: 'from-cyan-500 to-blue-500' 
+    },
+    { 
+      label: 'Próxima Cita', 
+      value: stats?.nextAppointmentTime || 'No programada', 
+      icon: ClockIcon, 
+      color: 'from-magenta-500 to-purple-500' 
+    },
+    { 
+      label: 'Estudiantes Totales', 
+      value: stats?.totalStudents?.toString() || '0', 
+      icon: UserGroupIcon, 
+      color: 'from-orange-500 to-red-500' 
+    },
+    { 
+      label: 'Horas Enseñadas', 
+      value: stats?.hoursTaught ? `${stats.hoursTaught}h` : '0h', 
+      icon: ChartBarIcon, 
+      color: 'from-green-500 to-emerald-500' 
+    },
   ];
 
   const quickActions = [
@@ -46,11 +98,32 @@ export default function TrainerDashboardPage() {
     { title: 'Estadísticas', description: 'Analiza tu rendimiento', href: '#', icon: ChartBarIcon },
   ];
 
-  const recentActivity = [
-    { activity: 'Cita completada con Juan Pérez', time: 'Hace 1 hora', type: 'completed' },
-    { activity: 'Nueva cita agendada para mañana', time: 'Hace 2 horas', type: 'scheduled' },
-    { activity: 'Horario actualizado para la semana', time: 'Ayer', type: 'update' },
-  ];
+  // Format recent activity with relative time
+  const formatRelativeTime = (dateString: string) => {
+    const appointmentDate = new Date(dateString);
+    const today = new Date();
+    
+    // Reset time to start of day for accurate comparison
+    const appointmentDay = new Date(appointmentDate);
+    appointmentDay.setHours(0, 0, 0, 0);
+    
+    const todayStart = new Date(today);
+    todayStart.setHours(0, 0, 0, 0);
+    
+    const diffTime = appointmentDay.getTime() - todayStart.getTime();
+    const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+    
+    // Future dates
+    if (diffDays === 0) return 'Hoy';
+    if (diffDays === 1) return 'Mañana';
+    if (diffDays > 1) return `En ${diffDays} días`;
+    
+    // Past dates
+    if (diffDays === -1) return 'Ayer';
+    if (diffDays < -1 && diffDays > -7) return `Hace ${Math.abs(diffDays)} días`;
+    if (diffDays <= -7 && diffDays > -30) return `Hace ${Math.ceil(Math.abs(diffDays) / 7)} semanas`;
+    return `Hace ${Math.ceil(Math.abs(diffDays) / 30)} meses`;
+  };
 
   return (
     <div className="min-h-screen space-y-8">
@@ -131,18 +204,25 @@ export default function TrainerDashboardPage() {
         <Card className="bg-gray-900/50 border-gray-800">
           <CardContent className="p-6">
             <div className="space-y-4">
-              {recentActivity.map((item, index) => (
-                <div key={index} className="flex items-center gap-4 p-4 rounded-lg bg-gray-800/50 hover:bg-gray-800/70 transition-all duration-300">
-                  <div className={`w-3 h-3 rounded-full ${
-                    item.type === 'completed' ? 'bg-green-500' :
-                    item.type === 'scheduled' ? 'bg-blue-500' : 'bg-purple-500'
-                  }`}></div>
-                  <div className="flex-1">
-                    <p className="text-white text-sm">{item.activity}</p>
-                    <p className="text-gray-400 text-xs">{item.time}</p>
+              {recentActivity.length > 0 ? (
+                recentActivity.map((item, index) => (
+                  <div key={index} className="flex items-center gap-4 p-4 rounded-lg bg-gray-800/50 hover:bg-gray-800/70 transition-all duration-300">
+                    <div className={`w-3 h-3 rounded-full ${
+                      item.type === 'completed' ? 'bg-green-500' : 
+                      item.type === 'upcoming' ? 'bg-blue-500' : 'bg-red-500'
+                    }`}></div>
+                    <div className="flex-1">
+                      <p className="text-white text-sm">{item.message}</p>
+                      <p className="text-gray-400 text-xs">{formatRelativeTime(item.date)}</p>
+                    </div>
                   </div>
+                ))
+              ) : (
+                <div className="text-center py-8">
+                  <p className="text-gray-400">No hay actividad reciente</p>
+                  <p className="text-gray-500 text-sm mt-2">Las citas aparecerán aquí una vez programadas</p>
                 </div>
-              ))}
+              )}
             </div>
           </CardContent>
         </Card>
