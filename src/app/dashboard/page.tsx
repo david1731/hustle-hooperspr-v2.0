@@ -140,7 +140,7 @@ export default function DashboardPage() {
       {/* Motivational Quote */}
       <div className="bg-gradient-to-r from-gray-900 to-gray-800 border border-gray-700 rounded-xl p-6 text-center">
         <blockquote className="text-lg text-gray-300 italic mb-2">
-          "El talento gana juegos, pero el trabajo en equipo y la inteligencia ganan campeonatos."
+          &ldquo;El talento gana juegos, pero el trabajo en equipo y la inteligencia ganan campeonatos.&rdquo;
         </blockquote>
         <cite className="text-cyan-400 text-sm">- Michael Jordan</cite>
       </div>

@@ -152,7 +152,7 @@ export default function TrainerDashboardPage() {
       <Card className="bg-gradient-to-r from-gray-900 to-gray-800 border-gray-700">
         <CardContent className="p-6 text-center">
           <blockquote className="text-lg text-gray-300 italic mb-2">
-            "Un coach toma un jugador y hace de él un atleta. Un gran coach toma un atleta y hace de él una persona."
+            &ldquo;Un coach toma un jugador y hace de él un atleta. Un gran coach toma un atleta y hace de él una persona.&rdquo;
           </blockquote>
           <cite className="text-cyan-400 text-sm">- Joe Ehrmann</cite>
         </CardContent>
