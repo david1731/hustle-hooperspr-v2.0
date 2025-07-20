@@ -7,6 +7,22 @@ import { useParams, useSearchParams,useRouter } from 'next/navigation'; // Hooks
 import { TrainerSlots, Service, Level } from '@/app/lib/definitions'; // Importing types and definitions
 import { fetchSlots, fetchAvailableDates, createAppointment,updateTimeSlotStatus } from '@/app/lib/data'; // Importing functions for data fetching and updating
 import { loadStripe } from '@stripe/stripe-js'; // Stripe integration for payment processing
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { cn } from '@/lib/utils';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
+import { 
+  CalendarIcon, 
+  ClockIcon, 
+  AcademicCapIcon, 
+  CreditCardIcon,
+  BookmarkIcon,
+  ChevronDownIcon,
+  ExclamationTriangleIcon
+} from '@heroicons/react/24/outline';
 
 // Load environment variables
 config();
@@ -26,7 +42,7 @@ export default function TrainerDetailPage() {
   const [levels, setLevels] = useState<Level[]>([]);
   const [services, setServices] = useState<Service[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [selectedDate, setSelectedDate] = useState<string>('');
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [selectedSlot, setSelectedSlot] = useState<number | null>(null);
   const [selectedLevel, setSelectedLevel] = useState<number | null>(null);
   const [selectedService, setSelectedService] = useState<number | null>(null);
@@ -71,11 +87,48 @@ export default function TrainerDetailPage() {
     fetchServices();
   }, []);
 
-  // Handle change event for the date dropdown
-  const handleDateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedDate = e.target.value;
-    setSelectedDate(selectedDate);
-    console.log('Selected date:', selectedDate);
+  // Fetch available dates for the selected trainer
+  useEffect(() => {
+    const fetchDates = async () => {
+      try {
+        if (!trainerId) return;
+        const parsedTrainerId = Array.isArray(trainerId) ? trainerId[0] : trainerId;
+        const datesData = await fetchAvailableDates(parseInt(parsedTrainerId));
+        setDates(datesData || []);
+      } catch (error) {
+        if (error instanceof Error) {
+          console.error('Error fetching available dates:', error);
+          setError(error.message);
+        }
+      }
+    };
+
+    fetchDates();
+  }, [trainerId]);
+
+  const formatDateForDB = (date: Date): string => {
+    const monthNames = [
+      'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+    ];
+    
+    const month = monthNames[date.getMonth()];
+    const day = date.getDate();
+    const year = date.getFullYear();
+    
+    return `${month} ${day}, ${year}`;
+  };
+
+  const isDateAvailable = (date: Date): boolean => {
+    const formattedDate = formatDateForDB(date);
+    return dates.includes(formattedDate);
+  };
+
+  const handleDateSelect = (date: Date | undefined) => {
+    setSelectedDate(date);
+    setSlots([]); // Clear slots when date changes
+    setSelectedSlot(null); // Clear selected slot
+    console.log('Selected date:', date ? formatDateForDB(date) : 'None');
   };
 
   // Fetch available time slots when a date is selected
@@ -83,7 +136,8 @@ export default function TrainerDetailPage() {
     try {
       if (!selectedDate || !trainerId) return;
       const parsedTrainerId = Array.isArray(trainerId) ? trainerId[0] : trainerId;
-      const slotsData = await fetchSlots(parseInt(parsedTrainerId), selectedDate);
+      const formattedDate = formatDateForDB(selectedDate);
+      const slotsData = await fetchSlots(parseInt(parsedTrainerId), formattedDate);
       setSlots(slotsData);
     } catch (error) {
       if (error instanceof Error) {
@@ -92,21 +146,6 @@ export default function TrainerDetailPage() {
       }
     }
   };
-
-  // Fetch available dates for the selected trainer
-  const handleDateDropdown = async () => {
-    try {
-      if (!trainerId) return;
-      const parsedTrainerId = Array.isArray(trainerId) ? trainerId[0] : trainerId;
-      const datesData = await fetchAvailableDates(parseInt(parsedTrainerId));
-      setDates(datesData || []);
-    } catch (error) {
-      if (error instanceof Error) {
-        console.error('Error fetching available time slots:', error);
-        setError(error.message);
-      }
-    }
-  }
 
   // Handle change events for time slots, levels, and services
   const handleSlotChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -139,6 +178,7 @@ export default function TrainerDetailPage() {
     setLoading(true);
   
     try {
+      const formattedDate = formatDateForDB(selectedDate);
       // Send a POST request to create a checkout session with Stripe
       const response = await fetch('/api/checkout_sessions', {
         method: 'POST',
@@ -151,7 +191,7 @@ export default function TrainerDetailPage() {
           slot_id: selectedSlot,
           level_id: selectedLevel,
           service_id: selectedService,
-          date: selectedDate,
+          date: formattedDate,
           email: useremail,
           trainer_id: Array.isArray(trainerId) ? trainerId[0] : trainerId,
         }),
@@ -182,9 +222,10 @@ export default function TrainerDetailPage() {
     }
 
     try {
-      await createAppointment(selectedSlot, useremail, selectedLevel, Number(trainerId), selectedService, selectedDate, 'No Pagado');
+      const formattedDate = formatDateForDB(selectedDate);
+      await createAppointment(selectedSlot, useremail, selectedLevel, Number(trainerId), selectedService, formattedDate, 'No Pagado');
       alert('Su cita ha sido reservada.');
-      await updateTimeSlotStatus(selectedSlot,Number(trainerId),selectedDate,'Unavailable');
+      await updateTimeSlotStatus(selectedSlot,Number(trainerId),formattedDate,'Unavailable');
       router.push(`/dashboard/citas`);
     } catch (error) {
       console.error('Error creating appointment without payment:', error);
@@ -194,91 +235,242 @@ export default function TrainerDetailPage() {
 
   // Render the form and checkout button
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Fechas Disponibles</h1>
-      {error && <div className="bg-red-500 text-white p-2 rounded">{error}</div>}
-      <form onSubmit={handleCheckout} className="space-y-4">
-        <div className="mb-3">
-          <label htmlFor="dates" className="block text-sm font-medium text-gray-700">Fecha</label>
-          <select
-            id="dates"
-            className="block w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-            onClick={handleDateDropdown}
-            onChange={handleDateChange}
-            value={selectedDate}
-          >
-            <option value="" disabled>Seleccione una fecha</option>
-            {dates.map((date) => (
-              <option key={date} value={date}>{date}</option>
-            ))}
-          </select>
+    <div className="max-w-4xl mx-auto space-y-8 p-6">
+      {/* Header */}
+      <div className="flex items-center gap-4">
+        <div className="p-3 rounded-lg bg-gradient-to-r from-cyan-500/20 to-magenta-500/20 border border-cyan-500/30">
+          <CalendarIcon className="w-8 h-8 text-cyan-400" />
         </div>
-        <div className="mb-3">
-          <label htmlFor="slots" className="block text-sm font-medium text-gray-700">Horas Disponible</label>
-          <select
-            id="slots"
-            className="block w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-            onClick={handleSlotDropdownClick}
-            onChange={handleSlotChange}
-            value={selectedSlot ?? ''}
-          >
-            <option value="" disabled>Seleccione una hora</option>
-            {slots.map((slot) => (
-              <option key={slot.slot_id} value={slot.slot_id}>
-                {slot.starttime} - {slot.endtime} {slot.date}
-              </option>
-            ))}
-          </select>
+        <div>
+          <h1 className="text-3xl font-bold text-white">Reserva tu Sesión</h1>
+          <p className="text-gray-400 mt-1">Selecciona la fecha, hora y detalles de tu entrenamiento</p>
         </div>
-        <div className="mb-3">
-          <label htmlFor="levels" className="block text-sm font-medium text-gray-700">Nivel</label>
-          <select
-            id="levels"
-            className="block w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-            onChange={handleLevelChange}
-            value={selectedLevel ?? ''}
-          >
-            <option value="" disabled>Seleccione su nivel de experiencia</option>
-            {levels.map((level) => (
-              <option key={level.level_id} value={level.level_id}>
-                {level.level}
-              </option>
-            ))}
-          </select>
+      </div>
+
+      {/* Error Display */}
+      {error && (
+        <Card className="bg-red-900/20 border-red-500/30">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <ExclamationTriangleIcon className="w-5 h-5 text-red-400" />
+              <p className="text-red-400">{error}</p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      <form onSubmit={handleCheckout} className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Date Selection with Calendar */}
+          <Card className="bg-gray-900/50 border-gray-800 hover:bg-gray-900/70 transition-all duration-300 md:col-span-2">
+            <CardHeader className="pb-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-gradient-to-r from-cyan-500/20 to-blue-500/20 border border-cyan-500/30">
+                  <CalendarIcon className="w-5 h-5 text-cyan-400" />
+                </div>
+                <CardTitle className="text-white">Fecha</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "w-full justify-start text-left font-normal bg-gray-800/50 border-gray-700 text-white hover:bg-gray-800/70 hover:border-cyan-500/50",
+                        !selectedDate && "text-gray-400"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4 text-gray-400" />
+                      {selectedDate ? (
+                        format(selectedDate, "PPP", { locale: es })
+                      ) : (
+                        <span>Selecciona una fecha disponible</span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0 bg-gray-800 border-gray-700" align="center">
+                    <Calendar
+                      mode="single"
+                      selected={selectedDate}
+                      onSelect={handleDateSelect}
+                      disabled={(date) => {
+                        const today = new Date();
+                        today.setHours(0, 0, 0, 0);
+                        return date < today || !isDateAvailable(date);
+                      }}
+                      initialFocus
+                      className="bg-gray-800 text-white"
+                      modifiers={{
+                        available: (date) => isDateAvailable(date),
+                        unavailable: (date) => !isDateAvailable(date) && date >= new Date()
+                      }}
+                      modifiersStyles={{
+                        unavailable: {
+                          textDecoration: 'line-through',
+                          color: '#6b7280',
+                          opacity: 0.5
+                        },
+                        available: {
+                          backgroundColor: 'rgba(6, 182, 212, 0.1)',
+                          border: '1px solid rgba(6, 182, 212, 0.3)'
+                        }
+                      }}
+                    />
+                  </PopoverContent>
+                </Popover>
+                
+                {selectedDate && (
+                  <div className="p-3 bg-gray-800/30 rounded-lg border border-gray-700">
+                    <p className="text-gray-300 text-sm">
+                      <span className="text-gray-400">Fecha seleccionada:</span>{' '}
+                      <span className="text-white font-medium">{formatDateForDB(selectedDate)}</span>
+                    </p>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Time Slots */}
+          <Card className="bg-gray-900/50 border-gray-800 hover:bg-gray-900/70 transition-all duration-300">
+            <CardHeader className="pb-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-gradient-to-r from-purple-500/20 to-magenta-500/20 border border-purple-500/30">
+                  <ClockIcon className="w-5 h-5 text-purple-400" />
+                </div>
+                <CardTitle className="text-white">Hora</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="relative">
+                <select
+                  id="slots"
+                  className="w-full p-4 bg-gray-800/50 border border-gray-700 rounded-lg text-white appearance-none cursor-pointer hover:border-purple-500/50 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-transparent transition-all duration-300"
+                  onClick={handleSlotDropdownClick}
+                  onChange={handleSlotChange}
+                  value={selectedSlot ?? ''}
+                  disabled={!selectedDate}
+                >
+                  <option value="" disabled>
+                    {selectedDate ? 'Seleccione una hora' : 'Primero seleccione una fecha'}
+                  </option>
+                  {slots.map((slot) => (
+                    <option key={slot.slot_id} value={slot.slot_id} className="bg-gray-800">
+                      {slot.starttime} - {slot.endtime}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDownIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Level Selection */}
+          <Card className="bg-gray-900/50 border-gray-800 hover:bg-gray-900/70 transition-all duration-300">
+            <CardHeader className="pb-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/30">
+                  <AcademicCapIcon className="w-5 h-5 text-green-400" />
+                </div>
+                <CardTitle className="text-white">Nivel</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="relative">
+                <select
+                  id="levels"
+                  className="w-full p-4 bg-gray-800/50 border border-gray-700 rounded-lg text-white appearance-none cursor-pointer hover:border-green-500/50 focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:border-transparent transition-all duration-300"
+                  onChange={handleLevelChange}
+                  value={selectedLevel ?? ''}
+                >
+                  <option value="" disabled>Seleccione su nivel de experiencia</option>
+                  {levels.map((level) => (
+                    <option key={level.level_id} value={level.level_id} className="bg-gray-800">
+                      {level.level}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDownIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Service Selection */}
+          <Card className="bg-gray-900/50 border-gray-800 hover:bg-gray-900/70 transition-all duration-300">
+            <CardHeader className="pb-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-gradient-to-r from-orange-500/20 to-red-500/20 border border-orange-500/30">
+                  <BookmarkIcon className="w-5 h-5 text-orange-400" />
+                </div>
+                <CardTitle className="text-white">Servicio</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="relative">
+                <select
+                  id="services"
+                  className="w-full p-4 bg-gray-800/50 border border-gray-700 rounded-lg text-white appearance-none cursor-pointer hover:border-orange-500/50 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-transparent transition-all duration-300"
+                  onChange={handleServiceChange}
+                  value={selectedService ?? ''}
+                >
+                  <option value="" disabled>Seleccione un servicio</option>
+                  {services.map((service) => (
+                    <option key={service.service_id} value={service.service_id} className="bg-gray-800">
+                      {service.servicename}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDownIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+              </div>
+            </CardContent>
+          </Card>
         </div>
-        <div className="mb-3">
-          <label htmlFor="services" className="block text-sm font-medium text-gray-700">Servicios</label>
-          <select
-            id="services"
-            className="block w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-            onChange={handleServiceChange}
-            value={selectedService ?? ''}
-          >
-            <option value="" disabled>Seleccione un servicio</option>
-            {services.map((service) => (
-              <option key={service.service_id} value={service.service_id}>
-                {service.servicename}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="flex space-x-4">
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition duration-200"
-          >
-            {loading ? 'Processing...' : 'Pagar y Reservar'}
-          </button>
-          <button
-            type="button"
-            disabled={loading}
-            onClick={handleReserveWithoutPaying}
-            className="w-full bg-gray-600 text-white py-2 rounded hover:bg-gray-700 transition duration-200"
-          >
-            Pagar Luego y Reservar
-          </button>
-        </div>
+
+        {/* Action Buttons */}
+        <Card className="bg-gray-900/50 border-gray-800">
+          <CardHeader>
+            <CardTitle className="text-white text-center">Finalizar Reserva</CardTitle>
+            <CardDescription className="text-center">
+              Elige tu método de pago preferido
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Button
+                type="submit"
+                disabled={loading}
+                className="w-full h-14 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+              >
+                <CreditCardIcon className="w-5 h-5 mr-2" />
+                {loading ? (
+                  <div className="flex items-center gap-2">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    Procesando...
+                  </div>
+                ) : (
+                  'Pagar y Reservar'
+                )}
+              </Button>
+              
+              <Button
+                type="button"
+                variant="outline"
+                disabled={loading}
+                onClick={handleReserveWithoutPaying}
+                className="w-full h-14 bg-transparent border-2 border-gray-600 text-gray-300 hover:bg-gray-800/50 hover:border-gray-500 font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+              >
+                <BookmarkIcon className="w-5 h-5 mr-2" />
+                Pagar Luego y Reservar
+              </Button>
+            </div>
+            
+            <p className="text-gray-400 text-sm text-center mt-4">
+              💡 Tip: Pagar ahora garantiza tu lugar y evita cancelaciones
+            </p>
+          </CardContent>
+        </Card>
       </form>
     </div>
   );

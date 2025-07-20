@@ -2,47 +2,57 @@
 import Link from 'next/link';
 import { usePathname, useParams } from 'next/navigation';
 import clsx from 'clsx';
-import { HomeIcon, CalendarIcon, PencilIcon, CalendarDaysIcon } from '@heroicons/react/24/outline';
+import { HomeIcon, CalendarIcon, PencilIcon } from '@heroicons/react/24/outline';
 
+interface NavLinksProps {
+  isExpanded: boolean;
+}
 
-export default function NavLinks() {
+export default function NavLinks({ isExpanded }: NavLinksProps) {
   const pathname = usePathname();
   const params = useParams();
-  const { trainer_id } = params; // Get the trainer_id from the URL
+  const { trainer_id } = params;
 
-  //trainer dashboard sections
   const links = [
     { 
       name: 'Home', 
       href: `/trainerSignin/${trainer_id}/trainerDashboard`, 
-      icon: <HomeIcon className="w-6 h-6" />
+      icon: <HomeIcon className="w-4 h-4" />
     },
     { 
       name: 'Mis Citas', 
       href: `/trainerSignin/${trainer_id}/trainerDashboard/citas`, 
-      icon: <CalendarIcon className="w-6 h-6" />
+      icon: <CalendarIcon className="w-4 h-4" />
     },
     { 
       name: 'Modificar Horas', 
       href: `/trainerSignin/${trainer_id}/trainerDashboard/modificaHoras`, 
-      icon: <PencilIcon className="w-6 h-6" />
+      icon: <PencilIcon className="w-4 h-4" />
     },
-
   ];
   
   return (
-    <div className="flex flex-col space-y-2">
+    <div className={clsx(
+      "flex transition-all duration-300",
+      isExpanded ? "flex-col space-y-2" : "flex-row space-x-1"
+    )}>
       {links.map((link) => (
         <Link
           key={link.name}
           href={link.href}
           className={clsx(
-            'flex items-center justify-center gap-2 rounded-md bg-gray-50 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600',
-            { 'bg-sky-100 text-blue-600': pathname === link.href }
+            "flex items-center gap-2 rounded-lg font-medium transition-all duration-300 border border-transparent",
+            "text-gray-300 hover:bg-cyan-500/20 hover:border-cyan-500/30 hover:text-cyan-400",
+            {
+              "bg-gradient-to-r from-cyan-500/20 to-magenta-500/20 border-cyan-500/30 text-white":
+                pathname === link.href,
+            },
+            isExpanded ? "px-3 py-2 text-sm justify-start min-w-[140px]" : "p-2 justify-center"
           )}
+          title={!isExpanded ? link.name : undefined}
         >
-          {link.icon}
-          <p>{link.name}</p>
+          <span className="flex-shrink-0">{link.icon}</span>
+          {isExpanded && <span className="whitespace-nowrap">{link.name}</span>}
         </Link>
       ))}
     </div>

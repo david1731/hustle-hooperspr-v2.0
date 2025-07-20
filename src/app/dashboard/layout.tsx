@@ -1,53 +1,49 @@
-// src/app/dashboard/layout.tsx
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import SideNav from "../../components/sideNav";
-import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS without source maps
-import "../../styles/globals.css";
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions';
-import { SessionProvider } from '@/app/context/SessionContext';
-import { User } from '@/app/lib/definitions';
+import type React from "react"
+import type { Metadata } from "next"
+import { Inter } from "next/font/google"
+import SideNav from "../../components/sideNav"
+import "../../styles/globals.css"
+import { getServerSession } from "next-auth"
+import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions"
+import { SessionProvider } from "@/app/context/SessionContext"
+import type { User } from "@/app/lib/definitions"
 
 export const metadata: Metadata = {
   title: "HustleHoopersPR",
-  description: "Dashboard"
-};
+  description: "Dashboard",
+}
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"] })
 
 export default async function RootLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
-  const session = await getServerSession(authOptions);
+  const session = await getServerSession(authOptions)
 
   if (!session) {
     return (
-      <div>
-        <p>You are not signed in</p>
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="bg-gray-900 border border-gray-800 rounded-lg p-8 text-center">
+          <p className="text-white text-lg">You are not signed in</p>
+        </div>
       </div>
-    );
+    )
   }
 
   const user: User = {
-    name: session.user?.name || '',
-    email: session.user?.email || '',
-    image: session.user?.image || '',
-  };
+    name: session.user?.name || "",
+    email: session.user?.email || "",
+    image: session.user?.image || "",
+  }
 
   return (
     <SessionProvider user={user}>
-      <div className="flex h-screen flex-col md:flex-row">
-        <div className="w-full flex-none md:w-64">
-          <SideNav />
-        </div>
-        <div className="flex-grow p-6 md:overflow-y-auto md:p-12">
-          {children}
-        </div>
+      <div className="min-h-screen bg-gray-950">
+        <SideNav />
+        <div className="p-6 md:p-12">{children}</div>
       </div>
     </SessionProvider>
-  );
+  )
 }
-

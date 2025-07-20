@@ -3,6 +3,18 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { fetchInfoFromAppID, fetchAvailableDates, fetchSlots, editAppointment } from '@/app/lib/data';
 import { Level, Service, TrainerSlots } from '@/app/lib/definitions';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { 
+  CalendarIcon, 
+  ClockIcon, 
+  AcademicCapIcon, 
+  BookmarkIcon,
+  PencilIcon,
+  ChevronDownIcon,
+  ExclamationTriangleIcon,
+  CheckCircleIcon
+} from '@heroicons/react/24/outline';
 
 export default function AppDetails() {
   const router = useRouter();
@@ -169,83 +181,217 @@ export default function AppDetails() {
     }
   };
 
-  return (
-    <>
-      {/* Edit Form */}
-      {appDetails && (
-        <div className="container mt-4">
-          <h1 className="mb-4">Edit Appointment</h1>
-          {error && <div className="alert alert-danger">{error}</div>}
-          <form onSubmit={handleEdit}>
-            <div className="mb-3">
-              <label htmlFor="dates" className="form-label">Select a Date</label>
-              <select
-                id="dates"
-                className="form-select"
-                onChange={handleDateChange}
-                onClick={handleDateDropdown}
-                value={selectedDate}
-              >
-                <option value="" disabled>{appDetails.appointment_date}</option>
-                {dates.map((date) => (
-                  <option key={date} value={date}>{date}</option>
-                ))}
-              </select>
-            </div>
-            <div className="mb-3">
-              <label htmlFor="slots" className="form-label">Select a Slot</label>
-              <select
-                id="slots"
-                className="form-select"
-                onChange={handleSlotChange}
-                onClick={handleSlotDropdownClick}
-                value={selectedSlot ?? ''}
-              >
-                <option value="" disabled>{appDetails.start_time} - {appDetails.end_time}</option>
-                {slots.map((slot) => (
-                  <option key={slot.slot_id} value={slot.slot_id}>
-                    {slot.starttime} - {slot.endtime} on {slot.date}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="mb-3">
-              <label htmlFor="levels" className="form-label">Select a Level</label>
-              <select
-                id="levels"
-                className="form-select"
-                onChange={handleLevelChange}
-                value={selectedLevel ?? ''}
-              >
-                <option value="" disabled>{appDetails.level}</option>
-                {levels.map((level) => (
-                  <option key={level.level_id} value={level.level_id}>
-                    {level.level}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="mb-3">
-              <label htmlFor="services" className="form-label">Select a Service</label>
-              <select
-                id="services"
-                className="form-select"
-                onChange={handleServiceChange}
-                value={selectedService ?? ''}
-              >
-                <option value="" disabled>{appDetails.service}</option>
-                {services.map((service) => (
-                  <option key={service.service_id} value={service.service_id}>
-                    {service.servicename}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <button type="submit" className="btn btn-primary">Editar Cita</button>
-          </form>
+  if (!appDetails) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="flex flex-col items-center gap-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-500"></div>
+          <p className="text-gray-400">Cargando detalles de la cita...</p>
         </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="max-w-4xl mx-auto space-y-8 p-6">
+      {/* Header */}
+      <div className="flex items-center gap-4">
+        <div className="p-3 rounded-lg bg-gradient-to-r from-cyan-500/20 to-magenta-500/20 border border-cyan-500/30">
+          <PencilIcon className="w-8 h-8 text-cyan-400" />
+        </div>
+        <div>
+          <h1 className="text-3xl font-bold text-white">Editar Cita</h1>
+          <p className="text-gray-400 mt-1">Modifica los detalles de tu sesión de entrenamiento</p>
+        </div>
+      </div>
+
+      {/* Current Appointment Info */}
+      <Card className="bg-gradient-to-r from-gray-900/50 to-gray-800/50 border-gray-700">
+        <CardHeader>
+          <CardTitle className="text-white flex items-center gap-2">
+            <CheckCircleIcon className="w-5 h-5 text-green-400" />
+            Cita Actual
+          </CardTitle>
+          <CardDescription>
+            Información de tu cita programada
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="bg-gray-800/50 rounded-lg p-4">
+              <p className="text-gray-400 text-sm">Entrenador</p>
+              <p className="text-white font-medium">{appDetails.trainer_fullname}</p>
+            </div>
+            <div className="bg-gray-800/50 rounded-lg p-4">
+              <p className="text-gray-400 text-sm">Fecha</p>
+              <p className="text-white font-medium">{appDetails.appointment_date}</p>
+            </div>
+            <div className="bg-gray-800/50 rounded-lg p-4">
+              <p className="text-gray-400 text-sm">Hora</p>
+              <p className="text-white font-medium">{appDetails.start_time} - {appDetails.end_time}</p>
+            </div>
+            <div className="bg-gray-800/50 rounded-lg p-4">
+              <p className="text-gray-400 text-sm">Servicio</p>
+              <p className="text-white font-medium">{appDetails.service}</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Error Display */}
+      {error && (
+        <Card className="bg-red-900/20 border-red-500/30">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <ExclamationTriangleIcon className="w-5 h-5 text-red-400" />
+              <p className="text-red-400">{error}</p>
+            </div>
+          </CardContent>
+        </Card>
       )}
-    </>
+
+      {/* Edit Form */}
+      <form onSubmit={handleEdit} className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Date Selection */}
+          <Card className="bg-gray-900/50 border-gray-800 hover:bg-gray-900/70 transition-all duration-300">
+            <CardHeader className="pb-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-gradient-to-r from-cyan-500/20 to-blue-500/20 border border-cyan-500/30">
+                  <CalendarIcon className="w-5 h-5 text-cyan-400" />
+                </div>
+                <CardTitle className="text-white">Nueva Fecha</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="relative">
+                <select
+                  id="dates"
+                  className="w-full p-4 bg-gray-800/50 border border-gray-700 rounded-lg text-white appearance-none cursor-pointer hover:border-cyan-500/50 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-transparent transition-all duration-300"
+                  onChange={handleDateChange}
+                  onClick={handleDateDropdown}
+                  value={selectedDate}
+                >
+                  <option value="" disabled>{appDetails.appointment_date}</option>
+                  {dates.map((date) => (
+                    <option key={date} value={date} className="bg-gray-800">{date}</option>
+                  ))}
+                </select>
+                <ChevronDownIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Time Slot Selection */}
+          <Card className="bg-gray-900/50 border-gray-800 hover:bg-gray-900/70 transition-all duration-300">
+            <CardHeader className="pb-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-gradient-to-r from-purple-500/20 to-magenta-500/20 border border-purple-500/30">
+                  <ClockIcon className="w-5 h-5 text-purple-400" />
+                </div>
+                <CardTitle className="text-white">Nueva Hora</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="relative">
+                <select
+                  id="slots"
+                  className="w-full p-4 bg-gray-800/50 border border-gray-700 rounded-lg text-white appearance-none cursor-pointer hover:border-purple-500/50 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-transparent transition-all duration-300"
+                  onChange={handleSlotChange}
+                  onClick={handleSlotDropdownClick}
+                  value={selectedSlot ?? ''}
+                >
+                  <option value="" disabled>{appDetails.start_time} - {appDetails.end_time}</option>
+                  {slots.map((slot) => (
+                    <option key={slot.slot_id} value={slot.slot_id} className="bg-gray-800">
+                      {slot.starttime} - {slot.endtime}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDownIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Level Selection */}
+          <Card className="bg-gray-900/50 border-gray-800 hover:bg-gray-900/70 transition-all duration-300">
+            <CardHeader className="pb-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/30">
+                  <AcademicCapIcon className="w-5 h-5 text-green-400" />
+                </div>
+                <CardTitle className="text-white">Nuevo Nivel</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="relative">
+                <select
+                  id="levels"
+                  className="w-full p-4 bg-gray-800/50 border border-gray-700 rounded-lg text-white appearance-none cursor-pointer hover:border-green-500/50 focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:border-transparent transition-all duration-300"
+                  onChange={handleLevelChange}
+                  value={selectedLevel ?? ''}
+                >
+                  <option value="" disabled>{appDetails.level}</option>
+                  {levels.map((level) => (
+                    <option key={level.level_id} value={level.level_id} className="bg-gray-800">
+                      {level.level}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDownIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Service Selection */}
+          <Card className="bg-gray-900/50 border-gray-800 hover:bg-gray-900/70 transition-all duration-300">
+            <CardHeader className="pb-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-gradient-to-r from-orange-500/20 to-red-500/20 border border-orange-500/30">
+                  <BookmarkIcon className="w-5 h-5 text-orange-400" />
+                </div>
+                <CardTitle className="text-white">Nuevo Servicio</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="relative">
+                <select
+                  id="services"
+                  className="w-full p-4 bg-gray-800/50 border border-gray-700 rounded-lg text-white appearance-none cursor-pointer hover:border-orange-500/50 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-transparent transition-all duration-300"
+                  onChange={handleServiceChange}
+                  value={selectedService ?? ''}
+                >
+                  <option value="" disabled>{appDetails.service}</option>
+                  {services.map((service) => (
+                    <option key={service.service_id} value={service.service_id} className="bg-gray-800">
+                      {service.servicename}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDownIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Save Button */}
+        <Card className="bg-gray-900/50 border-gray-800">
+          <CardContent className="p-6">
+            <Button
+              type="submit"
+              className="w-full h-14 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white font-semibold rounded-lg transition-all duration-300 transform hover:scale-105"
+            >
+              <PencilIcon className="w-5 h-5 mr-2" />
+              Guardar Cambios
+            </Button>
+            
+            <p className="text-gray-400 text-sm text-center mt-4">
+              💡 Los cambios se aplicarán inmediatamente después de guardar
+            </p>
+          </CardContent>
+        </Card>
+      </form>
+    </div>
   );
 }
 

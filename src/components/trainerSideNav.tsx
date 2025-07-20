@@ -1,47 +1,55 @@
 'use client';
 import Link from 'next/link';
+import { useState } from 'react';
 import NavLinks from '@/components/trainerLinks';
 import { signOut } from 'next-auth/react';
 import { PowerIcon } from '@heroicons/react/24/outline';
 import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
 
-const link = {
-  name: 'Signout',
-  href: '/',
-  icon: <PowerIcon className="w-6 h-6" />
-
-};
 export default function SideNav() {
+  const [isExpanded, setIsExpanded] = useState(false);
   const pathname = usePathname();
+
   const handleSignOut = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
-    signOut({ callbackUrl: '/' }); //redirects user to homepage when signed out
+    signOut({ callbackUrl: '/' });
   };
+
   return (
-    <div className="flex h-full flex-col px-3 py-4 md:px-2">
-      <Link
-        className="mb-2 flex h-20 items-end justify-start rounded-md bg-fuchsia-50 p-4 md:h-40"
-        href="/"
-      >
-        <div className="w-32 text-white md:w-40">
-          {/* Add logo or brand name here */}
+    <div 
+      className="fixed bottom-6 left-6 z-50"
+      onMouseEnter={() => setIsExpanded(true)}
+      onMouseLeave={() => setIsExpanded(false)}
+    >
+      <div className={clsx(
+        "bg-gray-900/90 border border-gray-800 rounded-xl backdrop-blur-sm transition-all duration-300 ease-out",
+        "shadow-xl shadow-black/20",
+        isExpanded ? "p-4" : "p-2"
+      )}>
+        {/* Navigation Links */}
+        <div className="mb-2">
+          <NavLinks isExpanded={isExpanded} />
         </div>
-      </Link>
-      <div className="flex grow flex-col space-y-2">
-        <NavLinks/>
-        <div className="hidden h-auto w-full grow rounded-md bg-gray-50 md:block"></div>
-        <Link 
-          key={link.name} 
-          href={link.href}
-          onClick={handleSignOut} 
+
+        {/* Divider */}
+        {isExpanded && (
+          <div className="border-t border-gray-700 my-2"></div>
+        )}
+
+        {/* Sign Out Button */}
+        <Link
+          href="/"
+          onClick={handleSignOut}
           className={clsx(
-            'flex items-center justify-center gap-2 rounded-md bg-gray-50 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600',
-            { 'bg-sky-100 text-blue-600': pathname === link.href}
+            "flex items-center gap-2 rounded-lg font-medium transition-all duration-300 border border-transparent",
+            "text-gray-300 hover:bg-red-500/20 hover:border-red-500/30 hover:text-red-400",
+            isExpanded ? "px-3 py-2 text-sm" : "p-2 justify-center"
           )}
+          title={!isExpanded ? "Sign Out" : undefined}
         >
-          {link.icon}
-          <p>{link.name}</p>
+          <PowerIcon className="w-4 h-4 flex-shrink-0" />
+          {isExpanded && <span>Sign Out</span>}
         </Link>
       </div>
     </div>
