@@ -85,7 +85,7 @@ export default function DashboardPage() {
   const quickActions = [
     { title: 'Reservar Sesión', description: 'Agenda tu próximo entrenamiento', href: '/dashboard/sacaCitas', icon: PlusIcon },
     { title: 'Ver Mis Citas', description: 'Revisa tus sesiones programadas', href: '/dashboard/citas', icon: CalendarIcon },
-    { title: 'Mi Progreso', description: 'Analiza tu evolución', href: '#', icon: ChartBarIcon },
+    { title: 'Mi Progreso (Pronto)', description: 'Analiza tu evolución', href: '#', icon: ChartBarIcon },
   ];
 
   // Format recent activity with relative time

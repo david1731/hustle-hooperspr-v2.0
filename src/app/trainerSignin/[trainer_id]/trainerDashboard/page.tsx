@@ -95,7 +95,7 @@ export default function TrainerDashboardPage() {
   const quickActions = [
     { title: 'Ver Mis Citas', description: 'Revisa tu horario de hoy', href: `/trainerSignin/${trainer_id}/trainerDashboard/citas`, icon: CalendarIcon },
     { title: 'Modificar Horarios', description: 'Ajusta tu disponibilidad', href: `/trainerSignin/${trainer_id}/trainerDashboard/modificaHoras`, icon: ClockIcon },
-    { title: 'Estadísticas', description: 'Analiza tu rendimiento', href: '#', icon: ChartBarIcon },
+    { title: 'Estadísticas (Pronto)', description: 'Analiza tu rendimiento', href: '#', icon: ChartBarIcon },
   ];
 
   // Format recent activity with relative time
