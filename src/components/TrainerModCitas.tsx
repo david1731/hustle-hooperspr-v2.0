@@ -7,6 +7,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { toast } from 'sonner';
 import { 
   CalendarIcon, 
   ClockIcon,
@@ -66,7 +67,7 @@ const TrainerWorkForm: React.FC<{ trainer_id: number }> = ({ trainer_id }) => {
       try {
         const formattedDate = formatDateForDB(selectedDate);
         await insertTrainerTimeSlot(trainer_id, selectedSlotId, 'Available', formattedDate); //insert into db new trainer time slot
-        alert('Su horario ha sido modificado exitosamente!');
+        toast.success('Su horario ha sido modificado exitosamente!');
         setSelectedSlotId(null); //reset the slot id
         setSelectedDate(undefined); //reset the date
         setError(null);
