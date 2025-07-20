@@ -1,14 +1,20 @@
-import Header from '../components/Header';  // Ensure the correct path to Header
-import Footer from '../components/Footer';  // Ensure the correct path to Footer
-import Main from '../components/Main';      // Ensure the correct path to Main
+import Header from "@/components/landing-page/header";
+import Hero from "@/components/landing-page/hero";
+import Services from "@/components/landing-page/services";
+import Levels from "@/components/landing-page/levels";
+import Mission from "@/components/landing-page/mission";
+import Footer from "@/components/landing-page/footer";
 import "../styles/globals.css";
 
 export default function HomePage() {
   return (
     <div className='homepage-container'>
-      <Header />  {/* Render the Header component */}
-      <Main />    {/* Render the Main content component */}
-      <Footer />  {/* Render the Footer component */}
+      <Header />  
+      <Hero/> 
+      <Services/>
+      <Levels/>
+      <Mission/>  
+      <Footer />  
     </div>
   );
 }
