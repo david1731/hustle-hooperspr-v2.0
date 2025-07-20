@@ -7,6 +7,17 @@ import { useParams, useSearchParams,useRouter } from 'next/navigation'; // Hooks
 import { TrainerSlots, Service, Level } from '@/app/lib/definitions'; // Importing types and definitions
 import { fetchSlots, fetchAvailableDates, createAppointment,updateTimeSlotStatus } from '@/app/lib/data'; // Importing functions for data fetching and updating
 import { loadStripe } from '@stripe/stripe-js'; // Stripe integration for payment processing
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { 
+  CalendarIcon, 
+  ClockIcon, 
+  AcademicCapIcon, 
+  CreditCardIcon,
+  BookmarkIcon,
+  ChevronDownIcon,
+  ExclamationTriangleIcon
+} from '@heroicons/react/24/outline';
 
 // Load environment variables
 config();
@@ -194,91 +205,196 @@ export default function TrainerDetailPage() {
 
   // Render the form and checkout button
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Fechas Disponibles</h1>
-      {error && <div className="bg-red-500 text-white p-2 rounded">{error}</div>}
-      <form onSubmit={handleCheckout} className="space-y-4">
-        <div className="mb-3">
-          <label htmlFor="dates" className="block text-sm font-medium text-gray-700">Fecha</label>
-          <select
-            id="dates"
-            className="block w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-            onClick={handleDateDropdown}
-            onChange={handleDateChange}
-            value={selectedDate}
-          >
-            <option value="" disabled>Seleccione una fecha</option>
-            {dates.map((date) => (
-              <option key={date} value={date}>{date}</option>
-            ))}
-          </select>
+    <div className="max-w-4xl mx-auto space-y-8 p-6">
+      {/* Header */}
+      <div className="flex items-center gap-4">
+        <div className="p-3 rounded-lg bg-gradient-to-r from-cyan-500/20 to-magenta-500/20 border border-cyan-500/30">
+          <CalendarIcon className="w-8 h-8 text-cyan-400" />
         </div>
-        <div className="mb-3">
-          <label htmlFor="slots" className="block text-sm font-medium text-gray-700">Horas Disponible</label>
-          <select
-            id="slots"
-            className="block w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-            onClick={handleSlotDropdownClick}
-            onChange={handleSlotChange}
-            value={selectedSlot ?? ''}
-          >
-            <option value="" disabled>Seleccione una hora</option>
-            {slots.map((slot) => (
-              <option key={slot.slot_id} value={slot.slot_id}>
-                {slot.starttime} - {slot.endtime} {slot.date}
-              </option>
-            ))}
-          </select>
+        <div>
+          <h1 className="text-3xl font-bold text-white">Reserva tu Sesión</h1>
+          <p className="text-gray-400 mt-1">Selecciona la fecha, hora y detalles de tu entrenamiento</p>
         </div>
-        <div className="mb-3">
-          <label htmlFor="levels" className="block text-sm font-medium text-gray-700">Nivel</label>
-          <select
-            id="levels"
-            className="block w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-            onChange={handleLevelChange}
-            value={selectedLevel ?? ''}
-          >
-            <option value="" disabled>Seleccione su nivel de experiencia</option>
-            {levels.map((level) => (
-              <option key={level.level_id} value={level.level_id}>
-                {level.level}
-              </option>
-            ))}
-          </select>
+      </div>
+
+      {/* Error Display */}
+      {error && (
+        <Card className="bg-red-900/20 border-red-500/30">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <ExclamationTriangleIcon className="w-5 h-5 text-red-400" />
+              <p className="text-red-400">{error}</p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      <form onSubmit={handleCheckout} className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Date Selection */}
+          <Card className="bg-gray-900/50 border-gray-800 hover:bg-gray-900/70 transition-all duration-300">
+            <CardHeader className="pb-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-gradient-to-r from-cyan-500/20 to-blue-500/20 border border-cyan-500/30">
+                  <CalendarIcon className="w-5 h-5 text-cyan-400" />
+                </div>
+                <CardTitle className="text-white">Fecha</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="relative">
+                <select
+                  id="dates"
+                  className="w-full p-4 bg-gray-800/50 border border-gray-700 rounded-lg text-white appearance-none cursor-pointer hover:border-cyan-500/50 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-transparent transition-all duration-300"
+                  onClick={handleDateDropdown}
+                  onChange={handleDateChange}
+                  value={selectedDate}
+                >
+                  <option value="" disabled>Seleccione una fecha</option>
+                  {dates.map((date) => (
+                    <option key={date} value={date} className="bg-gray-800">{date}</option>
+                  ))}
+                </select>
+                <ChevronDownIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Time Slots */}
+          <Card className="bg-gray-900/50 border-gray-800 hover:bg-gray-900/70 transition-all duration-300">
+            <CardHeader className="pb-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-gradient-to-r from-purple-500/20 to-magenta-500/20 border border-purple-500/30">
+                  <ClockIcon className="w-5 h-5 text-purple-400" />
+                </div>
+                <CardTitle className="text-white">Hora</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="relative">
+                <select
+                  id="slots"
+                  className="w-full p-4 bg-gray-800/50 border border-gray-700 rounded-lg text-white appearance-none cursor-pointer hover:border-purple-500/50 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-transparent transition-all duration-300"
+                  onClick={handleSlotDropdownClick}
+                  onChange={handleSlotChange}
+                  value={selectedSlot ?? ''}
+                >
+                  <option value="" disabled>Seleccione una hora</option>
+                  {slots.map((slot) => (
+                    <option key={slot.slot_id} value={slot.slot_id} className="bg-gray-800">
+                      {slot.starttime} - {slot.endtime}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDownIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Level Selection */}
+          <Card className="bg-gray-900/50 border-gray-800 hover:bg-gray-900/70 transition-all duration-300">
+            <CardHeader className="pb-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/30">
+                  <AcademicCapIcon className="w-5 h-5 text-green-400" />
+                </div>
+                <CardTitle className="text-white">Nivel</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="relative">
+                <select
+                  id="levels"
+                  className="w-full p-4 bg-gray-800/50 border border-gray-700 rounded-lg text-white appearance-none cursor-pointer hover:border-green-500/50 focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:border-transparent transition-all duration-300"
+                  onChange={handleLevelChange}
+                  value={selectedLevel ?? ''}
+                >
+                  <option value="" disabled>Seleccione su nivel de experiencia</option>
+                  {levels.map((level) => (
+                    <option key={level.level_id} value={level.level_id} className="bg-gray-800">
+                      {level.level}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDownIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Service Selection */}
+          <Card className="bg-gray-900/50 border-gray-800 hover:bg-gray-900/70 transition-all duration-300">
+            <CardHeader className="pb-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-gradient-to-r from-orange-500/20 to-red-500/20 border border-orange-500/30">
+                  <BookmarkIcon className="w-5 h-5 text-orange-400" />
+                </div>
+                <CardTitle className="text-white">Servicio</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="relative">
+                <select
+                  id="services"
+                  className="w-full p-4 bg-gray-800/50 border border-gray-700 rounded-lg text-white appearance-none cursor-pointer hover:border-orange-500/50 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-transparent transition-all duration-300"
+                  onChange={handleServiceChange}
+                  value={selectedService ?? ''}
+                >
+                  <option value="" disabled>Seleccione un servicio</option>
+                  {services.map((service) => (
+                    <option key={service.service_id} value={service.service_id} className="bg-gray-800">
+                      {service.servicename}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDownIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+              </div>
+            </CardContent>
+          </Card>
         </div>
-        <div className="mb-3">
-          <label htmlFor="services" className="block text-sm font-medium text-gray-700">Servicios</label>
-          <select
-            id="services"
-            className="block w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-            onChange={handleServiceChange}
-            value={selectedService ?? ''}
-          >
-            <option value="" disabled>Seleccione un servicio</option>
-            {services.map((service) => (
-              <option key={service.service_id} value={service.service_id}>
-                {service.servicename}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="flex space-x-4">
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition duration-200"
-          >
-            {loading ? 'Processing...' : 'Pagar y Reservar'}
-          </button>
-          <button
-            type="button"
-            disabled={loading}
-            onClick={handleReserveWithoutPaying}
-            className="w-full bg-gray-600 text-white py-2 rounded hover:bg-gray-700 transition duration-200"
-          >
-            Pagar Luego y Reservar
-          </button>
-        </div>
+
+        {/* Action Buttons */}
+        <Card className="bg-gray-900/50 border-gray-800">
+          <CardHeader>
+            <CardTitle className="text-white text-center">Finalizar Reserva</CardTitle>
+            <CardDescription className="text-center">
+              Elige tu método de pago preferido
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Button
+                type="submit"
+                disabled={loading}
+                className="w-full h-14 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+              >
+                <CreditCardIcon className="w-5 h-5 mr-2" />
+                {loading ? (
+                  <div className="flex items-center gap-2">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    Procesando...
+                  </div>
+                ) : (
+                  'Pagar y Reservar'
+                )}
+              </Button>
+              
+              <Button
+                type="button"
+                variant="outline"
+                disabled={loading}
+                onClick={handleReserveWithoutPaying}
+                className="w-full h-14 bg-transparent border-2 border-gray-600 text-gray-300 hover:bg-gray-800/50 hover:border-gray-500 font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+              >
+                <BookmarkIcon className="w-5 h-5 mr-2" />
+                Pagar Luego y Reservar
+              </Button>
+            </div>
+            
+            <p className="text-gray-400 text-sm text-center mt-4">
+              💡 Tip: Pagar ahora garantiza tu lugar y evita cancelaciones
+            </p>
+          </CardContent>
+        </Card>
       </form>
     </div>
   );

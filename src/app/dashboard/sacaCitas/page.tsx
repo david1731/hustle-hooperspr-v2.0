@@ -136,9 +136,6 @@ export default function SacaCitasPage() {
                   <span className="px-2 py-1 rounded-full bg-gradient-to-r from-cyan-500/20 to-blue-500/20 border border-cyan-500/30 text-cyan-400 text-xs">
                     Fundamentales
                   </span>
-                  <span className="px-2 py-1 rounded-full bg-gradient-to-r from-magenta-500/20 to-purple-500/20 border border-magenta-500/30 text-magenta-400 text-xs">
-                    Tiro
-                  </span>
                 </div>
 
                 {/* Selection Button */}
