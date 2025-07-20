@@ -14,6 +14,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { toast } from 'sonner';
 import { 
   CalendarIcon, 
   ClockIcon, 
@@ -171,7 +172,7 @@ export default function TrainerDetailPage() {
     e.preventDefault();
     // Validate that all necessary fields have been selected
     if (!selectedSlot || !selectedLevel || !selectedService || !selectedDate || !useremail) {
-      alert('Please select all fields');
+      toast.error('Por favor selecciona todos los campos');
       return;
     }
   
@@ -217,19 +218,19 @@ export default function TrainerDetailPage() {
   // Handle reserving without payment
   const handleReserveWithoutPaying = async () => {
     if (!selectedSlot || !selectedLevel || !selectedService || !selectedDate || !useremail) {
-      alert('Porfavor no deje nada vacio');
+      toast.error('Por favor no deje nada vacío');
       return;
     }
 
     try {
       const formattedDate = formatDateForDB(selectedDate);
       await createAppointment(selectedSlot, useremail, selectedLevel, Number(trainerId), selectedService, formattedDate, 'No Pagado');
-      alert('Su cita ha sido reservada.');
+      toast.success('Su cita ha sido reservada exitosamente');
       await updateTimeSlotStatus(selectedSlot,Number(trainerId),formattedDate,'Unavailable');
       router.push(`/dashboard/citas`);
     } catch (error) {
       console.error('Error creating appointment without payment:', error);
-      alert('Failed to reserve appointment.');
+      toast.error('Error al reservar la cita');
     }
   };
 

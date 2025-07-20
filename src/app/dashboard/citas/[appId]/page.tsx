@@ -5,6 +5,7 @@ import { fetchInfoFromAppID, fetchAvailableDates, fetchSlots, editAppointment } 
 import { Level, Service, TrainerSlots } from '@/app/lib/definitions';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 import { 
   CalendarIcon, 
   ClockIcon, 
@@ -169,15 +170,15 @@ export default function AppDetails() {
           appDetails.appointment_date
         ); //edit appointment
         console.log('Appointment edited:', result);
-        alert('Appointment edited successfully');
+        toast.success('Cita editada exitosamente');
         router.push(`/dashboard/citas`); //if the edit is successfull redirect back to appointments page
         
       } catch (error) {
         console.error('Error editing appointment:', error);
-        alert('Failed to edit appointment');
+        toast.error('Error al editar la cita');
       }
     } else {
-      alert('Please select all fields');
+      toast.error('Por favor selecciona todos los campos');
     }
   };
 
