@@ -20,7 +20,7 @@ export default function SideNav() {
 
   return (
     <div 
-      className="fixed top-6 left-6 z-50"
+      className="fixed bottom-6 left-6 z-50"
       onMouseEnter={() => setIsExpanded(true)}
       onMouseLeave={() => setIsExpanded(false)}
     >
